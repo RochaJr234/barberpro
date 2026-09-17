@@ -1919,15 +1919,15 @@ function renderizarFuncionamentoAgenda() {
     }
 
 
-    /* ======================================================
-       OBTER HORÁRIO CONFIGURADO
-    ====================================================== */
-
     const horario =
         obterHorarioFuncionamento(
             dataAgendaSelecionada
         );
 
+
+    /* ======================================================
+       HORÁRIO NÃO ENCONTRADO
+    ====================================================== */
 
     if (!horario) {
 
@@ -1941,8 +1941,10 @@ function renderizarFuncionamentoAgenda() {
             "Horário não definido";
 
         if (intervaloFuncionamento) {
+
             intervaloFuncionamento.style.display =
                 "none";
+
         }
 
         return;
@@ -1965,8 +1967,10 @@ function renderizarFuncionamentoAgenda() {
             "Não há atendimento neste dia";
 
         if (intervaloFuncionamento) {
+
             intervaloFuncionamento.style.display =
                 "none";
+
         }
 
         return;
@@ -1974,12 +1978,16 @@ function renderizarFuncionamentoAgenda() {
 
 
     /* ======================================================
-       MOSTRAR HORÁRIO
+       MOSTRAR HORÁRIO DE ATENDIMENTO
     ====================================================== */
 
     horarioFuncionamento.textContent =
         `${horario.abertura} às ${horario.fechamento}`;
 
+
+    /* ======================================================
+       MOSTRAR INTERVALO
+    ====================================================== */
 
     const temIntervalo =
         horario.inicioIntervalo &&
@@ -2003,12 +2011,14 @@ function renderizarFuncionamentoAgenda() {
 
             intervaloFuncionamento.style.display =
                 "none";
+
         }
+
     }
 
 
     /* ======================================================
-       VERIFICAR SE A DATA SELECIONADA É HOJE
+       VERIFICAR SE A DATA É HOJE
     ====================================================== */
 
     const hoje =
@@ -2030,11 +2040,12 @@ function renderizarFuncionamentoAgenda() {
 
 
     /* ======================================================
-       HORÁRIO ATUAL DO CELULAR
+       HORÁRIO ATUAL
     ====================================================== */
 
     const agora =
         new Date();
+
 
     const minutosAgora =
         agora.getHours() * 60 +
@@ -2050,15 +2061,18 @@ function renderizarFuncionamentoAgenda() {
             horario.abertura
         );
 
+
     const fechamento =
         horaParaMinutos(
             horario.fechamento
         );
 
+
     const inicioIntervalo =
         horaParaMinutos(
             horario.inicioIntervalo
         );
+
 
     const fimIntervalo =
         horaParaMinutos(
@@ -2126,7 +2140,7 @@ function renderizarFuncionamentoAgenda() {
 
 
     /* ======================================================
-       DENTRO DO HORÁRIO DE ATENDIMENTO
+       DENTRO DO HORÁRIO
     ====================================================== */
 
     status.textContent =
@@ -2136,78 +2150,11 @@ function renderizarFuncionamentoAgenda() {
         "●";
 }
 
-    /* ======================================================
-       DIA FECHADO
-    ====================================================== */
 
-    if (!horario.aberto) {
+/* ==========================================================
+   AGENDA — RENDERIZAÇÃO
+========================================================== */
 
-        status.textContent =
-            "Fechado";
-
-        indicador.textContent =
-            "●";
-
-        horarioFuncionamento.textContent =
-            "Não há atendimento neste dia";
-
-
-        if (intervaloFuncionamento) {
-
-            intervaloFuncionamento.style.display =
-                "none";
-        }
-
-
-        return;
-    }
-
-
-    /* ======================================================
-       DIA ABERTO
-    ====================================================== */
-
-    status.textContent =
-        "Aberto";
-
-    indicador.textContent =
-        "●";
-
-
-    horarioFuncionamento.textContent =
-        `${horario.abertura} às ${horario.fechamento}`;
-
-
-    /* ======================================================
-       INTERVALO
-    ====================================================== */
-
-    const temIntervalo =
-        horario.inicioIntervalo &&
-        horario.fimIntervalo;
-
-
-    if (
-        intervaloFuncionamento &&
-        horarioIntervalo
-    ) {
-
-        if (temIntervalo) {
-
-            intervaloFuncionamento.style.display =
-                "flex";
-
-            horarioIntervalo.textContent =
-                `${horario.inicioIntervalo} às ${horario.fimIntervalo}`;
-
-        } else {
-
-            intervaloFuncionamento.style.display =
-                "none";
-        }
-    }
-
-}
 /* ==========================================================
    AGENDA — RENDERIZAÇÃO
 ========================================================== */
