@@ -1,0 +1,2976 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
+    <meta
+        name="theme-color"
+        content="#f7f6f2"
+    >
+
+    <title>BarberPro</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+<!-- MENU LATERAL -->
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<aside class="menu-lateral" id="menuLateral">
+
+    <div class="menu-topo">
+        <div class="menu-marca">
+            <div class="menu-logo">✂</div>
+            <div>
+                <strong>Barber<span>Pro</span></strong>
+                <small>Gestão da Barbearia</small>
+            </div>
+        </div>
+
+        <button class="btn-fechar-menu" id="btnFecharMenu" type="button">
+            ×
+        </button>
+    </div>
+
+    <div class="menu-linha"></div>
+
+<nav class="menu-itens">
+
+    <!-- INÍCIO -->
+    <button
+        class="menu-item"
+        data-menu-tela="inicio"
+        type="button">
+
+        <span class="menu-icone">⌂</span>
+
+        <div>
+            <strong>Início</strong>
+            <small>Painel principal</small>
+        </div>
+
+    </button>
+
+
+    <!-- AGENDA -->
+    <button
+        class="menu-item"
+        data-menu-tela="agenda"
+        type="button">
+
+        <span class="menu-icone">▣</span>
+
+        <div>
+            <strong>Agenda</strong>
+            <small>Seus agendamentos</small>
+        </div>
+
+    </button>
+
+
+    <!-- CLIENTES -->
+    <button
+        class="menu-item"
+        data-menu-tela="clientes"
+        type="button">
+
+        <span class="menu-icone">♟</span>
+
+        <div>
+            <strong>Clientes</strong>
+            <small>Cadastro e histórico</small>
+        </div>
+
+    </button>
+
+
+    <!-- SERVIÇOS -->
+    <button
+        class="menu-item"
+        data-menu-tela="servicos"
+        type="button">
+
+        <span class="menu-icone">✂</span>
+
+        <div>
+            <strong>Serviços</strong>
+            <small>Preços e duração</small>
+        </div>
+
+    </button>
+
+
+    <!-- FINANCEIRO -->
+    <button
+        class="menu-item"
+        data-menu-tela="financeiro"
+        type="button">
+
+        <span class="menu-icone">R$</span>
+
+        <div>
+            <strong>Financeiro</strong>
+            <small>Faturamento e histórico</small>
+        </div>
+
+    </button>
+
+
+    <!-- CONFIGURAÇÕES -->
+    <button
+        class="menu-item"
+        data-menu-tela="configuracoes"
+        type="button">
+
+        <span class="menu-icone">⚙</span>
+
+        <div>
+            <strong>Configurações</strong>
+            <small>Dados da barbearia</small>
+        </div>
+
+    </button>
+
+</nav>
+
+    <div class="menu-rodape">
+        <span>BarberPro</span>
+        <small>Gestão inteligente</small>
+    </div>
+
+</aside>
+
+<body>
+
+
+<!-- =====================================================
+     TOPO
+===================================================== -->
+
+<header class="topo">
+
+    <button
+        class="botao-topo"
+        id="btnMenu"
+        aria-label="Menu"
+    >
+        ☰
+    </button>
+
+
+    <div class="logo">
+
+        <span class="logo-icone">✂</span>
+
+        <span>
+            Barber<span>Pro</span>
+        </span>
+
+    </div>
+
+
+    <button
+        class="botao-topo"
+        id="btnNotificacao"
+        aria-label="Notificações"
+    >
+        ♧
+    </button>
+
+</header>
+
+
+
+<!-- =====================================================
+     CONTEÚDO
+===================================================== -->
+
+<main id="conteudo">
+
+
+<!-- =====================================================
+     INÍCIO
+===================================================== -->
+
+<section
+    id="telaInicio"
+    class="tela ativa"
+>
+
+
+    <div class="saudacao">
+
+        <p class="saudacao-pequena">
+            BEM-VINDO DE VOLTA
+        </p>
+
+        <h1>
+            Olá, Barbeiro! 👋
+        </h1>
+
+        <p>
+            Veja como está o seu dia.
+        </p>
+
+    </div>
+
+
+
+    <!-- RESUMO -->
+
+    <div class="resumo-grid">
+
+
+        <div class="card-resumo">
+
+            <span class="icone-resumo">
+                ✂️
+            </span>
+
+            <strong>
+                8
+            </strong>
+
+            <small>
+                Atendimentos
+            </small>
+
+            <span class="resumo-dia">
+                Hoje
+            </span>
+
+        </div>
+
+
+        <div class="card-resumo">
+
+            <span class="icone-resumo">
+                R$
+            </span>
+
+            <strong>
+                280
+            </strong>
+
+            <small>
+                Faturamento
+            </small>
+
+            <span class="resumo-dia">
+                Hoje
+            </span>
+
+        </div>
+
+
+        <div class="card-resumo">
+
+            <span class="icone-resumo">
+                👤
+            </span>
+
+            <strong>
+                128
+            </strong>
+
+            <small>
+                Clientes
+            </small>
+
+            <span class="resumo-dia">
+                Ativos
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- ACESSO RÁPIDO -->
+
+    <div class="secao">
+
+        <div class="titulo-secao">
+
+            <h2>
+                Acesso rápido
+            </h2>
+
+        </div>
+
+
+        <div class="acoes-grid">
+
+
+            <button
+                class="acao-card"
+                id="btnInicioAgendamento"
+            >
+
+                <span>
+                    📅
+                </span>
+
+                <strong>
+                    Novo
+                </strong>
+
+                <small>
+                    Agendamento
+                </small>
+
+            </button>
+
+
+            <button
+                class="acao-card"
+                id="btnInicioCliente"
+            >
+
+                <span>
+                    👤
+                </span>
+
+                <strong>
+                    Cadastrar
+                </strong>
+
+                <small>
+                    Cliente
+                </small>
+
+            </button>
+
+
+            <button
+                class="acao-card"
+                id="btnInicioServicos"
+            >
+
+                <span>
+                    ✂️
+                </span>
+
+                <strong>
+                    Meus
+                </strong>
+
+                <small>
+                    Serviços
+                </small>
+
+            </button>
+
+
+            <button
+                class="acao-card"
+                id="btnInicioRelatorios"
+            >
+
+                <span>
+                    📊
+                </span>
+
+                <strong>
+                    Ver
+                </strong>
+
+                <small>
+                    Relatórios
+                </small>
+
+            </button>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- AGENDA RESUMIDA -->
+
+    <div class="secao">
+
+
+        <div class="titulo-secao">
+
+            <div>
+
+                <p class="titulo-pequeno">
+                    HOJE
+                </p>
+
+                <h2>
+                    Agenda
+                </h2>
+
+            </div>
+
+
+            <button
+                class="link-secao"
+                id="btnVerAgenda"
+            >
+                Ver tudo
+            </button>
+
+        </div>
+
+
+
+        <div class="agenda-resumo">
+
+            <div class="item-agenda concluido">
+
+                <div class="hora-agenda">
+                    <strong>
+                        09:00
+                    </strong>
+                </div>
+
+                <div class="avatar-agenda">
+                    CS
+                </div>
+
+                <div class="info-agenda">
+
+                    <strong>
+                        Carlos Silva
+                    </strong>
+
+                    <span>
+                        Corte
+                    </span>
+
+                </div>
+
+                <span class="status status-concluido">
+                    Concluído
+                </span>
+
+            </div>
+
+
+
+            <div class="item-agenda atendimento">
+
+                <div class="hora-agenda">
+                    <strong>
+                        10:00
+                    </strong>
+                </div>
+
+                <div class="avatar-agenda">
+                    JP
+                </div>
+
+                <div class="info-agenda">
+
+                    <strong>
+                        João Pedro
+                    </strong>
+
+                    <span>
+                        Barba
+                    </span>
+
+                </div>
+
+                <span class="status status-atendimento">
+                    Em atendimento
+                </span>
+
+            </div>
+
+
+
+            <div class="item-agenda">
+
+                <div class="hora-agenda">
+                    <strong>
+                        11:00
+                    </strong>
+                </div>
+
+                <div class="avatar-agenda">
+                    ML
+                </div>
+
+                <div class="info-agenda">
+
+                    <strong>
+                        Mateus Lima
+                    </strong>
+
+                    <span>
+                        Corte + Barba
+                    </span>
+
+                </div>
+
+                <span class="status status-agendado">
+                    Agendado
+                </span>
+
+            </div>
+
+
+
+            <div class="item-agenda">
+
+                <div class="hora-agenda">
+                    <strong>
+                        14:00
+                    </strong>
+                </div>
+
+                <div class="avatar-agenda">
+                    LS
+                </div>
+
+                <div class="info-agenda">
+
+                    <strong>
+                        Lucas Souza
+                    </strong>
+
+                    <span>
+                        Corte
+                    </span>
+
+                </div>
+
+                <span class="status status-agendado">
+                    Agendado
+                </span>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <button
+        class="botao-principal"
+        id="btnNovoAgendamento"
+    >
+        + Novo Agendamento
+    </button>
+
+
+
+    <!-- BANNER -->
+
+    <div class="banner-frase">
+
+        <div>
+
+            <span>
+                CUIDAR DE PESSOAS
+            </span>
+
+            <strong>
+                TAMBÉM É ARTE.
+            </strong>
+
+        </div>
+
+        <span class="banner-icone">
+            ✂
+        </span>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     AGENDA 2.0
+===================================================== -->
+
+<section
+    id="telaAgenda"
+    class="tela"
+>
+
+
+    <!-- CABEÇALHO -->
+
+    <div class="cabecalho-pagina">
+
+
+        <button
+            class="voltar"
+            id="voltarAgenda"
+        >
+            ←
+        </button>
+
+
+        <div>
+
+            <p class="subtitulo-pagina">
+                SEUS HORÁRIOS
+            </p>
+
+            <h1>
+                Agenda
+            </h1>
+
+        </div>
+
+
+        <button
+            class="botao-add"
+            id="btnAdicionarAgendamento"
+        >
+            +
+        </button>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+         CALENDÁRIO
+    ================================================== -->
+
+    <div class="calendario-agenda">
+
+
+        <button
+            class="mes-anterior"
+            id="btnMesAnterior"
+        >
+            ‹
+        </button>
+
+
+        <div class="mes-atual">
+
+            <strong id="mesAgenda">
+                Setembro 2026
+            </strong>
+
+        </div>
+
+
+        <button
+            class="mes-proximo"
+            id="btnMesProximo"
+        >
+            ›
+        </button>
+
+
+    </div>
+
+
+
+    <!-- DIAS -->
+
+    <div
+        class="datas-agenda"
+        id="datasAgenda"
+    >
+
+        <!--
+            Os dias serão preenchidos
+            pelo JavaScript.
+        -->
+
+    </div>
+
+
+
+    <!-- HOJE -->
+
+    <div class="atalho-hoje">
+
+        <button
+            id="btnHojeAgenda"
+        >
+            Hoje
+        </button>
+
+    </div>
+
+
+
+    <!-- DATA SELECIONADA -->
+
+    <div class="titulo-agenda-dia">
+
+
+        <span>
+            DATA SELECIONADA
+        </span>
+
+
+        <strong id="tituloDataAgenda">
+            Hoje
+        </strong>
+
+
+    </div>
+
+<!-- =================================================
+     HORÁRIO DE FUNCIONAMENTO
+================================================== -->
+
+<div class="funcionamento-agenda" id="funcionamentoAgenda">
+
+    <div class="funcionamento-topo">
+
+        <div>
+
+            <span class="funcionamento-label">
+                FUNCIONAMENTO
+            </span>
+
+            <strong id="funcionamentoStatus">
+                Aberto
+            </strong>
+
+        </div>
+
+        <span
+            class="funcionamento-indicador"
+            id="funcionamentoIndicador">
+            ●
+        </span>
+
+    </div>
+
+
+    <div class="funcionamento-horarios">
+
+        <div class="funcionamento-horario">
+
+            <span>Atendimento</span>
+
+            <strong id="horarioFuncionamento">
+                08:00 às 18:00
+            </strong>
+
+        </div>
+
+
+        <div
+            class="funcionamento-horario intervalo"
+            id="intervaloFuncionamento">
+
+            <span>Intervalo</span>
+
+            <strong id="horarioIntervalo">
+                13:00 às 15:00
+            </strong>
+
+        </div>
+
+    </div>
+
+</div>
+
+    <!-- LISTA DE AGENDAMENTOS -->
+
+    <div
+        class="lista-agenda"
+        id="listaAgenda"
+    >
+    </div>
+
+
+
+    <!-- BOTÃO -->
+
+    <button
+        class="botao-principal"
+        id="btnNovoAgendamentoAgenda"
+    >
+        + Novo Agendamento
+    </button>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     NOVO AGENDAMENTO
+===================================================== -->
+
+<section
+    id="telaNovoAgendamento"
+    class="tela"
+>
+
+
+    <div class="cabecalho-pagina">
+
+
+        <button
+            class="voltar"
+            id="voltarNovoAgendamento"
+        >
+            ←
+        </button>
+
+
+        <div>
+
+            <p class="subtitulo-pagina">
+                AGENDA
+            </p>
+
+            <h1>
+                Novo Agendamento
+            </h1>
+
+        </div>
+
+
+        <div></div>
+
+
+    </div>
+
+
+
+    <form
+        id="formAgendamento"
+        class="formulario"
+    >
+
+
+        <!-- CLIENTE -->
+
+  <div class="campo">
+
+    <label for="clienteNome">
+        Cliente
+    </label>
+
+    <input
+        type="text"
+        id="clienteNome"
+        placeholder="Digite o nome do cliente"
+        autocomplete="off"
+        list="clientesSugestoes"
+        required
+    >
+
+    <datalist id="clientesSugestoes"></datalist>
+
+</div>
+
+
+
+        <!-- SERVIÇO -->
+
+        <div class="campo">
+
+            <label for="servico">
+                Serviço
+            </label>
+
+            <select
+                id="servico"
+                required
+            >
+
+                <option value="">
+                    Selecione um serviço
+                </option>
+
+            </select>
+
+        </div>
+
+
+
+        <!-- DATA / HORA -->
+
+        <div class="linha-campos">
+
+
+            <div class="campo">
+
+                <label for="dataAgendamento">
+                    Data
+                </label>
+
+                <input
+                    type="date"
+                    id="dataAgendamento"
+                    required
+                >
+
+            </div>
+
+
+            <div class="campo">
+
+                <label for="horaAgendamento">
+                    Horário
+                </label>
+
+                <input
+                    type="time"
+                    id="horaAgendamento"
+                    required
+                >
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- VALOR -->
+
+        <div class="campo">
+
+            <label for="valor">
+                Valor
+            </label>
+
+            <input
+                type="number"
+                id="valor"
+                placeholder="0,00"
+                min="0"
+                step="0.01"
+                required
+            >
+
+        </div>
+
+
+
+        <!-- OBSERVAÇÃO -->
+
+        <div class="campo">
+
+            <label for="observacao">
+                Observação
+            </label>
+
+            <textarea
+                id="observacao"
+                rows="4"
+                placeholder="Alguma observação sobre o atendimento..."
+            ></textarea>
+
+        </div>
+
+
+
+        <button
+            type="submit"
+            class="botao-principal"
+        >
+            Confirmar Agendamento
+        </button>
+
+
+    </form>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     DETALHES DO AGENDAMENTO
+===================================================== -->
+
+<section
+    id="telaDetalhesAgendamento"
+    class="tela"
+>
+
+
+    <div class="cabecalho-pagina">
+
+
+        <button
+            class="voltar"
+            id="voltarDetalhesAgendamento"
+        >
+            ←
+        </button>
+
+
+        <div>
+
+            <p class="subtitulo-pagina">
+                ATENDIMENTO
+            </p>
+
+            <h1>
+                Detalhes
+            </h1>
+
+        </div>
+
+
+        <div></div>
+
+
+    </div>
+
+
+
+    <!-- CLIENTE -->
+
+    <div class="detalhe-cliente">
+
+
+        <div
+            class="detalhe-avatar"
+            id="detalheAvatar"
+        >
+            --
+        </div>
+
+
+        <div>
+
+            <h2 id="detalheCliente">
+                Cliente
+            </h2>
+
+            <p id="detalheTelefone">
+                —
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- INFORMAÇÕES -->
+
+    <div class="detalhes-card">
+
+
+        <div class="detalhe-linha">
+
+            <span>
+                ✂ Serviço
+            </span>
+
+            <strong id="detalheServico">
+                —
+            </strong>
+
+        </div>
+
+
+        <div class="detalhe-linha">
+
+            <span>
+                📅 Data
+            </span>
+
+            <strong id="detalheData">
+                —
+            </strong>
+
+        </div>
+
+
+        <div class="detalhe-linha">
+
+            <span>
+                ⏰ Horário
+            </span>
+
+            <strong id="detalheHora">
+                —
+            </strong>
+
+        </div>
+
+
+        <div class="detalhe-linha">
+
+            <span>
+                ⏱ Duração
+            </span>
+
+            <strong id="detalheDuracao">
+                —
+            </strong>
+
+        </div>
+
+
+        <div class="detalhe-linha destaque">
+
+            <span>
+                Valor
+            </span>
+
+            <strong id="detalheValor">
+                R$ 0,00
+            </strong>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- STATUS -->
+
+    <div class="detalhe-status-box">
+
+        <span>
+            STATUS
+        </span>
+
+        <strong
+            id="detalheStatus"
+            class="status status-agendado"
+        >
+            Agendado
+        </strong>
+
+    </div>
+
+
+
+    <!-- OBSERVAÇÃO -->
+
+    <div class="detalhes-observacao">
+
+        <h3>
+            Observação
+        </h3>
+
+        <p id="detalheObservacao">
+            Nenhuma observação.
+        </p>
+
+    </div>
+
+
+
+    <!-- AÇÕES -->
+
+    <div class="acoes-atendimento">
+
+
+        <button
+            class="acao-atendimento iniciar"
+            id="btnIniciarAtendimento"
+        >
+            ▶ Iniciar atendimento
+        </button>
+
+
+        <button
+            class="acao-atendimento concluir"
+            id="btnConcluirAtendimento"
+        >
+            ✓ Concluir atendimento
+        </button>
+
+
+        <button
+            class="acao-atendimento cancelar"
+            id="btnCancelarAtendimento"
+        >
+            × Cancelar atendimento
+        </button>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     CLIENTES
+===================================================== -->
+
+<section
+    id="telaClientes"
+    class="tela"
+>
+
+
+    <div class="cabecalho-pagina">
+
+        <button
+            class="voltar"
+            id="voltarClientes"
+        >
+            ←
+        </button>
+
+        <div>
+
+            <p class="subtitulo-pagina">
+                RELACIONAMENTO
+            </p>
+
+            <h1>
+                Clientes
+            </h1>
+
+        </div>
+
+        <button
+            class="botao-add"
+            id="btnAdicionarCliente"
+        >
+            +
+        </button>
+
+    </div>
+
+
+
+    <!-- BUSCA -->
+
+    <div class="busca-clientes">
+
+        <span>
+            ⌕
+        </span>
+
+        <input
+            type="search"
+            id="buscaCliente"
+            placeholder="Buscar cliente..."
+            autocomplete="off"
+        >
+
+    </div>
+
+
+
+    <!-- RESUMO -->
+
+    <div class="resumo-clientes">
+
+
+        <div>
+
+            <span>
+                Total
+            </span>
+
+            <strong id="totalClientes">
+                0
+            </strong>
+
+        </div>
+
+
+        <div>
+
+            <span>
+                Ativos
+            </span>
+
+            <strong id="clientesAtivos">
+                0
+            </strong>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- LISTA -->
+
+    <div
+        class="lista-clientes"
+        id="listaClientes"
+    >
+    </div>
+
+
+
+    <!-- VAZIO -->
+
+    <div
+        class="estado-vazio"
+        id="estadoVazioClientes"
+    >
+
+        <div class="vazio-icone">
+            👤
+        </div>
+
+        <h3>
+            Nenhum cliente encontrado
+        </h3>
+
+        <p>
+            Cadastre seus clientes para acompanhar
+            o histórico de cada atendimento.
+        </p>
+
+        <button
+            class="botao-principal"
+            id="btnCadastrarPrimeiroCliente"
+        >
+            + Cadastrar Cliente
+        </button>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     NOVO CLIENTE
+===================================================== -->
+
+<section
+    id="telaNovoCliente"
+    class="tela"
+>
+
+
+    <div class="cabecalho-pagina">
+
+
+        <button
+            class="voltar"
+            id="voltarNovoCliente"
+        >
+            ←
+        </button>
+
+
+        <div>
+
+            <p class="subtitulo-pagina">
+                CLIENTES
+            </p>
+
+            <h1>
+                Novo Cliente
+            </h1>
+
+        </div>
+
+
+        <div></div>
+
+
+    </div>
+
+
+
+    <form
+        id="formCliente"
+        class="formulario"
+    >
+
+
+        <div class="campo">
+
+            <label for="novoClienteNome">
+                Nome
+            </label>
+
+            <input
+                type="text"
+                id="novoClienteNome"
+                placeholder="Nome completo"
+                autocomplete="name"
+                required
+            >
+
+        </div>
+
+
+
+        <div class="campo">
+
+            <label for="novoClienteTelefone">
+                Telefone
+            </label>
+
+            <input
+                type="tel"
+                id="novoClienteTelefone"
+                placeholder="(00) 00000-0000"
+                autocomplete="tel"
+            >
+
+        </div>
+
+
+
+        <div class="campo">
+
+            <label for="novoClienteEmail">
+                E-mail
+            </label>
+
+            <input
+                type="email"
+                id="novoClienteEmail"
+                placeholder="cliente@email.com"
+                autocomplete="email"
+            >
+
+        </div>
+
+
+
+        <div class="campo">
+
+            <label for="novoClienteObservacao">
+                Observação
+            </label>
+
+            <textarea
+                id="novoClienteObservacao"
+                rows="4"
+                placeholder="Preferências, observações..."
+            ></textarea>
+
+        </div>
+
+
+
+        <button
+            type="submit"
+            class="botao-principal"
+        >
+            Salvar Cliente
+        </button>
+
+
+    </form>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     FICHA CLIENTE
+===================================================== -->
+
+<section
+    id="telaFichaCliente"
+    class="tela"
+>
+
+
+    <div class="cabecalho-pagina">
+
+
+        <button
+            class="voltar"
+            id="voltarFichaCliente"
+        >
+            ←
+        </button>
+
+
+        <div>
+
+            <p class="subtitulo-pagina">
+                CLIENTE
+            </p>
+
+            <h1>
+                Ficha
+            </h1>
+
+        </div>
+
+
+        <div></div>
+
+
+    </div>
+
+
+
+    <div class="ficha-perfil">
+
+
+        <div
+            class="ficha-avatar"
+            id="fichaAvatar"
+        >
+            --
+        </div>
+
+
+        <div class="ficha-identidade">
+
+            <h2 id="fichaNome">
+                Cliente
+            </h2>
+
+            <p id="fichaTelefone">
+                —
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="ficha-resumo">
+
+
+        <div>
+
+            <span>
+                Atendimentos
+            </span>
+
+            <strong id="fichaAtendimentos">
+                0
+            </strong>
+
+        </div>
+
+
+        <div>
+
+            <span>
+                Total gasto
+            </span>
+
+            <strong id="fichaTotalGasto">
+                R$ 0,00
+            </strong>
+
+        </div>
+
+
+        <div>
+
+            <span>
+                Último atendimento
+            </span>
+
+            <strong id="fichaUltimoAtendimento">
+                —
+            </strong>
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="ficha-bloco">
+
+
+        <div class="titulo-secao">
+
+            <h2>
+                Observações
+            </h2>
+
+        </div>
+
+
+        <p id="fichaObservacao">
+            Nenhuma observação cadastrada.
+        </p>
+
+
+    </div>
+
+
+
+    <div class="ficha-acoes">
+
+
+        <button
+            class="botao-secundario"
+            id="btnWhatsAppCliente"
+        >
+            💬 WhatsApp
+        </button>
+
+
+        <button
+            class="botao-secundario"
+            id="btnEditarCliente"
+        >
+            ✏️ Editar
+        </button>
+
+
+    </div>
+
+
+
+    <div class="ficha-bloco">
+
+
+        <div class="titulo-secao">
+
+            <h2>
+                Histórico
+            </h2>
+
+        </div>
+
+
+        <div
+            class="historico-cliente"
+            id="historicoCliente"
+        >
+        </div>
+
+
+    </div>
+
+
+
+    <button
+        class="botao-excluir"
+        id="btnExcluirCliente"
+    >
+        🗑 Excluir cliente
+    </button>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     SERVIÇOS
+===================================================== -->
+
+<section
+    id="telaServicos"
+    class="tela"
+>
+
+
+    <div class="cabecalho-pagina">
+
+
+        <button
+            class="voltar"
+            id="voltarServicos"
+        >
+            ←
+        </button>
+
+
+        <div>
+
+            <p class="subtitulo-pagina">
+                SEU CATÁLOGO
+            </p>
+
+            <h1>
+                Serviços
+            </h1>
+
+        </div>
+
+
+        <button
+            class="botao-add"
+            id="btnAdicionarServico"
+        >
+            +
+        </button>
+
+
+    </div>
+
+
+
+    <div class="resumo-servicos">
+
+
+        <div class="resumo-servico-item">
+
+            <span class="resumo-servico-icone">
+                ✂️
+            </span>
+
+            <div>
+
+                <strong id="totalServicos">
+                    0
+                </strong>
+
+                <small>
+                    Serviços
+                </small>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="resumo-servico-item">
+
+            <span class="resumo-servico-icone ativo">
+                ●
+            </span>
+
+            <div>
+
+                <strong id="servicosAtivos">
+                    0
+                </strong>
+
+                <small>
+                    Ativos
+                </small>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <div
+        class="lista-servicos"
+        id="listaServicos"
+    >
+    </div>
+
+
+
+    <div
+        class="estado-vazio"
+        id="estadoVazioServicos"
+    >
+
+        <div class="vazio-icone">
+            ✂️
+        </div>
+
+        <h3>
+            Nenhum serviço cadastrado
+        </h3>
+
+        <p>
+            Cadastre os serviços oferecidos
+            pela sua barbearia.
+        </p>
+
+        <button
+            class="botao-principal"
+            id="btnCadastrarPrimeiroServico"
+        >
+            + Cadastrar Serviço
+        </button>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     NOVO SERVIÇO
+===================================================== -->
+
+<section
+    id="telaNovoServico"
+    class="tela"
+>
+
+
+    <div class="cabecalho-pagina">
+
+
+        <button
+            class="voltar"
+            id="voltarNovoServico"
+        >
+            ←
+        </button>
+
+
+        <div>
+
+            <p class="subtitulo-pagina">
+                SERVIÇOS
+            </p>
+
+            <h1>
+                Novo Serviço
+            </h1>
+
+        </div>
+
+
+        <div></div>
+
+
+    </div>
+
+
+
+    <form
+        id="formServico"
+        class="formulario"
+    >
+
+
+        <div class="campo">
+
+            <label for="novoServicoNome">
+                Nome do serviço
+            </label>
+
+            <input
+                type="text"
+                id="novoServicoNome"
+                placeholder="Ex.: Corte masculino"
+                autocomplete="off"
+                required
+            >
+
+        </div>
+
+
+
+        <div class="linha-campos">
+
+
+            <div class="campo">
+
+                <label for="novoServicoPreco">
+                    Preço
+                </label>
+
+                <input
+                    type="number"
+                    id="novoServicoPreco"
+                    placeholder="0,00"
+                    min="0"
+                    step="0.01"
+                    required
+                >
+
+            </div>
+
+
+            <div class="campo">
+
+                <label for="novoServicoDuracao">
+                    Duração
+                </label>
+
+                <select
+                    id="novoServicoDuracao"
+                    required
+                >
+
+                    <option value="">
+                        Tempo
+                    </option>
+
+                    <option value="15">
+                        15 min
+                    </option>
+
+                    <option value="20">
+                        20 min
+                    </option>
+
+                    <option value="30">
+                        30 min
+                    </option>
+
+                    <option value="40">
+                        40 min
+                    </option>
+
+                    <option value="45">
+                        45 min
+                    </option>
+
+                    <option value="50">
+                        50 min
+                    </option>
+
+                    <option value="60">
+                        1 hora
+                    </option>
+
+                    <option value="90">
+                        1h 30min
+                    </option>
+
+                    <option value="120">
+                        2 horas
+                    </option>
+
+                </select>
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="campo campo-status-servico">
+
+            <label>
+                Status do serviço
+            </label>
+
+
+            <label
+                class="controle-status"
+                for="novoServicoAtivo"
+            >
+
+                <input
+                    type="checkbox"
+                    id="novoServicoAtivo"
+                    checked
+                >
+
+                <span class="status-switch"></span>
+
+                <span>
+                    Serviço ativo
+                </span>
+
+            </label>
+
+
+        </div>
+
+
+
+        <button
+            type="submit"
+            class="botao-principal"
+        >
+            Salvar Serviço
+        </button>
+
+
+    </form>
+
+
+</section>
+
+<!-- =====================================================
+     FINANCEIRO
+===================================================== -->
+
+<section
+    id="telaFinanceiro"
+    class="tela"
+>
+
+
+    <!-- CABEÇALHO -->
+
+    <div class="cabecalho-pagina">
+
+
+        <button
+            class="voltar"
+            id="voltarFinanceiro"
+            type="button"
+        >
+            ←
+        </button>
+
+
+        <div>
+
+            <p class="subtitulo-pagina">
+                CONTROLE
+            </p>
+
+            <h1>
+                Financeiro
+            </h1>
+
+        </div>
+
+
+        <div></div>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+         FATURAMENTO PRINCIPAL
+    ================================================== -->
+
+    <div class="financeiro-principal">
+
+        <span>
+            FATURAMENTO DO MÊS
+        </span>
+
+        <strong id="faturamentoMes">
+            R$ 0,00
+        </strong>
+
+        <small>
+            Apenas atendimentos concluídos
+        </small>
+
+    </div>
+
+
+
+    <!-- =================================================
+         RESUMO
+    ================================================== -->
+
+    <div class="financeiro-resumo">
+
+
+        <div class="financeiro-card">
+
+            <span class="financeiro-icone">
+                💰
+            </span>
+
+            <div>
+
+                <strong id="faturamentoHoje">
+                    R$ 0,00
+                </strong>
+
+                <small>
+                    Hoje
+                </small>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="financeiro-card">
+
+            <span class="financeiro-icone">
+                📅
+            </span>
+
+            <div>
+
+                <strong id="faturamentoSemana">
+                    R$ 0,00
+                </strong>
+
+                <small>
+                    Esta semana
+                </small>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="financeiro-card">
+
+            <span class="financeiro-icone">
+                ✂️
+            </span>
+
+            <div>
+
+                <strong id="totalAtendimentosFinanceiro">
+                    0
+                </strong>
+
+                <small>
+                    Atendimentos
+                </small>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="financeiro-card">
+
+            <span class="financeiro-icone">
+                🧾
+            </span>
+
+            <div>
+
+                <strong id="ticketMedio">
+                    R$ 0,00
+                </strong>
+
+                <small>
+                    Ticket médio
+                </small>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+         SERVIÇOS MAIS REALIZADOS
+    ================================================== -->
+
+    <div class="financeiro-bloco">
+
+
+        <div class="titulo-secao">
+
+            <div>
+
+                <p class="titulo-pequeno">
+                    DESEMPENHO
+                </p>
+
+                <h2>
+                    Serviços realizados
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="lista-financeiro-servicos"
+            id="listaFinanceiroServicos"
+        >
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+         HISTÓRICO
+    ================================================== -->
+
+    <div class="financeiro-bloco">
+
+
+        <div class="titulo-secao">
+
+            <div>
+
+                <p class="titulo-pequeno">
+                    MOVIMENTAÇÕES
+                </p>
+
+                <h2>
+                    Histórico
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="historico-financeiro"
+            id="historicoFinanceiro"
+        >
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+         ESTADO VAZIO
+    ================================================== -->
+
+    <div
+        class="estado-vazio"
+        id="estadoVazioFinanceiro"
+        style="display:none;"
+    >
+
+        <div class="vazio-icone">
+            💰
+        </div>
+
+        <h3>
+            Nenhum atendimento concluído
+        </h3>
+
+        <p>
+            Quando você concluir um atendimento,
+            o faturamento aparecerá aqui.
+        </p>
+
+    </div>
+
+
+</section>
+
+<!-- =====================================================
+     TELA CONFIGURAÇÕES
+     ===================================================== -->
+
+<section id="telaConfiguracoes" class="tela">
+
+    <div class="cabecalho-pagina">
+
+        <button
+            class="voltar"
+            id="voltarConfiguracoes"
+            type="button">
+            ←
+        </button>
+
+        <div>
+            <p class="subtitulo-pagina">SISTEMA</p>
+            <h1>Configurações</h1>
+        </div>
+
+        <div></div>
+
+    </div>
+
+
+    <!-- PERFIL DA BARBEARIA -->
+
+    <div class="config-bloco">
+
+        <div class="titulo-secao">
+
+            <div>
+                <p class="titulo-pequeno">IDENTIDADE</p>
+                <h2>Minha barbearia</h2>
+            </div>
+
+        </div>
+
+
+        <div class="config-form">
+
+            <label>
+                Nome da barbearia
+
+                <input
+                    type="text"
+                    id="configNomeBarbearia"
+                    placeholder="Ex.: BarberPro Barbearia">
+            </label>
+
+
+            <label>
+                Nome do barbeiro
+
+                <input
+                    type="text"
+                    id="configNomeBarbeiro"
+                    placeholder="Ex.: João da Silva">
+            </label>
+
+
+            <label>
+                WhatsApp
+
+                <input
+                    type="tel"
+                    id="configWhatsApp"
+                    placeholder="(81) 99999-9999">
+            </label>
+
+
+            <label>
+                Endereço
+
+                <input
+                    type="text"
+                    id="configEndereco"
+                    placeholder="Rua, número, bairro...">
+            </label>
+
+        </div>
+
+    </div>
+
+
+    <!-- HORÁRIO -->
+
+    <div class="config-bloco">
+
+        <div class="titulo-secao">
+
+            <div>
+                <p class="titulo-pequeno">FUNCIONAMENTO</p>
+                <h2>Horário de atendimento</h2>
+            </div>
+
+        </div>
+
+<div class="horarios-config" id="horariosConfig">
+
+    <!-- SEGUNDA -->
+    <div class="horario-dia">
+
+        <div class="horario-cabecalho">
+
+            <div class="horario-nome">
+                <strong>Segunda-feira</strong>
+                <small>Funcionamento</small>
+            </div>
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    class="dia-aberto"
+                    data-dia="segunda"
+                    checked
+                >
+
+                <span class="switch-slider"></span>
+
+            </label>
+
+        </div>
+
+        <div class="horario-inputs">
+
+            <input
+                type="time"
+                class="hora-abertura"
+                data-dia="segunda"
+                value="08:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fechamento"
+                data-dia="segunda"
+                value="18:00"
+            >
+
+        </div>
+
+        <div class="horario-intervalo">
+
+            <span>Intervalo</span>
+
+            <input
+                type="time"
+                class="hora-inicio-intervalo"
+                data-dia="segunda"
+                value="13:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fim-intervalo"
+                data-dia="segunda"
+                value="15:00"
+            >
+
+        </div>
+
+    </div>
+
+
+    <!-- TERÇA -->
+    <div class="horario-dia">
+
+        <div class="horario-cabecalho">
+
+            <div class="horario-nome">
+                <strong>Terça-feira</strong>
+                <small>Funcionamento</small>
+            </div>
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    class="dia-aberto"
+                    data-dia="terca"
+                    checked
+                >
+
+                <span class="switch-slider"></span>
+
+            </label>
+
+        </div>
+
+        <div class="horario-inputs">
+
+            <input
+                type="time"
+                class="hora-abertura"
+                data-dia="terca"
+                value="08:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fechamento"
+                data-dia="terca"
+                value="18:00"
+            >
+
+        </div>
+
+        <div class="horario-intervalo">
+
+            <span>Intervalo</span>
+
+            <input
+                type="time"
+                class="hora-inicio-intervalo"
+                data-dia="terca"
+                value="13:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fim-intervalo"
+                data-dia="terca"
+                value="15:00"
+            >
+
+        </div>
+
+    </div>
+
+
+    <!-- QUARTA -->
+    <div class="horario-dia">
+
+        <div class="horario-cabecalho">
+
+            <div class="horario-nome">
+                <strong>Quarta-feira</strong>
+                <small>Funcionamento</small>
+            </div>
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    class="dia-aberto"
+                    data-dia="quarta"
+                    checked
+                >
+
+                <span class="switch-slider"></span>
+
+            </label>
+
+        </div>
+
+        <div class="horario-inputs">
+
+            <input
+                type="time"
+                class="hora-abertura"
+                data-dia="quarta"
+                value="08:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fechamento"
+                data-dia="quarta"
+                value="18:00"
+            >
+
+        </div>
+
+        <div class="horario-intervalo">
+
+            <span>Intervalo</span>
+
+            <input
+                type="time"
+                class="hora-inicio-intervalo"
+                data-dia="quarta"
+                value="13:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fim-intervalo"
+                data-dia="quarta"
+                value="15:00"
+            >
+
+        </div>
+
+    </div>
+
+
+    <!-- QUINTA -->
+    <div class="horario-dia">
+
+        <div class="horario-cabecalho">
+
+            <div class="horario-nome">
+                <strong>Quinta-feira</strong>
+                <small>Funcionamento</small>
+            </div>
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    class="dia-aberto"
+                    data-dia="quinta"
+                    checked
+                >
+
+                <span class="switch-slider"></span>
+
+            </label>
+
+        </div>
+
+        <div class="horario-inputs">
+
+            <input
+                type="time"
+                class="hora-abertura"
+                data-dia="quinta"
+                value="08:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fechamento"
+                data-dia="quinta"
+                value="18:00"
+            >
+
+        </div>
+
+        <div class="horario-intervalo">
+
+            <span>Intervalo</span>
+
+            <input
+                type="time"
+                class="hora-inicio-intervalo"
+                data-dia="quinta"
+                value="13:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fim-intervalo"
+                data-dia="quinta"
+                value="15:00"
+            >
+
+        </div>
+
+    </div>
+
+
+    <!-- SEXTA -->
+    <div class="horario-dia">
+
+        <div class="horario-cabecalho">
+
+            <div class="horario-nome">
+                <strong>Sexta-feira</strong>
+                <small>Funcionamento</small>
+            </div>
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    class="dia-aberto"
+                    data-dia="sexta"
+                    checked
+                >
+
+                <span class="switch-slider"></span>
+
+            </label>
+
+        </div>
+
+        <div class="horario-inputs">
+
+            <input
+                type="time"
+                class="hora-abertura"
+                data-dia="sexta"
+                value="08:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fechamento"
+                data-dia="sexta"
+                value="18:00"
+            >
+
+        </div>
+
+        <div class="horario-intervalo">
+
+            <span>Intervalo</span>
+
+            <input
+                type="time"
+                class="hora-inicio-intervalo"
+                data-dia="sexta"
+                value="13:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fim-intervalo"
+                data-dia="sexta"
+                value="15:00"
+            >
+
+        </div>
+
+    </div>
+
+
+    <!-- SÁBADO -->
+    <div class="horario-dia">
+
+        <div class="horario-cabecalho">
+
+            <div class="horario-nome">
+                <strong>Sábado</strong>
+                <small>Funcionamento</small>
+            </div>
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    class="dia-aberto"
+                    data-dia="sabado"
+                    checked
+                >
+
+                <span class="switch-slider"></span>
+
+            </label>
+
+        </div>
+
+        <div class="horario-inputs">
+
+            <input
+                type="time"
+                class="hora-abertura"
+                data-dia="sabado"
+                value="08:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fechamento"
+                data-dia="sabado"
+                value="14:00"
+            >
+
+        </div>
+
+        <div class="horario-intervalo">
+
+            <span>Intervalo</span>
+
+            <input
+                type="time"
+                class="hora-inicio-intervalo"
+                data-dia="sabado"
+                value=""
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fim-intervalo"
+                data-dia="sabado"
+                value=""
+            >
+
+        </div>
+
+    </div>
+
+
+    <!-- DOMINGO -->
+    <div class="horario-dia fechado">
+
+        <div class="horario-cabecalho">
+
+            <div class="horario-nome">
+                <strong>Domingo</strong>
+                <small>Fechado</small>
+            </div>
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    class="dia-aberto"
+                    data-dia="domingo"
+                >
+
+                <span class="switch-slider"></span>
+
+            </label>
+
+        </div>
+
+        <div class="horario-inputs">
+
+            <input
+                type="time"
+                class="hora-abertura"
+                data-dia="domingo"
+                value="08:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fechamento"
+                data-dia="domingo"
+                value="12:00"
+            >
+
+        </div>
+
+        <div class="horario-intervalo">
+
+            <span>Intervalo</span>
+
+            <input
+                type="time"
+                class="hora-inicio-intervalo"
+                data-dia="domingo"
+                value=""
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fim-intervalo"
+                data-dia="domingo"
+                value=""
+            >
+
+        </div>
+
+    </div>
+
+</div>
+
+    <!-- BOTÃO -->
+
+    <button
+        class="btn-salvar-config"
+        id="btnSalvarConfiguracoes"
+        type="button">
+
+        💾 Salvar configurações
+
+    </button>
+
+
+    <div
+        class="config-status"
+        id="configStatus"
+        style="display:none;">
+
+        ✓ Configurações salvas com sucesso.
+
+    </div>
+
+</section>
+<!-- =================================================
+     BACKUP DO BARBERPRO
+================================================== -->
+
+<div class="config-card backup-card">
+
+    <div class="config-card-topo">
+
+        <div class="config-icone">
+            💾
+        </div>
+
+        <div>
+            <h3>Backup dos dados</h3>
+
+            <p>
+                Salve uma cópia dos dados da sua barbearia.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="backup-acoes">
+
+        <button
+            type="button"
+            class="botao-principal"
+            onclick="fazerBackupBarberPro()">
+
+            💾 Fazer backup
+
+        </button>
+
+
+        <button
+            type="button"
+            class="botao-secundario"
+            onclick="selecionarBackupBarberPro()">
+
+            📥 Restaurar backup
+
+        </button>
+
+    </div>
+
+
+    <input
+        type="file"
+        id="inputBackupBarberPro"
+        accept=".json,application/json"
+        style="display:none"
+        onchange="restaurarBackupBarberPro(event)"
+    >
+
+    <div class="backup-aviso">
+
+        <strong>Importante</strong>
+
+        <span>
+            Guarde o arquivo de backup em um local seguro.
+            Ele poderá ser usado para recuperar seus dados
+            em caso de perda ou troca do celular.
+        </span>
+
+    </div>
+
+</div>
+</main>
+
+
+<!-- =====================================================
+     TOAST
+===================================================== -->
+
+<div
+    id="toast"
+    class="toast"
+    aria-live="polite"
+></div>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script src="app.js"></script>
+
+
+</body>
+</html>
