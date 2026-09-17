@@ -1879,7 +1879,7 @@ function nomeDiaSemana(data) {
 }
 
 /* ==========================================================
-   AGENDA — HORÁRIO DE FUNCIONAMENTO
+   AGENDA — STATUS REAL DO FUNCIONAMENTO
 ========================================================== */
 
 function renderizarFuncionamentoAgenda() {
@@ -1910,11 +1910,6 @@ function renderizarFuncionamentoAgenda() {
         );
 
 
-    /*
-       Se a nova área ainda não estiver
-       no HTML, simplesmente não faz nada.
-    */
-
     if (
         !status ||
         !indicador ||
@@ -1923,6 +1918,10 @@ function renderizarFuncionamentoAgenda() {
         return;
     }
 
+
+    /* ======================================================
+       OBTER HORÁRIO CONFIGURADO
+    ====================================================== */
 
     const horario =
         obterHorarioFuncionamento(
@@ -1949,6 +1948,193 @@ function renderizarFuncionamentoAgenda() {
         return;
     }
 
+
+    /* ======================================================
+       DIA FECHADO
+    ====================================================== */
+
+    if (!horario.aberto) {
+
+        status.textContent =
+            "Fechado";
+
+        indicador.textContent =
+            "●";
+
+        horarioFuncionamento.textContent =
+            "Não há atendimento neste dia";
+
+        if (intervaloFuncionamento) {
+            intervaloFuncionamento.style.display =
+                "none";
+        }
+
+        return;
+    }
+
+
+    /* ======================================================
+       MOSTRAR HORÁRIO
+    ====================================================== */
+
+    horarioFuncionamento.textContent =
+        `${horario.abertura} às ${horario.fechamento}`;
+
+
+    const temIntervalo =
+        horario.inicioIntervalo &&
+        horario.fimIntervalo;
+
+
+    if (
+        intervaloFuncionamento &&
+        horarioIntervalo
+    ) {
+
+        if (temIntervalo) {
+
+            intervaloFuncionamento.style.display =
+                "flex";
+
+            horarioIntervalo.textContent =
+                `${horario.inicioIntervalo} às ${horario.fimIntervalo}`;
+
+        } else {
+
+            intervaloFuncionamento.style.display =
+                "none";
+        }
+    }
+
+
+    /* ======================================================
+       VERIFICAR SE A DATA SELECIONADA É HOJE
+    ====================================================== */
+
+    const hoje =
+        dataHojeISO();
+
+
+    if (
+        dataAgendaSelecionada !== hoje
+    ) {
+
+        status.textContent =
+            "Aberto";
+
+        indicador.textContent =
+            "●";
+
+        return;
+    }
+
+
+    /* ======================================================
+       HORÁRIO ATUAL DO CELULAR
+    ====================================================== */
+
+    const agora =
+        new Date();
+
+    const minutosAgora =
+        agora.getHours() * 60 +
+        agora.getMinutes();
+
+
+    /* ======================================================
+       CONVERTER HORÁRIOS
+    ====================================================== */
+
+    const abertura =
+        horaParaMinutos(
+            horario.abertura
+        );
+
+    const fechamento =
+        horaParaMinutos(
+            horario.fechamento
+        );
+
+    const inicioIntervalo =
+        horaParaMinutos(
+            horario.inicioIntervalo
+        );
+
+    const fimIntervalo =
+        horaParaMinutos(
+            horario.fimIntervalo
+        );
+
+
+    /* ======================================================
+       ANTES DA ABERTURA
+    ====================================================== */
+
+    if (
+        abertura !== null &&
+        minutosAgora < abertura
+    ) {
+
+        status.textContent =
+            "Fechado";
+
+        indicador.textContent =
+            "●";
+
+        return;
+    }
+
+
+    /* ======================================================
+       DEPOIS DO FECHAMENTO
+    ====================================================== */
+
+    if (
+        fechamento !== null &&
+        minutosAgora >= fechamento
+    ) {
+
+        status.textContent =
+            "Fechado";
+
+        indicador.textContent =
+            "●";
+
+        return;
+    }
+
+
+    /* ======================================================
+       DURANTE O INTERVALO
+    ====================================================== */
+
+    if (
+        inicioIntervalo !== null &&
+        fimIntervalo !== null &&
+        minutosAgora >= inicioIntervalo &&
+        minutosAgora < fimIntervalo
+    ) {
+
+        status.textContent =
+            "Intervalo";
+
+        indicador.textContent =
+            "●";
+
+        return;
+    }
+
+
+    /* ======================================================
+       DENTRO DO HORÁRIO DE ATENDIMENTO
+    ====================================================== */
+
+    status.textContent =
+        "Aberto";
+
+    indicador.textContent =
+        "●";
+}
 
     /* ======================================================
        DIA FECHADO
