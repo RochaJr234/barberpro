@@ -362,9 +362,14 @@ const telas = {
     financeiro:
         document.getElementById(
             "telaFinanceiro"
-        )
-};
+        ),
 
+    configuracoes:
+        document.getElementById(
+            "telaConfiguracoes"
+        )
+
+};
 
 function mostrarTela(nome) {
 
@@ -1873,7 +1878,150 @@ function nomeDiaSemana(data) {
     ];
 }
 
+/* ==========================================================
+   AGENDA — HORÁRIO DE FUNCIONAMENTO
+========================================================== */
 
+function renderizarFuncionamentoAgenda() {
+
+    const status =
+        document.getElementById(
+            "funcionamentoStatus"
+        );
+
+    const indicador =
+        document.getElementById(
+            "funcionamentoIndicador"
+        );
+
+    const horarioFuncionamento =
+        document.getElementById(
+            "horarioFuncionamento"
+        );
+
+    const intervaloFuncionamento =
+        document.getElementById(
+            "intervaloFuncionamento"
+        );
+
+    const horarioIntervalo =
+        document.getElementById(
+            "horarioIntervalo"
+        );
+
+
+    /*
+       Se a nova área ainda não estiver
+       no HTML, simplesmente não faz nada.
+    */
+
+    if (
+        !status ||
+        !indicador ||
+        !horarioFuncionamento
+    ) {
+        return;
+    }
+
+
+    const horario =
+        obterHorarioFuncionamento(
+            dataAgendaSelecionada
+        );
+
+
+    if (!horario) {
+
+        status.textContent =
+            "Indisponível";
+
+        indicador.textContent =
+            "●";
+
+        horarioFuncionamento.textContent =
+            "Horário não definido";
+
+        if (intervaloFuncionamento) {
+            intervaloFuncionamento.style.display =
+                "none";
+        }
+
+        return;
+    }
+
+
+    /* ======================================================
+       DIA FECHADO
+    ====================================================== */
+
+    if (!horario.aberto) {
+
+        status.textContent =
+            "Fechado";
+
+        indicador.textContent =
+            "●";
+
+        horarioFuncionamento.textContent =
+            "Não há atendimento neste dia";
+
+
+        if (intervaloFuncionamento) {
+
+            intervaloFuncionamento.style.display =
+                "none";
+        }
+
+
+        return;
+    }
+
+
+    /* ======================================================
+       DIA ABERTO
+    ====================================================== */
+
+    status.textContent =
+        "Aberto";
+
+    indicador.textContent =
+        "●";
+
+
+    horarioFuncionamento.textContent =
+        `${horario.abertura} às ${horario.fechamento}`;
+
+
+    /* ======================================================
+       INTERVALO
+    ====================================================== */
+
+    const temIntervalo =
+        horario.inicioIntervalo &&
+        horario.fimIntervalo;
+
+
+    if (
+        intervaloFuncionamento &&
+        horarioIntervalo
+    ) {
+
+        if (temIntervalo) {
+
+            intervaloFuncionamento.style.display =
+                "flex";
+
+            horarioIntervalo.textContent =
+                `${horario.inicioIntervalo} às ${horario.fimIntervalo}`;
+
+        } else {
+
+            intervaloFuncionamento.style.display =
+                "none";
+        }
+    }
+
+}
 /* ==========================================================
    AGENDA — RENDERIZAÇÃO
 ========================================================== */
@@ -1891,8 +2039,10 @@ function renderizarAgenda() {
         );
 
     if (!lista) {
-        return;
-    }
+    return;
+}
+
+renderizarFuncionamentoAgenda();
 
     if (titulo) {
 
@@ -2142,6 +2292,619 @@ function abrirNovoAgendamento() {
     mostrarTela("novo");
 }
 
+/* ==========================================================
+   CONTROLE DE HORÁRIO DE FUNCIONAMENTO
+========================================================== */
+
+function obterChaveDia(data) {
+
+    const partes =
+        String(data).split("-");
+
+    if (partes.length !== 3) {
+        return null;
+    }
+
+    const dataObjeto =
+        new Date(
+            Number(partes[0]),
+            Number(partes[1]) - 1,
+            Number(partes[2])
+        );
+
+    const dias = [
+        "domingo",
+        "segunda",
+        "terca",
+        "quarta",
+        "quinta",
+        "sexta",
+        "sabado"
+    ];
+
+    return dias[
+        dataObjeto.getDay()
+    ];
+}
+
+
+/* ==========================================================
+   OBTER CONFIGURAÇÃO DOS HORÁRIOS
+========================================================== */
+
+function obterHorarioFuncionamento(data) {
+
+    const dia =
+        obterChaveDia(data);
+
+    if (!dia) {
+        return null;
+    }
+
+    let configuracoes = {};
+
+    try {
+
+        const salvo =
+            localStorage.getItem(
+                CONFIG_CHAVE
+            );
+
+        if (salvo) {
+
+            configuracoes =
+                JSON.parse(salvo);
+        }
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao ler horários:",
+            erro
+        );
+    }
+
+
+    const horarios =
+        configuracoes.horarios || {};
+
+
+    const padrao =
+        HORARIOS_PADRAO[dia];
+
+
+    const horarioSalvo =
+        horarios[dia] || {};
+
+
+    if (!padrao) {
+        return null;
+    }
+
+
+    return {
+
+        dia: dia,
+
+        nome:
+            padrao.nome,
+
+        aberto:
+            horarioSalvo.aberto !== undefined
+                ? horarioSalvo.aberto
+                : padrao.aberto,
+
+        abertura:
+            horarioSalvo.abertura ||
+            padrao.abertura,
+
+        inicioIntervalo:
+            horarioSalvo.inicioIntervalo ||
+            padrao.inicioIntervalo,
+
+        fimIntervalo:
+            horarioSalvo.fimIntervalo ||
+            padrao.fimIntervalo,
+
+        fechamento:
+            horarioSalvo.fechamento ||
+            padrao.fechamento
+
+    };
+}
+
+
+/* ==========================================================
+   CONVERTER HORA PARA MINUTOS
+========================================================== */
+
+function horaParaMinutos(hora) {
+
+    if (!hora) {
+        return null;
+    }
+
+    const partes =
+        String(hora).split(":");
+
+    if (partes.length !== 2) {
+        return null;
+    }
+
+    const horas =
+        Number(partes[0]);
+
+    const minutos =
+        Number(partes[1]);
+
+
+    if (
+        !Number.isFinite(horas) ||
+        !Number.isFinite(minutos)
+    ) {
+        return null;
+    }
+
+
+    return (
+        horas * 60 +
+        minutos
+    );
+}
+
+/* ==========================================================
+   HORÁRIOS DISPONÍVEIS PARA AGENDAMENTO
+========================================================== */
+
+function gerarHorariosDisponiveis(
+    data,
+    duracao
+) {
+
+    const horario =
+        obterHorarioFuncionamento(data);
+
+    if (!horario || !horario.aberto) {
+        return [];
+    }
+
+
+    const duracaoNumerica =
+        Number(duracao || 0);
+
+
+    /*
+       Se o serviço não tiver duração,
+       usamos blocos de 30 minutos.
+    */
+
+    const duracaoBloco =
+        duracaoNumerica > 0
+            ? duracaoNumerica
+            : 30;
+
+
+    const abertura =
+        horaParaMinutos(
+            horario.abertura
+        );
+
+    const fechamento =
+        horaParaMinutos(
+            horario.fechamento
+        );
+
+
+    if (
+        abertura === null ||
+        fechamento === null
+    ) {
+
+        return [];
+    }
+
+
+    /* ------------------------------------------
+       INTERVALO
+    ------------------------------------------ */
+
+    const inicioIntervalo =
+        horaParaMinutos(
+            horario.inicioIntervalo
+        );
+
+    const fimIntervalo =
+        horaParaMinutos(
+            horario.fimIntervalo
+        );
+
+
+    const intervaloValido =
+        inicioIntervalo !== null &&
+        fimIntervalo !== null &&
+        fimIntervalo > inicioIntervalo;
+
+
+    /* ------------------------------------------
+       AGENDAMENTOS EXISTENTES
+    ------------------------------------------ */
+
+    const agendamentos =
+        obterDados(
+            CHAVES.agendamentos
+        )
+        .filter(item => {
+
+            if (item.data !== data) {
+                return false;
+            }
+
+            /*
+               Cancelados não ocupam horário.
+            */
+
+            return (
+                normalizarStatus(
+                    item.status
+                ) !== "cancelado"
+            );
+        });
+
+
+    const horariosDisponiveis = [];
+
+
+    /* ------------------------------------------
+       GERAR HORÁRIOS
+    ------------------------------------------ */
+
+    for (
+        let inicio = abertura;
+        inicio < fechamento;
+        inicio += duracaoBloco
+    ) {
+
+        const fim =
+            inicio +
+            duracaoNumerica;
+
+
+        /*
+           O serviço precisa terminar
+           antes ou exatamente no fechamento.
+        */
+
+        if (
+            duracaoNumerica > 0 &&
+            fim > fechamento
+        ) {
+            continue;
+        }
+
+
+        /*
+           VERIFICAR INTERVALO
+        */
+
+        if (intervaloValido) {
+
+            /*
+               Começa durante o intervalo.
+            */
+
+            if (
+                inicio >= inicioIntervalo &&
+                inicio < fimIntervalo
+            ) {
+
+                continue;
+            }
+
+
+            /*
+               Atravessa o intervalo.
+            */
+
+            if (
+                duracaoNumerica > 0 &&
+                inicio < inicioIntervalo &&
+                fim > inicioIntervalo
+            ) {
+
+                continue;
+            }
+        }
+
+
+        /*
+           VERIFICAR CONFLITO COM
+           AGENDAMENTOS EXISTENTES
+        */
+
+        const conflito =
+            agendamentos.some(
+                agendamento => {
+
+                    const inicioExistente =
+                        horaParaMinutos(
+                            agendamento.hora
+                        );
+
+                    if (
+                        inicioExistente === null
+                    ) {
+                        return false;
+                    }
+
+
+                    const duracaoExistente =
+                        Number(
+                            agendamento.duracao || 0
+                        );
+
+
+                    const fimExistente =
+                        inicioExistente +
+                        Math.max(
+                            duracaoExistente,
+                            0
+                        );
+
+
+                    /*
+                       Se o agendamento antigo
+                       não possuir duração,
+                       consideramos um bloco
+                       de 30 minutos.
+                    */
+
+                    const fimExistenteAjustado =
+                        duracaoExistente > 0
+                            ? fimExistente
+                            : inicioExistente + 30;
+
+
+                    /*
+                       Verifica se os períodos
+                       se sobrepõem.
+                    */
+
+                    return (
+                        inicio <
+                            fimExistenteAjustado &&
+                        (
+                            inicio +
+                            duracaoBloco
+                        ) >
+                            inicioExistente
+                    );
+
+                }
+            );
+
+
+        if (conflito) {
+            continue;
+        }
+
+
+        /*
+           CONVERTER MINUTOS PARA HH:MM
+        */
+
+        const horas =
+            Math.floor(
+                inicio / 60
+            );
+
+        const minutos =
+            inicio % 60;
+
+
+        const horaFormatada =
+            `${String(horas).padStart(2, "0")}:` +
+            `${String(minutos).padStart(2, "0")}`;
+
+
+        horariosDisponiveis.push(
+            horaFormatada
+        );
+    }
+
+
+    return horariosDisponiveis;
+}
+
+/* ==========================================================
+   VALIDAR HORÁRIO DO AGENDAMENTO
+========================================================== */
+
+function validarHorarioFuncionamento(
+    data,
+    hora,
+    duracao
+) {
+
+    const horario =
+        obterHorarioFuncionamento(data);
+
+
+    if (!horario) {
+
+        return {
+            valido: false,
+            mensagem:
+                "Não foi possível verificar o horário."
+        };
+    }
+
+
+    /* ------------------------------------------
+       DIA FECHADO
+    ------------------------------------------ */
+
+    if (!horario.aberto) {
+
+        return {
+            valido: false,
+            mensagem:
+                `A barbearia está fechada na ${horario.nome}.`
+        };
+    }
+
+
+    const inicio =
+        horaParaMinutos(hora);
+
+    const abertura =
+        horaParaMinutos(
+            horario.abertura
+        );
+
+    const fechamento =
+        horaParaMinutos(
+            horario.fechamento
+        );
+
+
+    if (
+        inicio === null ||
+        abertura === null ||
+        fechamento === null
+    ) {
+
+        return {
+            valido: false,
+            mensagem:
+                "Horário de funcionamento inválido."
+        };
+    }
+
+
+    /* ------------------------------------------
+       DURAÇÃO DO SERVIÇO
+    ------------------------------------------ */
+
+    const duracaoNumerica =
+        Number(duracao || 0);
+
+
+    const fim =
+        inicio +
+        Math.max(
+            duracaoNumerica,
+            0
+        );
+
+
+    /* ------------------------------------------
+       ANTES DA ABERTURA
+    ------------------------------------------ */
+
+    if (inicio < abertura) {
+
+        return {
+            valido: false,
+            mensagem:
+                `A barbearia abre às ${horario.abertura}.`
+        };
+    }
+
+
+    /* ------------------------------------------
+       DEPOIS DO FECHAMENTO
+    ------------------------------------------ */
+
+    if (inicio >= fechamento) {
+
+        return {
+            valido: false,
+            mensagem:
+                `A barbearia fecha às ${horario.fechamento}.`
+        };
+    }
+
+
+    /* ------------------------------------------
+       SERVIÇO TERMINA DEPOIS DO FECHAMENTO
+    ------------------------------------------ */
+
+    if (
+        duracaoNumerica > 0 &&
+        fim > fechamento
+    ) {
+
+        return {
+            valido: false,
+            mensagem:
+                `Esse serviço termina depois do fechamento (${horario.fechamento}).`
+        };
+    }
+
+
+    /* ------------------------------------------
+       INTERVALO
+    ------------------------------------------ */
+
+    const inicioIntervalo =
+        horaParaMinutos(
+            horario.inicioIntervalo
+        );
+
+    const fimIntervalo =
+        horaParaMinutos(
+            horario.fimIntervalo
+        );
+
+
+    const intervaloValido =
+        inicioIntervalo !== null &&
+        fimIntervalo !== null &&
+        fimIntervalo > inicioIntervalo;
+
+
+    if (intervaloValido) {
+
+
+        /* COMEÇA NO INTERVALO */
+
+        if (
+            inicio >= inicioIntervalo &&
+            inicio < fimIntervalo
+        ) {
+
+            return {
+                valido: false,
+                mensagem:
+                    `Este horário está no intervalo (${horario.inicioIntervalo} às ${horario.fimIntervalo}).`
+            };
+        }
+
+
+        /* ATRAVESSA O INTERVALO */
+
+        if (
+            duracaoNumerica > 0 &&
+            inicio < inicioIntervalo &&
+            fim > inicioIntervalo
+        ) {
+
+            return {
+                valido: false,
+                mensagem:
+                    `O serviço atravessa o intervalo (${horario.inicioIntervalo} às ${horario.fimIntervalo}).`
+            };
+        }
+
+    }
+
+
+    return {
+        valido: true,
+        mensagem: ""
+    };
+}
+
 
 /* ==========================================================
    SALVAR AGENDAMENTO
@@ -2310,7 +3073,32 @@ function salvarAgendamento(event) {
             return;
         }
 
+/* ==================================================
+   VERIFICAR HORÁRIO DE FUNCIONAMENTO
+================================================== */
 
+const duracaoSelecionada =
+    servicoSelect.options[
+        servicoSelect.selectedIndex
+    ]?.dataset.duracao || 0;
+
+
+const validacaoHorario =
+    validarHorarioFuncionamento(
+        data,
+        hora,
+        Number(duracaoSelecionada)
+    );
+
+
+if (!validacaoHorario.valido) {
+
+    mostrarMensagem(
+        validacaoHorario.mensagem
+    );
+
+    return;
+}
         /* LOCALIZAR CLIENTE */
 
         let cliente =
@@ -4575,6 +5363,10 @@ if (formServico) {
 }
 
 
+/* ==========================================================
+   MENU
+========================================================== */
+
 /* =====================================================
    MENU LATERAL
    ===================================================== */
@@ -4652,13 +5444,59 @@ document.querySelectorAll(".menu-item").forEach(function (item) {
 
     item.addEventListener("click", function () {
 
-        const tela = item.dataset.menuTela;
+        const tela =
+            item.dataset.menuTela;
 
-        if (!tela) return;
+        if (!tela) {
+            return;
+        }
 
         fecharMenu();
 
+
         setTimeout(function () {
+
+            /* ==============================
+               AGENDA
+            ============================== */
+
+            if (tela === "agenda") {
+
+                renderizarCalendario();
+
+                renderizarAgenda();
+            }
+
+
+            /* ==============================
+               CLIENTES
+            ============================== */
+
+            if (tela === "clientes") {
+
+                renderizarClientes();
+            }
+
+
+            /* ==============================
+               SERVIÇOS
+            ============================== */
+
+            if (tela === "servicos") {
+
+                renderizarServicos();
+            }
+
+
+            /* ==============================
+               FINANCEIRO
+            ============================== */
+
+            if (tela === "financeiro") {
+
+                renderizarFinanceiro();
+            }
+
 
             mostrarTela(tela);
 
@@ -4667,30 +5505,6 @@ document.querySelectorAll(".menu-item").forEach(function (item) {
     });
 
 });
-
-
-/* ==========================================================
-   NOTIFICAÇÕES
-========================================================== */
-
-const btnNotificacao =
-    document.getElementById(
-        "btnNotificacao"
-    );
-
-if (btnNotificacao) {
-
-    btnNotificacao
-        .addEventListener(
-            "click",
-            () =>
-                mostrarMensagem(
-                    "Nenhuma nova notificação."
-                )
-        );
-}
-
-
 /* ==========================================================
    INICIALIZAÇÃO
 ========================================================== */
@@ -4789,4 +5603,878 @@ if (
 } else {
 
     iniciarBarberPro();
+}
+/* =========================================
+   CONFIGURAÇÕES DA BARBEARIA
+========================================= */
+
+const CONFIG_CHAVE = "barberpro_configuracoes";
+
+
+/* =========================================
+   HORÁRIOS PADRÃO
+========================================= */
+
+const HORARIOS_PADRAO = {
+
+    segunda: {
+        nome: "Segunda-feira",
+        aberto: true,
+        abertura: "08:00",
+        inicioIntervalo: "13:00",
+        fimIntervalo: "15:00",
+        fechamento: "18:00"
+    },
+
+    terca: {
+        nome: "Terça-feira",
+        aberto: true,
+        abertura: "08:00",
+        inicioIntervalo: "13:00",
+        fimIntervalo: "15:00",
+        fechamento: "18:00"
+    },
+
+    quarta: {
+        nome: "Quarta-feira",
+        aberto: true,
+        abertura: "08:00",
+        inicioIntervalo: "13:00",
+        fimIntervalo: "15:00",
+        fechamento: "18:00"
+    },
+
+    quinta: {
+        nome: "Quinta-feira",
+        aberto: true,
+        abertura: "08:00",
+        inicioIntervalo: "13:00",
+        fimIntervalo: "15:00",
+        fechamento: "18:00"
+    },
+
+    sexta: {
+        nome: "Sexta-feira",
+        aberto: true,
+        abertura: "08:00",
+        inicioIntervalo: "13:00",
+        fimIntervalo: "15:00",
+        fechamento: "18:00"
+    },
+
+    sabado: {
+        nome: "Sábado",
+        aberto: true,
+        abertura: "08:00",
+        inicioIntervalo: "",
+        fimIntervalo: "",
+        fechamento: "14:00"
+    },
+
+    domingo: {
+        nome: "Domingo",
+        aberto: false,
+        abertura: "08:00",
+        inicioIntervalo: "",
+        fimIntervalo: "",
+        fechamento: "12:00"
+    }
+
+};
+
+
+/* =========================================
+   CARREGAR CONFIGURAÇÕES
+========================================= */
+
+function carregarConfiguracoes() {
+
+    let configuracoes = {};
+
+    try {
+
+        const dadosSalvos =
+            localStorage.getItem(CONFIG_CHAVE);
+
+        if (dadosSalvos) {
+
+            configuracoes =
+                JSON.parse(dadosSalvos);
+        }
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao carregar configurações:",
+            erro
+        );
+
+        configuracoes = {};
+    }
+
+
+    /* -----------------------------------------
+       PERFIL
+    ----------------------------------------- */
+
+    const nomeBarbearia =
+        document.getElementById(
+            "configNomeBarbearia"
+        );
+
+    const nomeBarbeiro =
+        document.getElementById(
+            "configNomeBarbeiro"
+        );
+
+    const whatsapp =
+        document.getElementById(
+            "configWhatsApp"
+        );
+
+    const endereco =
+        document.getElementById(
+            "configEndereco"
+        );
+
+
+    if (nomeBarbearia) {
+
+        nomeBarbearia.value =
+            configuracoes.nomeBarbearia || "";
+    }
+
+    if (nomeBarbeiro) {
+
+        nomeBarbeiro.value =
+            configuracoes.nomeBarbeiro || "";
+    }
+
+    if (whatsapp) {
+
+        whatsapp.value =
+            configuracoes.whatsapp || "";
+    }
+
+    if (endereco) {
+
+        endereco.value =
+            configuracoes.endereco || "";
+    }
+
+
+    /* -----------------------------------------
+       HORÁRIOS
+    ----------------------------------------- */
+
+    const horarios =
+        configuracoes.horarios || {};
+
+
+    Object.keys(HORARIOS_PADRAO)
+        .forEach(function(dia) {
+
+            const padrao =
+                HORARIOS_PADRAO[dia];
+
+            const salvo =
+                horarios[dia] || {};
+
+
+            const checkbox =
+                document.querySelector(
+                    '.dia-aberto[data-dia="' +
+                    dia +
+                    '"]'
+                );
+
+            const abertura =
+                document.querySelector(
+                    '.hora-abertura[data-dia="' +
+                    dia +
+                    '"]'
+                );
+
+            const inicioIntervalo =
+                document.querySelector(
+                    '.hora-inicio-intervalo[data-dia="' +
+                    dia +
+                    '"]'
+                );
+
+            const fimIntervalo =
+                document.querySelector(
+                    '.hora-fim-intervalo[data-dia="' +
+                    dia +
+                    '"]'
+                );
+
+            const fechamento =
+                document.querySelector(
+                    '.hora-fechamento[data-dia="' +
+                    dia +
+                    '"]'
+                );
+
+
+            if (checkbox) {
+
+                checkbox.checked =
+                    salvo.aberto !== undefined
+                        ? salvo.aberto
+                        : padrao.aberto;
+            }
+
+
+            if (abertura) {
+
+                abertura.value =
+                    salvo.abertura ||
+                    padrao.abertura;
+            }
+
+
+            if (inicioIntervalo) {
+
+                inicioIntervalo.value =
+                    salvo.inicioIntervalo ||
+                    padrao.inicioIntervalo;
+            }
+
+
+            if (fimIntervalo) {
+
+                fimIntervalo.value =
+                    salvo.fimIntervalo ||
+                    padrao.fimIntervalo;
+            }
+
+
+            if (fechamento) {
+
+                fechamento.value =
+                    salvo.fechamento ||
+                    padrao.fechamento;
+            }
+
+
+            atualizarVisualHorario(dia);
+
+        });
+}
+
+
+/* =========================================
+   VISUAL ABERTO / FECHADO
+========================================= */
+
+function atualizarVisualHorario(dia) {
+
+    const checkbox =
+        document.querySelector(
+            '.dia-aberto[data-dia="' +
+            dia +
+            '"]'
+        );
+
+    if (!checkbox) {
+        return;
+    }
+
+
+    const bloco =
+        checkbox.closest(
+            ".horario-dia"
+        );
+
+    if (!bloco) {
+        return;
+    }
+
+
+    if (checkbox.checked) {
+
+        bloco.classList.remove(
+            "fechado"
+        );
+
+    } else {
+
+        bloco.classList.add(
+            "fechado"
+        );
+    }
+}
+
+
+/* =========================================
+   EVENTOS DOS DIAS
+========================================= */
+
+document
+    .querySelectorAll(".dia-aberto")
+    .forEach(function(checkbox) {
+
+        checkbox.addEventListener(
+            "change",
+            function() {
+
+                atualizarVisualHorario(
+                    checkbox.dataset.dia
+                );
+
+            }
+        );
+
+    });
+
+
+/* =========================================
+   SALVAR CONFIGURAÇÕES
+========================================= */
+
+function salvarConfiguracoes(event) {
+
+    if (event) {
+
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+
+    try {
+
+        const configuracoes = {};
+
+
+        /* -------------------------------------
+           PERFIL
+        ------------------------------------- */
+
+        const nomeBarbearia =
+            document.getElementById(
+                "configNomeBarbearia"
+            );
+
+        const nomeBarbeiro =
+            document.getElementById(
+                "configNomeBarbeiro"
+            );
+
+        const whatsapp =
+            document.getElementById(
+                "configWhatsApp"
+            );
+
+        const endereco =
+            document.getElementById(
+                "configEndereco"
+            );
+
+
+        configuracoes.nomeBarbearia =
+            nomeBarbearia
+                ? nomeBarbearia.value.trim()
+                : "";
+
+        configuracoes.nomeBarbeiro =
+            nomeBarbeiro
+                ? nomeBarbeiro.value.trim()
+                : "";
+
+        configuracoes.whatsapp =
+            whatsapp
+                ? whatsapp.value.trim()
+                : "";
+
+        configuracoes.endereco =
+            endereco
+                ? endereco.value.trim()
+                : "";
+
+
+        /* -------------------------------------
+           HORÁRIOS
+        ------------------------------------- */
+
+        configuracoes.horarios = {};
+
+
+        Object.keys(HORARIOS_PADRAO)
+            .forEach(function(dia) {
+
+                const padrao =
+                    HORARIOS_PADRAO[dia];
+
+
+                const checkbox =
+                    document.querySelector(
+                        '.dia-aberto[data-dia="' +
+                        dia +
+                        '"]'
+                    );
+
+                const abertura =
+                    document.querySelector(
+                        '.hora-abertura[data-dia="' +
+                        dia +
+                        '"]'
+                    );
+
+                const inicioIntervalo =
+                    document.querySelector(
+                        '.hora-inicio-intervalo[data-dia="' +
+                        dia +
+                        '"]'
+                    );
+
+                const fimIntervalo =
+                    document.querySelector(
+                        '.hora-fim-intervalo[data-dia="' +
+                        dia +
+                        '"]'
+                    );
+
+                const fechamento =
+                    document.querySelector(
+                        '.hora-fechamento[data-dia="' +
+                        dia +
+                        '"]'
+                    );
+
+
+                configuracoes.horarios[dia] = {
+
+                    nome:
+                        padrao.nome,
+
+                    aberto:
+                        checkbox
+                            ? checkbox.checked
+                            : padrao.aberto,
+
+                    abertura:
+                        abertura
+                            ? abertura.value
+                            : padrao.abertura,
+
+                    inicioIntervalo:
+                        inicioIntervalo
+                            ? inicioIntervalo.value
+                            : padrao.inicioIntervalo,
+
+                    fimIntervalo:
+                        fimIntervalo
+                            ? fimIntervalo.value
+                            : padrao.fimIntervalo,
+
+                    fechamento:
+                        fechamento
+                            ? fechamento.value
+                            : padrao.fechamento
+
+                };
+
+            });
+
+
+        /* -------------------------------------
+           SALVAR
+        ------------------------------------- */
+
+        localStorage.setItem(
+            CONFIG_CHAVE,
+            JSON.stringify(
+                configuracoes
+            )
+        );
+
+
+        /* -------------------------------------
+           CONFERIR SE REALMENTE GRAVOU
+        ------------------------------------- */
+
+        const conferencia =
+            localStorage.getItem(
+                CONFIG_CHAVE
+            );
+
+
+        if (!conferencia) {
+
+            throw new Error(
+                "Configurações não foram gravadas."
+            );
+        }
+
+
+        console.log(
+            "BARBERPRO - CONFIGURAÇÕES SALVAS:",
+            configuracoes
+        );
+
+
+        /* -------------------------------------
+           STATUS
+        ------------------------------------- */
+
+        const status =
+            document.getElementById(
+                "configStatus"
+            );
+
+        if (status) {
+
+            status.textContent =
+                "✓ Configurações salvas com sucesso!";
+
+            status.style.color =
+                "#4d8b5c";
+        }
+
+
+        mostrarMensagem(
+            "Configurações salvas!"
+        );
+
+
+        setTimeout(function() {
+
+            if (status) {
+
+                status.textContent = "";
+            }
+
+        }, 3000);
+
+
+    } catch (erro) {
+
+        console.error(
+            "BARBERPRO - ERRO AO SALVAR CONFIGURAÇÕES:",
+            erro
+        );
+
+
+        mostrarMensagem(
+            "Erro ao salvar configurações."
+        );
+    }
+}
+
+
+/* =========================================
+   BOTÃO SALVAR
+========================================= */
+
+const btnSalvarConfiguracoes =
+    document.getElementById(
+        "btnSalvarConfiguracoes"
+    );
+
+
+if (btnSalvarConfiguracoes) {
+
+    btnSalvarConfiguracoes.type =
+        "button";
+
+
+    btnSalvarConfiguracoes.addEventListener(
+        "click",
+        salvarConfiguracoes
+    );
+
+}
+
+
+/* =========================================
+   VOLTAR CONFIGURAÇÕES
+========================================= */
+
+const voltarConfiguracoes =
+    document.getElementById(
+        "voltarConfiguracoes"
+    );
+
+
+if (voltarConfiguracoes) {
+
+    voltarConfiguracoes.addEventListener(
+        "click",
+        function(event) {
+
+            event.preventDefault();
+
+            mostrarTela(
+                "inicio"
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
+   CARREGAR CONFIGURAÇÕES
+========================================= */
+
+carregarConfiguracoes();
+
+/* ==========================================================
+   BACKUP E RESTAURAÇÃO — BARBERPRO
+========================================================== */
+
+
+/* ==========================================================
+   OBTER DADOS DO BARBERPRO
+========================================================== */
+
+function obterDadosBackupBarberPro() {
+
+    const dados = {};
+
+    for (let i = 0; i < localStorage.length; i++) {
+
+        const chave = localStorage.key(i);
+
+        if (
+            chave &&
+            chave.startsWith("barberpro_")
+        ) {
+
+            try {
+
+                const valor =
+                    localStorage.getItem(chave);
+
+                dados[chave] =
+                    JSON.parse(valor);
+
+            } catch (erro) {
+
+                dados[chave] =
+                    localStorage.getItem(chave);
+
+            }
+
+        }
+
+    }
+
+    return dados;
+}
+
+
+/* ==========================================================
+   FAZER BACKUP + COMPARTILHAR
+========================================================== */
+
+async function fazerBackupBarberPro() {
+
+    try {
+
+        const dados =
+            obterDadosBackupBarberPro();
+
+
+        const backup = {
+
+            aplicativo: "BarberPro",
+
+            versaoBackup: "1.0",
+
+            dataBackup:
+                new Date().toISOString(),
+
+            dados: dados
+
+        };
+
+
+        const conteudo =
+            JSON.stringify(
+                backup,
+                null,
+                2
+            );
+
+
+        const arquivo =
+            new Blob(
+                [conteudo],
+                {
+                    type:
+                        "application/json"
+                }
+            );
+
+
+        const agora =
+            new Date();
+
+
+        const ano =
+            agora.getFullYear();
+
+
+        const mes =
+            String(
+                agora.getMonth() + 1
+            ).padStart(2, "0");
+
+
+        const dia =
+            String(
+                agora.getDate()
+            ).padStart(2, "0");
+
+
+        const hora =
+            String(
+                agora.getHours()
+            ).padStart(2, "0");
+
+
+        const minuto =
+            String(
+                agora.getMinutes()
+            ).padStart(2, "0");
+
+
+        const nomeArquivo =
+            `BarberPro_Backup_${ano}-${mes}-${dia}_${hora}-${minuto}.json`;
+
+
+        /* ==================================================
+           TENTAR COMPARTILHAR PELO CELULAR
+        ================================================== */
+
+        if (
+            navigator.share &&
+            navigator.canShare
+        ) {
+
+            const arquivoBackup =
+                new File(
+                    [arquivo],
+                    nomeArquivo,
+                    {
+                        type:
+                            "application/json"
+                    }
+                );
+
+
+            const dadosCompartilhamento = {
+                title:
+                    "Backup do BarberPro",
+
+                text:
+                    "Backup dos dados da minha barbearia.",
+
+                files:
+                    [arquivoBackup]
+            };
+
+
+            if (
+                navigator.canShare(
+                    dadosCompartilhamento
+                )
+            ) {
+
+                await navigator.share(
+                    dadosCompartilhamento
+                );
+
+
+                mostrarMensagem(
+                    "Backup pronto para compartilhamento."
+                );
+
+
+                return;
+
+            }
+
+        }
+
+
+        /* ==================================================
+           SE O CELULAR NÃO SUPORTAR COMPARTILHAMENTO
+        ================================================== */
+
+        const url =
+            URL.createObjectURL(
+                arquivo
+            );
+
+
+        const link =
+            document.createElement(
+                "a"
+            );
+
+
+        link.href =
+            url;
+
+
+        link.download =
+            nomeArquivo;
+
+
+        document.body.appendChild(
+            link
+        );
+
+
+        link.click();
+
+
+        document.body.removeChild(
+            link
+        );
+
+
+        URL.revokeObjectURL(
+            url
+        );
+
+
+        mostrarMensagem(
+            "Backup salvo no dispositivo."
+        );
+
+
+    } catch (erro) {
+
+        /* ================================================
+           CANCELAMENTO DO COMPARTILHAMENTO
+        ================================================ */
+
+        if (
+            erro &&
+            erro.name ===
+            "AbortError"
+        ) {
+
+            return;
+
+        }
+
+
+        console.error(
+            "Erro ao fazer backup:",
+            erro
+        );
+
+
+        mostrarMensagem(
+            "Não foi possível realizar o backup."
+        );
+
+    }
+
 }
