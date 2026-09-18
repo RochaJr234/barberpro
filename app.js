@@ -5301,45 +5301,95 @@ if (btnInicioRelatorios) {
 /* ==========================================================
    MENU LATERAL
 ========================================================== */
-
 function abrirMenu() {
 
-    const menu =
-        document.getElementById(
-            "menuLateral"
-        );
-
-
-    const overlay =
-        document.getElementById(
-            "menuOverlay"
-        );
-
-
-    if (menu) {
-
-        menu.classList.add(
-            "aberto"
-        );
-
+    if (!menuLateral) {
+        alert("ERRO: menuLateral não encontrado!");
+        return;
     }
 
+    menuLateral.classList.add("ativo");
 
-    if (overlay) {
-
-        overlay.classList.add(
-            "ativo"
-        );
-
-    }
-
-
-    document.body.classList.add(
-        "menu-aberto"
+    menuLateral.style.setProperty(
+        "display",
+        "block",
+        "important"
     );
 
-}
+    menuLateral.style.setProperty(
+        "visibility",
+        "visible",
+        "important"
+    );
 
+    menuLateral.style.setProperty(
+        "opacity",
+        "1",
+        "important"
+    );
+
+    menuLateral.style.setProperty(
+        "transform",
+        "translateX(0)",
+        "important"
+    );
+
+    menuLateral.style.setProperty(
+        "left",
+        "0",
+        "important"
+    );
+
+    menuLateral.style.setProperty(
+        "top",
+        "0",
+        "important"
+    );
+
+    menuLateral.style.setProperty(
+        "bottom",
+        "0",
+        "important"
+    );
+
+    menuLateral.style.setProperty(
+        "z-index",
+        "999999",
+        "important"
+    );
+
+
+    if (menuOverlay) {
+
+        menuOverlay.classList.add("ativo");
+
+        menuOverlay.style.setProperty(
+            "display",
+            "block",
+            "important"
+        );
+
+        menuOverlay.style.setProperty(
+            "visibility",
+            "visible",
+            "important"
+        );
+
+        menuOverlay.style.setProperty(
+            "opacity",
+            "1",
+            "important"
+        );
+
+        menuOverlay.style.setProperty(
+            "z-index",
+            "999998",
+            "important"
+        );
+    }
+
+    document.body.classList.add("menu-aberto");
+}
 
 /* ==========================================================
    FECHAR MENU
@@ -5347,42 +5397,42 @@ function abrirMenu() {
 
 function fecharMenu() {
 
-    const menu =
-        document.getElementById(
-            "menuLateral"
+    if (menuLateral) {
+
+        menuLateral.classList.remove("ativo");
+
+        menuLateral.style.setProperty(
+            "transform",
+            "translateX(-110%)",
+            "important"
         );
 
-
-    const overlay =
-        document.getElementById(
-            "menuOverlay"
+        menuLateral.style.setProperty(
+            "visibility",
+            "hidden",
+            "important"
         );
-
-
-    if (menu) {
-
-        menu.classList.remove(
-            "aberto"
-        );
-
     }
 
+    if (menuOverlay) {
 
-    if (overlay) {
+        menuOverlay.classList.remove("ativo");
 
-        overlay.classList.remove(
-            "ativo"
+        menuOverlay.style.setProperty(
+            "opacity",
+            "0",
+            "important"
         );
 
+        menuOverlay.style.setProperty(
+            "visibility",
+            "hidden",
+            "important"
+        );
     }
 
-
-    document.body.classList.remove(
-        "menu-aberto"
-    );
-
+    document.body.classList.remove("menu-aberto");
 }
-
 
 /* ==========================================================
    BOTÃO MENU
