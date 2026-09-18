@@ -5579,3 +5579,85 @@ body.splashAtivo {
     }
 
 }
+
+/* ==========================================================
+   CORREÇÃO DEFINITIVA — MENU LATERAL
+========================================================== */
+
+.menu-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(0, 0, 0, 0.45) !important;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    z-index: 9998 !important;
+
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
+}
+
+.menu-overlay.ativo {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+
+/* MENU */
+
+.menu-lateral {
+    position: fixed !important;
+
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+
+    width: 290px !important;
+    max-width: 82vw !important;
+
+    background: #ffffff !important;
+
+    z-index: 9999 !important;
+
+    transform: translateX(-100%);
+    visibility: hidden;
+    pointer-events: none;
+
+    transition:
+        transform 0.28s ease,
+        visibility 0.28s ease;
+
+    overflow-y: auto;
+
+    box-shadow:
+        12px 0 35px rgba(0, 0, 0, 0.12);
+}
+
+
+/* MENU ABERTO */
+
+.menu-lateral.ativo {
+    transform: translateX(0) !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+
+/* BOTÃO FECHAR */
+
+.btn-fechar-menu {
+    position: relative;
+    z-index: 10001 !important;
+}
+
+
+/* BOTÃO HAMBÚRGUER */
+
+#btnMenu {
+    position: relative;
+    z-index: 10000 !important;
+}
