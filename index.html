@@ -45,49 +45,104 @@
 
     <div class="menu-linha"></div>
 
-    <nav class="menu-itens">
+<nav class="menu-itens">
 
-        <button class="menu-item" data-menu-tela="inicio" type="button">
-            <span class="menu-icone">⌂</span>
-            <div>
-                <strong>Início</strong>
-                <small>Painel principal</small>
-            </div>
-        </button>
+    <!-- INÍCIO -->
+    <button
+        class="menu-item"
+        data-menu-tela="inicio"
+        type="button">
 
-        <button class="menu-item" data-menu-tela="agenda" type="button">
-            <span class="menu-icone">▣</span>
-            <div>
-                <strong>Agenda</strong>
-                <small>Seus agendamentos</small>
-            </div>
-        </button>
+        <span class="menu-icone">⌂</span>
 
-        <button class="menu-item" data-menu-tela="clientes" type="button">
-            <span class="menu-icone">♟</span>
-            <div>
-                <strong>Clientes</strong>
-                <small>Cadastro e histórico</small>
-            </div>
-        </button>
+        <div>
+            <strong>Início</strong>
+            <small>Painel principal</small>
+        </div>
 
-        <button class="menu-item" data-menu-tela="servicos" type="button">
-            <span class="menu-icone">✂</span>
-            <div>
-                <strong>Serviços</strong>
-                <small>Preços e duração</small>
-            </div>
-        </button>
+    </button>
 
-        <button class="menu-item" data-menu-tela="financeiro" type="button">
-            <span class="menu-icone">R$</span>
-            <div>
-                <strong>Financeiro</strong>
-                <small>Faturamento e histórico</small>
-            </div>
-        </button>
 
-    </nav>
+    <!-- AGENDA -->
+    <button
+        class="menu-item"
+        data-menu-tela="agenda"
+        type="button">
+
+        <span class="menu-icone">▣</span>
+
+        <div>
+            <strong>Agenda</strong>
+            <small>Seus agendamentos</small>
+        </div>
+
+    </button>
+
+
+    <!-- CLIENTES -->
+    <button
+        class="menu-item"
+        data-menu-tela="clientes"
+        type="button">
+
+        <span class="menu-icone">♟</span>
+
+        <div>
+            <strong>Clientes</strong>
+            <small>Cadastro e histórico</small>
+        </div>
+
+    </button>
+
+
+    <!-- SERVIÇOS -->
+    <button
+        class="menu-item"
+        data-menu-tela="servicos"
+        type="button">
+
+        <span class="menu-icone">✂</span>
+
+        <div>
+            <strong>Serviços</strong>
+            <small>Preços e duração</small>
+        </div>
+
+    </button>
+
+
+    <!-- FINANCEIRO -->
+    <button
+        class="menu-item"
+        data-menu-tela="financeiro"
+        type="button">
+
+        <span class="menu-icone">R$</span>
+
+        <div>
+            <strong>Financeiro</strong>
+            <small>Faturamento e histórico</small>
+        </div>
+
+    </button>
+
+
+    <!-- CONFIGURAÇÕES -->
+    <button
+        class="menu-item"
+        data-menu-tela="configuracoes"
+        type="button">
+
+        <span class="menu-icone">⚙</span>
+
+        <div>
+            <strong>Configurações</strong>
+            <small>Dados da barbearia</small>
+        </div>
+
+    </button>
+
+</nav>
 
     <div class="menu-rodape">
         <span>BarberPro</span>
@@ -679,7 +734,63 @@
 
     </div>
 
+<!-- =================================================
+     HORÁRIO DE FUNCIONAMENTO
+================================================== -->
 
+<div class="funcionamento-agenda" id="funcionamentoAgenda">
+
+    <div class="funcionamento-topo">
+
+        <div>
+
+            <span class="funcionamento-label">
+                FUNCIONAMENTO
+            </span>
+
+            <strong id="funcionamentoStatus">
+                Aberto
+            </strong>
+
+        </div>
+
+        <span
+            class="funcionamento-indicador"
+            id="funcionamentoIndicador">
+            ●
+        </span>
+
+    </div>
+
+
+    <div class="funcionamento-horarios">
+
+        <div class="funcionamento-horario">
+
+            <span>Atendimento</span>
+
+            <strong id="horarioFuncionamento">
+                08:00 às 18:00
+            </strong>
+
+        </div>
+
+
+        <div
+            class="funcionamento-horario intervalo"
+            id="intervaloFuncionamento">
+
+            <span>Intervalo</span>
+
+            <strong id="horarioIntervalo">
+                13:00 às 15:00
+            </strong>
+
+        </div>
+
+    </div>
+
+</div>
 
     <!-- LISTA DE AGENDAMENTOS -->
 
@@ -2159,10 +2270,687 @@
 
 </section>
 
+<!-- =====================================================
+     TELA CONFIGURAÇÕES
+     ===================================================== -->
+
+<section id="telaConfiguracoes" class="tela">
+
+    <div class="cabecalho-pagina">
+
+        <button
+            class="voltar"
+            id="voltarConfiguracoes"
+            type="button">
+            ←
+        </button>
+
+        <div>
+            <p class="subtitulo-pagina">SISTEMA</p>
+            <h1>Configurações</h1>
+        </div>
+
+        <div></div>
+
+    </div>
 
 
+    <!-- PERFIL DA BARBEARIA -->
+
+    <div class="config-bloco">
+
+        <div class="titulo-secao">
+
+            <div>
+                <p class="titulo-pequeno">IDENTIDADE</p>
+                <h2>Minha barbearia</h2>
+            </div>
+
+        </div>
+
+
+        <div class="config-form">
+
+            <label>
+                Nome da barbearia
+
+                <input
+                    type="text"
+                    id="configNomeBarbearia"
+                    placeholder="Ex.: BarberPro Barbearia">
+            </label>
+
+
+            <label>
+                Nome do barbeiro
+
+                <input
+                    type="text"
+                    id="configNomeBarbeiro"
+                    placeholder="Ex.: João da Silva">
+            </label>
+
+
+            <label>
+                WhatsApp
+
+                <input
+                    type="tel"
+                    id="configWhatsApp"
+                    placeholder="(81) 99999-9999">
+            </label>
+
+
+            <label>
+                Endereço
+
+                <input
+                    type="text"
+                    id="configEndereco"
+                    placeholder="Rua, número, bairro...">
+            </label>
+
+        </div>
+
+    </div>
+
+
+    <!-- HORÁRIO -->
+
+    <div class="config-bloco">
+
+        <div class="titulo-secao">
+
+            <div>
+                <p class="titulo-pequeno">FUNCIONAMENTO</p>
+                <h2>Horário de atendimento</h2>
+            </div>
+
+        </div>
+
+<div class="horarios-config" id="horariosConfig">
+
+    <!-- SEGUNDA -->
+    <div class="horario-dia">
+
+        <div class="horario-cabecalho">
+
+            <div class="horario-nome">
+                <strong>Segunda-feira</strong>
+                <small>Funcionamento</small>
+            </div>
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    class="dia-aberto"
+                    data-dia="segunda"
+                    checked
+                >
+
+                <span class="switch-slider"></span>
+
+            </label>
+
+        </div>
+
+        <div class="horario-inputs">
+
+            <input
+                type="time"
+                class="hora-abertura"
+                data-dia="segunda"
+                value="08:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fechamento"
+                data-dia="segunda"
+                value="18:00"
+            >
+
+        </div>
+
+        <div class="horario-intervalo">
+
+            <span>Intervalo</span>
+
+            <input
+                type="time"
+                class="hora-inicio-intervalo"
+                data-dia="segunda"
+                value="13:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fim-intervalo"
+                data-dia="segunda"
+                value="15:00"
+            >
+
+        </div>
+
+    </div>
+
+
+    <!-- TERÇA -->
+    <div class="horario-dia">
+
+        <div class="horario-cabecalho">
+
+            <div class="horario-nome">
+                <strong>Terça-feira</strong>
+                <small>Funcionamento</small>
+            </div>
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    class="dia-aberto"
+                    data-dia="terca"
+                    checked
+                >
+
+                <span class="switch-slider"></span>
+
+            </label>
+
+        </div>
+
+        <div class="horario-inputs">
+
+            <input
+                type="time"
+                class="hora-abertura"
+                data-dia="terca"
+                value="08:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fechamento"
+                data-dia="terca"
+                value="18:00"
+            >
+
+        </div>
+
+        <div class="horario-intervalo">
+
+            <span>Intervalo</span>
+
+            <input
+                type="time"
+                class="hora-inicio-intervalo"
+                data-dia="terca"
+                value="13:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fim-intervalo"
+                data-dia="terca"
+                value="15:00"
+            >
+
+        </div>
+
+    </div>
+
+
+    <!-- QUARTA -->
+    <div class="horario-dia">
+
+        <div class="horario-cabecalho">
+
+            <div class="horario-nome">
+                <strong>Quarta-feira</strong>
+                <small>Funcionamento</small>
+            </div>
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    class="dia-aberto"
+                    data-dia="quarta"
+                    checked
+                >
+
+                <span class="switch-slider"></span>
+
+            </label>
+
+        </div>
+
+        <div class="horario-inputs">
+
+            <input
+                type="time"
+                class="hora-abertura"
+                data-dia="quarta"
+                value="08:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fechamento"
+                data-dia="quarta"
+                value="18:00"
+            >
+
+        </div>
+
+        <div class="horario-intervalo">
+
+            <span>Intervalo</span>
+
+            <input
+                type="time"
+                class="hora-inicio-intervalo"
+                data-dia="quarta"
+                value="13:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fim-intervalo"
+                data-dia="quarta"
+                value="15:00"
+            >
+
+        </div>
+
+    </div>
+
+
+    <!-- QUINTA -->
+    <div class="horario-dia">
+
+        <div class="horario-cabecalho">
+
+            <div class="horario-nome">
+                <strong>Quinta-feira</strong>
+                <small>Funcionamento</small>
+            </div>
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    class="dia-aberto"
+                    data-dia="quinta"
+                    checked
+                >
+
+                <span class="switch-slider"></span>
+
+            </label>
+
+        </div>
+
+        <div class="horario-inputs">
+
+            <input
+                type="time"
+                class="hora-abertura"
+                data-dia="quinta"
+                value="08:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fechamento"
+                data-dia="quinta"
+                value="18:00"
+            >
+
+        </div>
+
+        <div class="horario-intervalo">
+
+            <span>Intervalo</span>
+
+            <input
+                type="time"
+                class="hora-inicio-intervalo"
+                data-dia="quinta"
+                value="13:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fim-intervalo"
+                data-dia="quinta"
+                value="15:00"
+            >
+
+        </div>
+
+    </div>
+
+
+    <!-- SEXTA -->
+    <div class="horario-dia">
+
+        <div class="horario-cabecalho">
+
+            <div class="horario-nome">
+                <strong>Sexta-feira</strong>
+                <small>Funcionamento</small>
+            </div>
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    class="dia-aberto"
+                    data-dia="sexta"
+                    checked
+                >
+
+                <span class="switch-slider"></span>
+
+            </label>
+
+        </div>
+
+        <div class="horario-inputs">
+
+            <input
+                type="time"
+                class="hora-abertura"
+                data-dia="sexta"
+                value="08:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fechamento"
+                data-dia="sexta"
+                value="18:00"
+            >
+
+        </div>
+
+        <div class="horario-intervalo">
+
+            <span>Intervalo</span>
+
+            <input
+                type="time"
+                class="hora-inicio-intervalo"
+                data-dia="sexta"
+                value="13:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fim-intervalo"
+                data-dia="sexta"
+                value="15:00"
+            >
+
+        </div>
+
+    </div>
+
+
+    <!-- SÁBADO -->
+    <div class="horario-dia">
+
+        <div class="horario-cabecalho">
+
+            <div class="horario-nome">
+                <strong>Sábado</strong>
+                <small>Funcionamento</small>
+            </div>
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    class="dia-aberto"
+                    data-dia="sabado"
+                    checked
+                >
+
+                <span class="switch-slider"></span>
+
+            </label>
+
+        </div>
+
+        <div class="horario-inputs">
+
+            <input
+                type="time"
+                class="hora-abertura"
+                data-dia="sabado"
+                value="08:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fechamento"
+                data-dia="sabado"
+                value="14:00"
+            >
+
+        </div>
+
+        <div class="horario-intervalo">
+
+            <span>Intervalo</span>
+
+            <input
+                type="time"
+                class="hora-inicio-intervalo"
+                data-dia="sabado"
+                value=""
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fim-intervalo"
+                data-dia="sabado"
+                value=""
+            >
+
+        </div>
+
+    </div>
+
+
+    <!-- DOMINGO -->
+    <div class="horario-dia fechado">
+
+        <div class="horario-cabecalho">
+
+            <div class="horario-nome">
+                <strong>Domingo</strong>
+                <small>Fechado</small>
+            </div>
+
+            <label class="switch">
+
+                <input
+                    type="checkbox"
+                    class="dia-aberto"
+                    data-dia="domingo"
+                >
+
+                <span class="switch-slider"></span>
+
+            </label>
+
+        </div>
+
+        <div class="horario-inputs">
+
+            <input
+                type="time"
+                class="hora-abertura"
+                data-dia="domingo"
+                value="08:00"
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fechamento"
+                data-dia="domingo"
+                value="12:00"
+            >
+
+        </div>
+
+        <div class="horario-intervalo">
+
+            <span>Intervalo</span>
+
+            <input
+                type="time"
+                class="hora-inicio-intervalo"
+                data-dia="domingo"
+                value=""
+            >
+
+            <span>até</span>
+
+            <input
+                type="time"
+                class="hora-fim-intervalo"
+                data-dia="domingo"
+                value=""
+            >
+
+        </div>
+
+    </div>
+
+</div>
+
+    <!-- BOTÃO -->
+
+    <button
+        class="btn-salvar-config"
+        id="btnSalvarConfiguracoes"
+        type="button">
+
+        💾 Salvar configurações
+
+    </button>
+
+
+    <div
+        class="config-status"
+        id="configStatus"
+        style="display:none;">
+
+        ✓ Configurações salvas com sucesso.
+
+    </div>
+
+</section>
+<!-- =================================================
+     BACKUP DO BARBERPRO
+================================================== -->
+
+<div class="config-card backup-card">
+
+    <div class="config-card-topo">
+
+        <div class="config-icone">
+            💾
+        </div>
+
+        <div>
+            <h3>Backup dos dados</h3>
+
+            <p>
+                Salve uma cópia dos dados da sua barbearia.
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="backup-acoes">
+
+        <button
+            type="button"
+            class="botao-principal"
+            onclick="fazerBackupBarberPro()">
+
+            💾 Fazer backup
+
+        </button>
+
+
+        <button
+            type="button"
+            class="botao-secundario"
+            onclick="selecionarBackupBarberPro()">
+
+            📥 Restaurar backup
+
+        </button>
+
+    </div>
+
+
+    <input
+        type="file"
+        id="inputBackupBarberPro"
+        accept=".json,application/json"
+        style="display:none"
+        onchange="restaurarBackupBarberPro(event)"
+    >
+
+    <div class="backup-aviso">
+
+        <strong>Importante</strong>
+
+        <span>
+            Guarde o arquivo de backup em um local seguro.
+            Ele poderá ser usado para recuperar seus dados
+            em caso de perda ou troca do celular.
+        </span>
+
+    </div>
+
+</div>
 </main>
-
 
 
 <!-- =====================================================
