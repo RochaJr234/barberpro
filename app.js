@@ -1,37 +1,48 @@
 /* ==========================================================
    BARBERPRO
-   APP.JS
-   VERSÃO ESTÁVEL + FINANCEIRO
+   SISTEMA DE GESTÃO PARA BARBEARIA
 ========================================================== */
 
 
 /* ==========================================================
-   CONFIGURAÇÕES
+   CHAVES DO LOCALSTORAGE
 ========================================================== */
 
 const CHAVES = {
-    agendamentos: "barberpro_agendamentos",
-    clientes: "barberpro_clientes",
-    servicos: "barberpro_servicos"
+
+    agendamentos:
+        "barberpro_agendamentos",
+
+    clientes:
+        "barberpro_clientes",
+
+    servicos:
+        "barberpro_servicos"
+
 };
 
 
 /* ==========================================================
-   CONTROLE DO SISTEMA
+   VARIÁVEIS GLOBAIS
 ========================================================== */
 
 let telaAtual = "inicio";
+
 let clienteFichaAtual = null;
+
 let agendamentoAtual = null;
 
-let dataAgendaSelecionada = dataHojeISO();
+let dataAgendaSelecionada =
+    dataHojeISO();
 
-let mesAgendaAtual = new Date();
+let mesAgendaAtual =
+    new Date();
+
 mesAgendaAtual.setDate(1);
 
 
 /* ==========================================================
-   LOCAL STORAGE
+   FUNÇÕES DE ARMAZENAMENTO
 ========================================================== */
 
 function obterDados(chave) {
@@ -42,28 +53,24 @@ function obterDados(chave) {
             localStorage.getItem(chave);
 
         if (!dados) {
+
             return [];
+
         }
 
-        const resultado =
-            JSON.parse(dados);
-
-        if (!Array.isArray(resultado)) {
-            return [];
-        }
-
-        return resultado;
+        return JSON.parse(dados);
 
     } catch (erro) {
 
         console.error(
-            "Erro ao carregar dados:",
-            chave,
+            "Erro ao obter dados:",
             erro
         );
 
         return [];
+
     }
+
 }
 
 
@@ -82,7 +89,6 @@ function salvarDados(chave, dados) {
 
         console.error(
             "Erro ao salvar dados:",
-            chave,
             erro
         );
 
@@ -91,36 +97,33 @@ function salvarDados(chave, dados) {
         );
 
         return false;
+
     }
+
 }
 
 
 /* ==========================================================
-   TESTE DO ARMAZENAMENTO
+   TESTAR ARMAZENAMENTO
 ========================================================== */
 
 function testarArmazenamento() {
 
     try {
 
-        const chaveTeste =
+        const teste =
             "__barberpro_teste__";
 
         localStorage.setItem(
-            chaveTeste,
+            teste,
             "ok"
         );
 
-        const resultado =
-            localStorage.getItem(
-                chaveTeste
-            );
-
         localStorage.removeItem(
-            chaveTeste
+            teste
         );
 
-        return resultado === "ok";
+        return true;
 
     } catch (erro) {
 
@@ -130,28 +133,35 @@ function testarArmazenamento() {
         );
 
         return false;
+
     }
+
 }
 
 
 /* ==========================================================
-   FUNÇÕES AUXILIARES
+   GERAR ID
 ========================================================== */
 
 function gerarId() {
 
-    return (
-        Date.now().toString() +
-        Math.random()
+    return Date.now().toString()
+        + "_"
+        + Math.random()
             .toString(36)
-            .substring(2, 9)
-    );
+            .substring(2, 9);
+
 }
 
 
+/* ==========================================================
+   DATA DE HOJE
+========================================================== */
+
 function dataHojeISO() {
 
-    const hoje = new Date();
+    const hoje =
+        new Date();
 
     const ano =
         hoje.getFullYear();
@@ -167,41 +177,61 @@ function dataHojeISO() {
         ).padStart(2, "0");
 
     return `${ano}-${mes}-${dia}`;
+
 }
 
+
+/* ==========================================================
+   FORMATAR DATA
+========================================================== */
 
 function formatarData(data) {
 
     if (!data) {
-        return "—";
+
+        return "";
+
     }
 
     const partes =
         String(data).split("-");
 
     if (partes.length !== 3) {
+
         return data;
+
     }
 
     return (
-        `${partes[2]}/` +
-        `${partes[1]}/` +
-        `${partes[0]}`
+        partes[2] +
+        "/" +
+        partes[1] +
+        "/" +
+        partes[0]
     );
+
 }
 
+
+/* ==========================================================
+   DATA POR EXTENSO
+========================================================== */
 
 function formatarDataLonga(data) {
 
     if (!data) {
-        return "—";
+
+        return "";
+
     }
 
     const partes =
         String(data).split("-");
 
     if (partes.length !== 3) {
+
         return data;
+
     }
 
     const objeto =
@@ -211,63 +241,112 @@ function formatarDataLonga(data) {
             Number(partes[2])
         );
 
-    return objeto.toLocaleDateString(
-        "pt-BR",
-        {
-            weekday: "long",
-            day: "numeric",
-            month: "long"
-        }
+    const dias = [
+
+        "domingo",
+        "segunda-feira",
+        "terça-feira",
+        "quarta-feira",
+        "quinta-feira",
+        "sexta-feira",
+        "sábado"
+
+    ];
+
+    const meses = [
+
+        "janeiro",
+        "fevereiro",
+        "março",
+        "abril",
+        "maio",
+        "junho",
+        "julho",
+        "agosto",
+        "setembro",
+        "outubro",
+        "novembro",
+        "dezembro"
+
+    ];
+
+    return (
+        dias[objeto.getDay()] +
+        ", " +
+        objeto.getDate() +
+        " de " +
+        meses[objeto.getMonth()] +
+        " de " +
+        objeto.getFullYear()
     );
+
 }
 
+
+/* ==========================================================
+   FORMATAR MOEDA
+========================================================== */
 
 function formatarMoeda(valor) {
 
-    return Number(valor || 0)
-        .toLocaleString(
-            "pt-BR",
-            {
-                style: "currency",
-                currency: "BRL"
-            }
-        );
+    const numero =
+        Number(valor) || 0;
+
+    return numero.toLocaleString(
+        "pt-BR",
+        {
+            style: "currency",
+            currency: "BRL"
+        }
+    );
+
 }
 
+
+/* ==========================================================
+   GERAR INICIAIS
+========================================================== */
 
 function gerarIniciais(nome) {
 
     if (!nome) {
-        return "--";
+
+        return "?";
+
     }
 
     const partes =
         String(nome)
             .trim()
-            .split(/\s+/)
-            .filter(Boolean);
+            .split(/\s+/);
 
     if (partes.length === 1) {
 
         return partes[0]
             .substring(0, 2)
             .toUpperCase();
+
     }
 
     return (
         partes[0][0] +
         partes[partes.length - 1][0]
     ).toUpperCase();
+
 }
 
 
+/* ==========================================================
+   ESCAPAR HTML
+========================================================== */
+
 function escaparHTML(valor) {
 
-    if (
-        valor === null ||
-        valor === undefined
-    ) {
+    if (valor === null ||
+        valor === undefined) {
+
         return "";
+
     }
 
     return String(valor)
@@ -276,40 +355,66 @@ function escaparHTML(valor) {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
-}
 
-
-function mostrarMensagem(texto) {
-
-    const toast =
-        document.getElementById("toast");
-
-    if (!toast) {
-        alert(texto);
-        return;
-    }
-
-    toast.textContent = texto;
-
-    toast.classList.add("mostrar");
-
-    clearTimeout(
-        window.barberProToast
-    );
-
-    window.barberProToast =
-        setTimeout(() => {
-
-            toast.classList.remove(
-                "mostrar"
-            );
-
-        }, 2500);
 }
 
 
 /* ==========================================================
-   TELAS
+   MENSAGEM
+========================================================== */
+
+function mostrarMensagem(mensagem) {
+
+    let elemento =
+        document.getElementById(
+            "mensagemSistema"
+        );
+
+    if (!elemento) {
+
+        elemento =
+            document.createElement("div");
+
+        elemento.id =
+            "mensagemSistema";
+
+        elemento.className =
+            "mensagem-sistema";
+
+        document.body.appendChild(
+            elemento
+        );
+
+    }
+
+    elemento.textContent =
+        mensagem;
+
+    elemento.classList.add(
+        "mostrar"
+    );
+
+    clearTimeout(
+        elemento._timeoutBarberPro
+    );
+
+    elemento._timeoutBarberPro =
+        setTimeout(
+            function () {
+
+                elemento.classList.remove(
+                    "mostrar"
+                );
+
+            },
+            2800
+        );
+
+}
+
+
+/* ==========================================================
+   TELAS DO SISTEMA
 ========================================================== */
 
 const telas = {
@@ -324,12 +429,12 @@ const telas = {
             "telaAgenda"
         ),
 
-    novo:
+    novoAgendamento:
         document.getElementById(
             "telaNovoAgendamento"
         ),
 
-    detalhes:
+    detalhesAgendamento:
         document.getElementById(
             "telaDetalhesAgendamento"
         ),
@@ -371,81 +476,131 @@ const telas = {
 
 };
 
-function mostrarTela(nome) {
 
-    Object.keys(telas).forEach(
-        chave => {
+/* ==========================================================
+   MOSTRAR TELA
+========================================================== */
 
-            if (telas[chave]) {
+function mostrarTela(nomeTela) {
 
-                telas[chave]
-                    .classList
-                    .remove("ativa");
+    Object.keys(telas)
+        .forEach(
+            function (nome) {
+
+                const tela =
+                    telas[nome];
+
+                if (!tela) {
+
+                    return;
+
+                }
+
+                tela.classList.remove(
+                    "ativa"
+                );
+
+                tela.style.display =
+                    "none";
+
             }
+        );
+
+
+    const telaSelecionada =
+        telas[nomeTela];
+
+    if (!telaSelecionada) {
+
+        console.warn(
+            "Tela não encontrada:",
+            nomeTela
+        );
+
+        return;
+
+    }
+
+
+    telaSelecionada.classList.add(
+        "ativa"
+    );
+
+    telaSelecionada.style.display =
+        "block";
+
+
+    telaAtual =
+        nomeTela;
+
+
+    atualizarNavegacao();
+
+    window.scrollTo(
+        {
+            top: 0,
+            behavior: "smooth"
         }
     );
 
-    if (telas[nome]) {
-
-        telas[nome]
-            .classList
-            .add("ativa");
-
-        telaAtual = nome;
-    }
-
-    atualizarNavegacao(nome);
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
 }
 
 
-function atualizarNavegacao(nome) {
+/* ==========================================================
+   ATUALIZAR NAVEGAÇÃO
+========================================================== */
+
+function atualizarNavegacao() {
 
     document
         .querySelectorAll(".nav-item")
-        .forEach(item => {
+        .forEach(
+            function (item) {
 
-            item.classList.remove(
-                "ativo"
-            );
-
-            const destino =
-                item.dataset.tela;
-
-            if (
-                destino === nome ||
-
-                (
-                    destino === "agenda" &&
-                    (
-                        nome === "novo" ||
-                        nome === "detalhes"
-                    )
-                ) ||
-
-                (
-                    destino === "clientes" &&
-                    (
-                        nome === "novoCliente" ||
-                        nome === "fichaCliente"
-                    )
-                ) ||
-
-                (
-                    destino === "servicos" &&
-                    nome === "novoServico"
-                )
-            ) {
-
-                item.classList.add(
+                item.classList.remove(
                     "ativo"
                 );
+
+                if (
+                    item.dataset &&
+                    item.dataset.tela ===
+                    telaAtual
+                ) {
+
+                    item.classList.add(
+                        "ativo"
+                    );
+
+                }
+
             }
-        });
+        );
+
+
+    document
+        .querySelectorAll(".menu-item")
+        .forEach(
+            function (item) {
+
+                item.classList.remove(
+                    "ativo"
+                );
+
+                if (
+                    item.dataset &&
+                    item.dataset.menuTela ===
+                    telaAtual
+                ) {
+
+                    item.classList.add(
+                        "ativo"
+                    );
+
+                }
+
+            }
+        );
+
 }
 
 
@@ -460,15 +615,22 @@ function criarServicosPadrao() {
             CHAVES.servicos
         );
 
-    if (servicos.length > 0) {
+
+    if (
+        Array.isArray(servicos) &&
+        servicos.length > 0
+    ) {
+
         return;
+
     }
+
 
     const padrao = [
 
         {
             id: gerarId(),
-            nome: "Corte masculino",
+            nome: "Corte",
             preco: 30,
             duracao: 30,
             ativo: true
@@ -492,15 +654,17 @@ function criarServicosPadrao() {
 
     ];
 
+
     salvarDados(
         CHAVES.servicos,
         padrao
     );
+
 }
 
 
 /* ==========================================================
-   SERVIÇOS
+   RENDERIZAR SERVIÇOS
 ========================================================== */
 
 function renderizarServicos() {
@@ -510,195 +674,159 @@ function renderizarServicos() {
             "listaServicos"
         );
 
-    const vazio =
-        document.getElementById(
-            "estadoVazioServicos"
-        );
-
     if (!lista) {
+
         return;
+
     }
+
 
     const servicos =
         obterDados(
             CHAVES.servicos
         );
 
-    const ativos =
-        servicos.filter(
-            item =>
-                item.ativo !== false
-        );
 
-    const total =
-        document.getElementById(
-            "totalServicos"
-        );
+    if (
+        !Array.isArray(servicos) ||
+        servicos.length === 0
+    ) {
 
-    const totalAtivos =
-        document.getElementById(
-            "servicosAtivos"
-        );
-
-    if (total) {
-        total.textContent =
-            servicos.length;
-    }
-
-    if (totalAtivos) {
-        totalAtivos.textContent =
-            ativos.length;
-    }
-
-    if (servicos.length === 0) {
-
-        lista.innerHTML = "";
-
-        if (vazio) {
-            vazio.style.display =
-                "block";
-        }
-
-        return;
-    }
-
-    if (vazio) {
-        vazio.style.display =
-            "none";
-    }
-
-    lista.innerHTML =
-        servicos.map(
-            servico => {
-
-                const ativo =
-                    servico.ativo !== false;
-
-                return `
-
-                <div class="
-                    servico-card
-                    ${ativo ? "" : "desativado"}
-                ">
-
-                    <div class="servico-info">
-
-                        <div class="servico-icone">
-                            ✂
-                        </div>
-
-                        <div>
-
-                            <h3>
-                                ${escaparHTML(
-                                    servico.nome
-                                )}
-                            </h3>
-
-                            <p>
-                                ${formatarDuracao(
-                                    servico.duracao
-                                )}
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                    <div class="servico-direita">
-
-                        <strong>
-                            ${formatarMoeda(
-                                servico.preco
-                            )}
-                        </strong>
-
-                        <div class="servico-acoes">
-
-                            <button
-                                class="botao-mini"
-                                data-editar-servico="${servico.id}"
-                                type="button"
-                            >
-                                ✎
-                            </button>
-
-                            <button
-                                class="botao-mini"
-                                data-excluir-servico="${servico.id}"
-                                type="button"
-                            >
-                                🗑
-                            </button>
-
-                        </div>
-
-                    </div>
-
+        lista.innerHTML = `
+            <div class="estado-vazio">
+                <div class="estado-vazio-icone">
+                    ✂
                 </div>
 
-                `;
-            }
-        ).join("");
+                <h3>
+                    Nenhum serviço cadastrado
+                </h3>
 
-    document
-        .querySelectorAll(
-            "[data-editar-servico]"
-        )
-        .forEach(botao => {
+                <p>
+                    Cadastre os serviços da sua barbearia.
+                </p>
+            </div>
+        `;
 
-            botao.addEventListener(
-                "click",
-                () =>
-                    editarServico(
-                        botao.dataset
-                            .editarServico
-                    )
-            );
-        });
+        return;
 
-    document
-        .querySelectorAll(
-            "[data-excluir-servico]"
-        )
-        .forEach(botao => {
+    }
 
-            botao.addEventListener(
-                "click",
-                () =>
-                    excluirServico(
-                        botao.dataset
-                            .excluirServico
-                    )
-            );
-        });
+
+    lista.innerHTML =
+        servicos
+            .filter(
+                function (servico) {
+
+                    return servico.ativo !== false;
+
+                }
+            )
+            .map(
+                function (servico) {
+
+                    return `
+                        <div
+                            class="card-servico"
+                            data-id="${escaparHTML(servico.id)}"
+                        >
+
+                            <div class="servico-info">
+
+                                <div class="servico-icone">
+                                    ✂
+                                </div>
+
+                                <div>
+
+                                    <h3>
+                                        ${escaparHTML(servico.nome)}
+                                    </h3>
+
+                                    <span>
+                                        ${formatarDuracao(servico.duracao)}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="servico-direita">
+
+                                <strong>
+                                    ${formatarMoeda(servico.preco)}
+                                </strong>
+
+                                <div class="servico-acoes">
+
+                                    <button
+                                        type="button"
+                                        onclick="editarServico('${escaparHTML(servico.id)}')"
+                                    >
+                                        ✎
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onclick="excluirServico('${escaparHTML(servico.id)}')"
+                                    >
+                                        🗑
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    `;
+
+                }
+            )
+            .join("");
+
 }
 
 
+/* ==========================================================
+   FORMATAR DURAÇÃO
+========================================================== */
+
 function formatarDuracao(minutos) {
 
-    minutos =
-        Number(minutos || 0);
+    const valor =
+        Number(minutos) || 0;
 
-    if (minutos < 60) {
 
-        return `${minutos} min`;
+    if (valor < 60) {
+
+        return `${valor} min`;
+
     }
+
 
     const horas =
         Math.floor(
-            minutos / 60
+            valor / 60
         );
 
-    const resto =
-        minutos % 60;
+    const restante =
+        valor % 60;
 
-    if (resto === 0) {
 
-        return `${horas}h`;
+    if (restante === 0) {
+
+        return (
+            horas === 1
+                ? "1 hora"
+                : `${horas} horas`
+        );
+
     }
 
-    return `${horas}h ${resto}min`;
+
+    return `${horas}h ${restante}min`;
+
 }
 
 
@@ -708,40 +836,47 @@ function formatarDuracao(minutos) {
 
 function abrirNovoServico() {
 
-    const form =
+    const formulario =
         document.getElementById(
-            "formServico"
+            "formNovoServico"
         );
 
-    if (form) {
+    if (formulario) {
 
-        form.reset();
+        formulario.reset();
 
-        delete form.dataset.editando;
     }
 
-    const ativo =
+
+    const id =
         document.getElementById(
-            "novoServicoAtivo"
+            "servicoId"
         );
 
-    if (ativo) {
-        ativo.checked = true;
+    if (id) {
+
+        id.value = "";
+
     }
+
 
     const titulo =
-        document.querySelector(
-            "#telaNovoServico h1"
+        document.getElementById(
+            "tituloNovoServico"
         );
 
     if (titulo) {
+
         titulo.textContent =
-            "Novo Serviço";
+            "Novo serviço";
+
     }
+
 
     mostrarTela(
         "novoServico"
     );
+
 }
 
 
@@ -756,60 +891,96 @@ function editarServico(id) {
             CHAVES.servicos
         );
 
+
     const servico =
         servicos.find(
-            item =>
-                String(item.id) ===
-                String(id)
+            function (item) {
+
+                return String(item.id) ===
+                    String(id);
+
+            }
         );
+
 
     if (!servico) {
-        return;
-    }
 
-    document.getElementById(
-        "novoServicoNome"
-    ).value =
-        servico.nome || "";
-
-    document.getElementById(
-        "novoServicoPreco"
-    ).value =
-        servico.preco || "";
-
-    document.getElementById(
-        "novoServicoDuracao"
-    ).value =
-        servico.duracao || "";
-
-    document.getElementById(
-        "novoServicoAtivo"
-    ).checked =
-        servico.ativo !== false;
-
-    const form =
-        document.getElementById(
-            "formServico"
+        mostrarMensagem(
+            "Serviço não encontrado."
         );
 
-    if (form) {
-        form.dataset.editando =
-            servico.id;
+        return;
+
     }
 
+
+    const campoId =
+        document.getElementById(
+            "servicoId"
+        );
+
+    const campoNome =
+        document.getElementById(
+            "servicoNome"
+        );
+
+    const campoPreco =
+        document.getElementById(
+            "servicoPreco"
+        );
+
+    const campoDuracao =
+        document.getElementById(
+            "servicoDuracao"
+        );
+
+
+    if (campoId) {
+
+        campoId.value =
+            servico.id;
+
+    }
+
+    if (campoNome) {
+
+        campoNome.value =
+            servico.nome;
+
+    }
+
+    if (campoPreco) {
+
+        campoPreco.value =
+            servico.preco;
+
+    }
+
+    if (campoDuracao) {
+
+        campoDuracao.value =
+            servico.duracao;
+
+    }
+
+
     const titulo =
-        document.querySelector(
-            "#telaNovoServico h1"
+        document.getElementById(
+            "tituloNovoServico"
         );
 
     if (titulo) {
+
         titulo.textContent =
-            "Editar Serviço";
+            "Editar serviço";
+
     }
+
 
     mostrarTela(
         "novoServico"
     );
+
 }
 
 
@@ -819,250 +990,284 @@ function editarServico(id) {
 
 function excluirServico(id) {
 
-    const servicos =
+    const confirmar =
+        confirm(
+            "Deseja realmente excluir este serviço?"
+        );
+
+
+    if (!confirmar) {
+
+        return;
+
+    }
+
+
+    let servicos =
         obterDados(
             CHAVES.servicos
         );
 
-    const servico =
-        servicos.find(
-            item =>
-                String(item.id) ===
-                String(id)
-        );
 
-    if (!servico) {
-        return;
-    }
-
-    if (
-        !confirm(
-            `Excluir "${servico.nome}"?`
-        )
-    ) {
-        return;
-    }
-
-    const novos =
+    servicos =
         servicos.filter(
-            item =>
-                String(item.id) !==
-                String(id)
+            function (servico) {
+
+                return String(servico.id) !==
+                    String(id);
+
+            }
         );
 
-    if (
-        !salvarDados(
-            CHAVES.servicos,
-            novos
-        )
-    ) {
-        return;
-    }
+
+    salvarDados(
+        CHAVES.servicos,
+        servicos
+    );
+
+
+    atualizarSelectServicos();
 
     renderizarServicos();
 
-    atualizarSelectServicos();
 
     mostrarMensagem(
         "Serviço excluído."
     );
+
 }
 
 
 /* ==========================================================
-   SELECT SERVIÇOS
+   ATUALIZAR SELECT DE SERVIÇOS
 ========================================================== */
 
 function atualizarSelectServicos() {
 
     const select =
         document.getElementById(
-            "servico"
+            "agendamentoServico"
         );
 
+
     if (!select) {
+
         return;
+
     }
+
 
     const servicos =
         obterDados(
             CHAVES.servicos
-        ).filter(
-            item =>
-                item.ativo !== false
         );
 
-    select.innerHTML = `
 
+    const valorAtual =
+        select.value;
+
+
+    select.innerHTML = `
         <option value="">
             Selecione um serviço
         </option>
-
-        ${
-            servicos.map(
-                servico => `
-
-                <option
-                    value="${escaparHTML(
-                        servico.nome
-                    )}"
-                    data-preco="${Number(
-                        servico.preco || 0
-                    )}"
-                    data-duracao="${Number(
-                        servico.duracao || 0
-                    )}"
-                >
-
-                    ${escaparHTML(
-                        servico.nome
-                    )}
-
-                </option>
-
-                `
-            ).join("")
-        }
-
     `;
+
+
+    servicos
+        .filter(
+            function (servico) {
+
+                return servico.ativo !== false;
+
+            }
+        )
+        .forEach(
+            function (servico) {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value =
+                    servico.id;
+
+                option.textContent =
+                    `${servico.nome} — ${formatarMoeda(servico.preco)}`;
+
+                option.dataset.duracao =
+                    servico.duracao || 0;
+
+                option.dataset.preco =
+                    servico.preco || 0;
+
+                select.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+    if (valorAtual) {
+
+        select.value =
+            valorAtual;
+
+    }
+
 }
+
 
 /* ==========================================================
    CLIENTES
 ========================================================== */
 
-function renderizarClientes(filtro = "") {
+function renderizarClientes() {
 
     const lista =
-        document.getElementById("listaClientes");
-
-    const vazio =
-        document.getElementById("estadoVazioClientes");
+        document.getElementById(
+            "listaClientes"
+        );
 
     if (!lista) {
+
         return;
+
     }
+
 
     const clientes =
-        obterDados(CHAVES.clientes);
+        obterDados(
+            CHAVES.clientes
+        );
 
-    const busca =
-        String(filtro)
-            .trim()
-            .toLowerCase();
 
-    const filtrados =
-        clientes.filter(cliente => {
+    if (
+        !Array.isArray(clientes) ||
+        clientes.length === 0
+    ) {
 
-            const nome =
-                String(cliente.nome || "")
-                    .toLowerCase();
+        lista.innerHTML = `
+            <div class="estado-vazio">
 
-            const telefone =
-                String(cliente.telefone || "")
-                    .toLowerCase();
+                <div class="estado-vazio-icone">
+                    👤
+                </div>
 
-            return (
-                nome.includes(busca) ||
-                telefone.includes(busca)
-            );
-        });
+                <h3>
+                    Nenhum cliente cadastrado
+                </h3>
 
-    const total =
-        document.getElementById("totalClientes");
+                <p>
+                    Cadastre seu primeiro cliente.
+                </p>
 
-    const ativos =
-        document.getElementById("clientesAtivos");
-
-    if (total) {
-        total.textContent =
-            clientes.length;
-    }
-
-    if (ativos) {
-        ativos.textContent =
-            clientes.length;
-    }
-
-    if (filtrados.length === 0) {
-
-        lista.innerHTML = "";
-
-        if (vazio) {
-            vazio.style.display = "block";
-        }
+            </div>
+        `;
 
         return;
+
     }
 
-    if (vazio) {
-        vazio.style.display = "none";
-    }
+
+    const clientesOrdenados =
+        [...clientes].sort(
+            function (a, b) {
+
+                return String(a.nome || "")
+                    .localeCompare(
+                        String(b.nome || ""),
+                        "pt-BR"
+                    );
+
+            }
+        );
+
 
     lista.innerHTML =
-        filtrados.map(cliente => `
+        clientesOrdenados
+            .map(
+                function (cliente) {
 
-            <button
-                class="cliente-card"
-                data-cliente="${cliente.id}"
-                type="button"
-            >
+                    const atendimentos =
+                        contarAtendimentosCliente(
+                            cliente.id
+                        );
 
-                <div class="cliente-avatar">
-                    ${gerarIniciais(cliente.nome)}
-                </div>
 
-                <div class="cliente-info">
+                    return `
+                        <button
+                            type="button"
+                            class="card-cliente"
+                            onclick="abrirFichaCliente('${escaparHTML(cliente.id)}')"
+                        >
 
-                    <strong>
-                        ${escaparHTML(cliente.nome)}
-                    </strong>
+                            <div class="cliente-avatar">
+                                ${gerarIniciais(cliente.nome)}
+                            </div>
 
-                    <span>
-                        ${escaparHTML(
-                            cliente.telefone ||
-                            "Sem telefone"
-                        )}
-                    </span>
+                            <div class="cliente-info">
 
-                </div>
+                                <strong>
+                                    ${escaparHTML(cliente.nome)}
+                                </strong>
 
-                <div class="cliente-total">
-                    ${contarAtendimentosCliente(cliente.id)}
-                </div>
+                                <span>
+                                    ${escaparHTML(cliente.telefone || "Sem telefone")}
+                                </span>
 
-                <span class="cliente-seta">
-                    ›
-                </span>
+                            </div>
 
-            </button>
+                            <div class="cliente-atendimentos">
 
-        `).join("");
+                                <strong>
+                                    ${atendimentos}
+                                </strong>
 
-    document
-        .querySelectorAll("[data-cliente]")
-        .forEach(botao => {
+                                <span>
+                                    atendimentos
+                                </span>
 
-            botao.addEventListener(
-                "click",
-                () =>
-                    abrirFichaCliente(
-                        botao.dataset.cliente
-                    )
-            );
-        });
+                            </div>
+
+                        </button>
+                    `;
+
+                }
+            )
+            .join("");
+
 }
 
 
-function contarAtendimentosCliente(id) {
+/* ==========================================================
+   CONTAR ATENDIMENTOS
+========================================================== */
 
-    return obterDados(
-        CHAVES.agendamentos
-    ).filter(
-        item =>
-            String(item.clienteId) ===
-            String(id)
+function contarAtendimentosCliente(idCliente) {
+
+    const agendamentos =
+        obterDados(
+            CHAVES.agendamentos
+        );
+
+
+    return agendamentos.filter(
+        function (agendamento) {
+
+            return String(
+                agendamento.clienteId
+            ) === String(idCliente)
+
+            &&
+            agendamento.status !==
+                "cancelado";
+
+        }
     ).length;
+
 }
 
 
@@ -1072,54 +1277,41 @@ function contarAtendimentosCliente(id) {
 
 function atualizarSugestoesClientes() {
 
-    const input =
+    const datalist =
         document.getElementById(
-            "clienteNome"
+            "sugestoesClientes"
         );
 
-    const lista =
-        document.getElementById(
-            "clientesSugestoes"
-        );
 
-    if (!input || !lista) {
+    if (!datalist) {
+
         return;
+
     }
+
 
     const clientes =
         obterDados(
             CHAVES.clientes
         );
 
-    lista.innerHTML =
-        clientes
-            .sort(
-                (a, b) =>
-                    String(a.nome || "")
-                        .localeCompare(
-                            String(b.nome || ""),
-                            "pt-BR"
-                        )
-            )
-            .map(
-                cliente => {
 
-                    const telefone =
-                        cliente.telefone || "";
+    datalist.innerHTML =
+        clientes
+            .map(
+                function (cliente) {
 
                     return `
                         <option
-                            value="${escaparHTML(
-                                cliente.nome
-                            )}"
-                            label="${escaparHTML(
-                                telefone
-                            )}"
+                            value="${escaparHTML(cliente.nome)}"
+                            data-id="${escaparHTML(cliente.id)}"
                         ></option>
                     `;
+
                 }
             )
             .join("");
+
 }
 
 
@@ -1129,32 +1321,50 @@ function atualizarSugestoesClientes() {
 
 function abrirNovoCliente() {
 
-    const form =
+    const formulario =
         document.getElementById(
-            "formCliente"
+            "formNovoCliente"
         );
 
-    if (form) {
 
-        form.reset();
+    if (formulario) {
 
-        delete form.dataset.editando;
+        formulario.reset();
+
     }
 
-    const titulo =
-        document.querySelector(
-            "#telaNovoCliente h1"
+
+    const id =
+        document.getElementById(
+            "clienteId"
         );
+
+
+    if (id) {
+
+        id.value = "";
+
+    }
+
+
+    const titulo =
+        document.getElementById(
+            "tituloNovoCliente"
+        );
+
 
     if (titulo) {
 
         titulo.textContent =
-            "Novo Cliente";
+            "Novo cliente";
+
     }
+
 
     mostrarTela(
         "novoCliente"
     );
+
 }
 
 
@@ -1162,151 +1372,137 @@ function abrirNovoCliente() {
    SALVAR CLIENTE
 ========================================================== */
 
-function salvarCliente(event) {
+function salvarCliente() {
 
-    event.preventDefault();
+    const idCampo =
+        document.getElementById(
+            "clienteId"
+        );
 
-    const form =
-        event.currentTarget;
+    const nomeCampo =
+        document.getElementById(
+            "clienteNome"
+        );
+
+    const telefoneCampo =
+        document.getElementById(
+            "clienteTelefone"
+        );
+
+    const observacoesCampo =
+        document.getElementById(
+            "clienteObservacoes"
+        );
+
+
+    const id =
+        idCampo?.value ||
+        gerarId();
 
     const nome =
-        document.getElementById(
-            "novoClienteNome"
-        );
+        nomeCampo?.value
+            .trim() || "";
 
     const telefone =
-        document.getElementById(
-            "novoClienteTelefone"
-        );
+        telefoneCampo?.value
+            .trim() || "";
 
-    const email =
-        document.getElementById(
-            "novoClienteEmail"
-        );
+    const observacoes =
+        observacoesCampo?.value
+            .trim() || "";
 
-    const observacao =
-        document.getElementById(
-            "novoClienteObservacao"
-        );
 
-    if (
-        !nome ||
-        !nome.value.trim()
-    ) {
+    if (!nome) {
 
         mostrarMensagem(
-            "Digite o nome do cliente."
+            "Informe o nome do cliente."
         );
 
         return;
+
     }
 
-    const clientes =
+
+    let clientes =
         obterDados(
             CHAVES.clientes
         );
 
-    const editando =
-        form.dataset.editando;
 
-    if (editando) {
+    const indice =
+        clientes.findIndex(
+            function (cliente) {
 
-        const index =
-            clientes.findIndex(
-                cliente =>
-                    String(cliente.id) ===
-                    String(editando)
-            );
+                return String(cliente.id) ===
+                    String(id);
 
-        if (index === -1) {
-
-            mostrarMensagem(
-                "Cliente não encontrado."
-            );
-
-            return;
-        }
-
-        clientes[index].nome =
-            nome.value.trim();
-
-        clientes[index].telefone =
-            telefone
-                ? telefone.value.trim()
-                : "";
-
-        clientes[index].email =
-            email
-                ? email.value.trim()
-                : "";
-
-        clientes[index].observacao =
-            observacao
-                ? observacao.value.trim()
-                : "";
-
-        mostrarMensagem(
-            "Cliente atualizado."
+            }
         );
+
+
+    const cliente = {
+
+        id: id,
+
+        nome: nome,
+
+        telefone: telefone,
+
+        observacoes: observacoes,
+
+        atualizadoEm:
+            new Date().toISOString()
+
+    };
+
+
+    if (indice >= 0) {
+
+        clientes[indice] =
+            {
+                ...clientes[indice],
+                ...cliente
+            };
 
     } else {
 
-        clientes.push({
+        cliente.criadoEm =
+            new Date().toISOString();
 
-            id:
-                gerarId(),
-
-            nome:
-                nome.value.trim(),
-
-            telefone:
-                telefone
-                    ? telefone.value.trim()
-                    : "",
-
-            email:
-                email
-                    ? email.value.trim()
-                    : "",
-
-            observacao:
-                observacao
-                    ? observacao.value.trim()
-                    : "",
-
-            criadoEm:
-                new Date().toISOString()
-
-        });
-
-        mostrarMensagem(
-            "Cliente cadastrado."
+        clientes.push(
+            cliente
         );
+
     }
 
-    if (
-        !salvarDados(
-            CHAVES.clientes,
-            clientes
-        )
-    ) {
-        return;
-    }
 
-    delete form.dataset.editando;
+    salvarDados(
+        CHAVES.clientes,
+        clientes
+    );
+
+
+    atualizarSugestoesClientes();
 
     renderizarClientes();
 
-    atualizarSugestoesClientes();
+
+    mostrarMensagem(
+        indice >= 0
+            ? "Cliente atualizado."
+            : "Cliente cadastrado."
+    );
+
 
     mostrarTela(
         "clientes"
     );
+
 }
 
 
 /* ==========================================================
-   FICHA DO CLIENTE
+   ABRIR FICHA DO CLIENTE
 ========================================================== */
 
 function abrirFichaCliente(id) {
@@ -1316,39 +1512,68 @@ function abrirFichaCliente(id) {
             CHAVES.clientes
         );
 
+
     const cliente =
         clientes.find(
-            item =>
-                String(item.id) ===
-                String(id)
+            function (item) {
+
+                return String(item.id) ===
+                    String(id);
+
+            }
         );
+
 
     if (!cliente) {
+
+        mostrarMensagem(
+            "Cliente não encontrado."
+        );
+
         return;
+
     }
 
-    clienteFichaAtual =
-        cliente;
 
-    const avatar =
-        document.getElementById(
-            "fichaAvatar"
-        );
+    clienteFichaAtual =
+        cliente.id;
+
 
     const nome =
         document.getElementById(
-            "fichaNome"
+            "fichaClienteNome"
         );
 
     const telefone =
         document.getElementById(
-            "fichaTelefone"
+            "fichaClienteTelefone"
         );
 
-    const observacao =
+    const avatar =
         document.getElementById(
-            "fichaObservacao"
+            "fichaClienteAvatar"
         );
+
+    const observacoes =
+        document.getElementById(
+            "fichaClienteObservacoes"
+        );
+
+
+    if (nome) {
+
+        nome.textContent =
+            cliente.nome;
+
+    }
+
+    if (telefone) {
+
+        telefone.textContent =
+            cliente.telefone ||
+            "Telefone não informado";
+
+    }
 
     if (avatar) {
 
@@ -1356,262 +1581,343 @@ function abrirFichaCliente(id) {
             gerarIniciais(
                 cliente.nome
             );
+
     }
 
-    if (nome) {
+    if (observacoes) {
 
-        nome.textContent =
-            cliente.nome;
+        observacoes.textContent =
+            cliente.observacoes ||
+            "Nenhuma observação.";
+
     }
 
-    if (telefone) {
 
-        telefone.textContent =
-            cliente.telefone ||
-            "Sem telefone";
-    }
+    atualizarResumoFicha();
 
-    if (observacao) {
+    renderizarHistoricoCliente();
 
-        observacao.textContent =
-            cliente.observacao ||
-            "Nenhuma observação cadastrada.";
-    }
-
-    atualizarResumoFicha(
-        cliente
-    );
-
-    renderizarHistoricoCliente(
-        cliente
-    );
 
     mostrarTela(
         "fichaCliente"
     );
+
 }
 
 
-function atualizarResumoFicha(cliente) {
+/* ==========================================================
+   RESUMO DA FICHA
+========================================================== */
+
+function atualizarResumoFicha() {
+
+    if (!clienteFichaAtual) {
+
+        return;
+
+    }
+
 
     const agendamentos =
         obterDados(
             CHAVES.agendamentos
-        ).filter(
-            item =>
-                String(item.clienteId) ===
-                String(cliente.id)
         );
 
-    const atendimentos =
-        document.getElementById(
-            "fichaAtendimentos"
+
+    const historico =
+        agendamentos.filter(
+            function (agendamento) {
+
+                return String(
+                    agendamento.clienteId
+                ) ===
+                    String(clienteFichaAtual);
+
+            }
         );
+
+
+    const realizados =
+        historico.filter(
+            function (agendamento) {
+
+                return (
+                    agendamento.status ===
+                    "concluido"
+                );
+
+            }
+        );
+
 
     const total =
-        document.getElementById(
-            "fichaTotalGasto"
-        );
+        realizados.reduce(
+            function (soma, agendamento) {
 
-    const ultimo =
-        document.getElementById(
-            "fichaUltimoAtendimento"
-        );
+                return soma +
+                    Number(
+                        agendamento.preco ||
+                        0
+                    );
 
-    if (atendimentos) {
-
-        atendimentos.textContent =
-            agendamentos.length;
-    }
-
-    const valorTotal =
-        agendamentos.reduce(
-            (soma, item) =>
-                soma +
-                Number(item.valor || 0),
+            },
             0
         );
 
-    if (total) {
 
-        total.textContent =
-            formatarMoeda(
-                valorTotal
-            );
+    const quantidade =
+        document.getElementById(
+            "fichaClienteQuantidade"
+        );
+
+    const valor =
+        document.getElementById(
+            "fichaClienteTotal"
+        );
+
+
+    if (quantidade) {
+
+        quantidade.textContent =
+            realizados.length;
+
     }
 
-    const concluidos =
-        agendamentos
-            .filter(
-                item =>
-                    normalizarStatus(
-                        item.status
-                    ) === "concluido"
-            )
-            .sort(
-                (a, b) =>
-                    `${b.data}${b.hora}`
-                        .localeCompare(
-                            `${a.data}${a.hora}`
-                        )
-            );
+    if (valor) {
 
-    if (ultimo) {
+        valor.textContent =
+            formatarMoeda(total);
 
-        ultimo.textContent =
-            concluidos.length
-                ? formatarData(
-                    concluidos[0].data
-                )
-                : "—";
     }
+
 }
 
 
-function renderizarHistoricoCliente(cliente) {
+/* ==========================================================
+   HISTÓRICO DO CLIENTE
+========================================================== */
+
+function renderizarHistoricoCliente() {
 
     const lista =
         document.getElementById(
             "historicoCliente"
         );
 
+
     if (!lista) {
+
         return;
+
     }
+
+
+    if (!clienteFichaAtual) {
+
+        lista.innerHTML = "";
+
+        return;
+
+    }
+
 
     const agendamentos =
         obterDados(
             CHAVES.agendamentos
-        )
-        .filter(
-            item =>
-                String(item.clienteId) ===
-                String(cliente.id)
-        )
-        .sort(
-            (a, b) =>
-                `${b.data}${b.hora}`
-                    .localeCompare(
-                        `${a.data}${a.hora}`
-                    )
         );
 
-    if (agendamentos.length === 0) {
+
+    const historico =
+        agendamentos
+            .filter(
+                function (agendamento) {
+
+                    return String(
+                        agendamento.clienteId
+                    ) ===
+                        String(clienteFichaAtual);
+
+                }
+            )
+            .sort(
+                function (a, b) {
+
+                    return String(
+                        b.data || ""
+                    ).localeCompare(
+                        String(a.data || "")
+                    );
+
+                }
+            );
+
+
+    if (historico.length === 0) {
 
         lista.innerHTML = `
-
             <div class="estado-vazio pequeno">
-
-                <div class="vazio-icone">
-                    ✂
-                </div>
 
                 <p>
                     Nenhum atendimento registrado.
                 </p>
 
             </div>
-
         `;
 
         return;
+
     }
 
+
     lista.innerHTML =
-        agendamentos.map(
-            item => `
+        historico
+            .map(
+                function (agendamento) {
 
-            <div class="historico-item">
+                    return `
+                        <div class="historico-item">
 
-                <div>
+                            <div>
 
-                    <strong>
-                        ${escaparHTML(
-                            item.servico
-                        )}
-                    </strong>
+                                <strong>
+                                    ${escaparHTML(agendamento.servicoNome || "Serviço")}
+                                </strong>
 
-                    <span>
-                        ${formatarData(
-                            item.data
-                        )}
-                        ·
-                        ${escaparHTML(
-                            item.hora
-                        )}
-                    </span>
+                                <span>
+                                    ${formatarData(agendamento.data)}
+                                    às
+                                    ${escaparHTML(agendamento.hora || "")}
+                                </span>
 
-                </div>
+                            </div>
 
-                <strong>
-                    ${formatarMoeda(
-                        item.valor
-                    )}
-                </strong>
+                            <div>
 
-            </div>
+                                <strong>
+                                    ${formatarMoeda(agendamento.preco || 0)}
+                                </strong>
 
-            `
-        ).join("");
+                                <span>
+                                    ${escaparHTML(agendamento.status || "")}
+                                </span>
+
+                            </div>
+
+                        </div>
+                    `;
+
+                }
+            )
+            .join("");
+
 }
 
 
 /* ==========================================================
-   EDITAR CLIENTE
+   EDITAR CLIENTE ATUAL
 ========================================================== */
 
 function editarClienteAtual() {
 
     if (!clienteFichaAtual) {
+
         return;
+
     }
 
-    const form =
-        document.getElementById(
-            "formCliente"
+
+    const clientes =
+        obterDados(
+            CHAVES.clientes
         );
 
-    if (!form) {
+
+    const cliente =
+        clientes.find(
+            function (item) {
+
+                return String(item.id) ===
+                    String(clienteFichaAtual);
+
+            }
+        );
+
+
+    if (!cliente) {
+
         return;
+
     }
 
-    document.getElementById(
-        "novoClienteNome"
-    ).value =
-        clienteFichaAtual.nome || "";
 
-    document.getElementById(
-        "novoClienteTelefone"
-    ).value =
-        clienteFichaAtual.telefone || "";
+    const id =
+        document.getElementById(
+            "clienteId"
+        );
 
-    document.getElementById(
-        "novoClienteEmail"
-    ).value =
-        clienteFichaAtual.email || "";
+    const nome =
+        document.getElementById(
+            "clienteNome"
+        );
 
-    document.getElementById(
-        "novoClienteObservacao"
-    ).value =
-        clienteFichaAtual.observacao || "";
+    const telefone =
+        document.getElementById(
+            "clienteTelefone"
+        );
 
-    form.dataset.editando =
-        clienteFichaAtual.id;
+    const observacoes =
+        document.getElementById(
+            "clienteObservacoes"
+        );
+
+
+    if (id) {
+
+        id.value =
+            cliente.id;
+
+    }
+
+    if (nome) {
+
+        nome.value =
+            cliente.nome || "";
+
+    }
+
+    if (telefone) {
+
+        telefone.value =
+            cliente.telefone || "";
+
+    }
+
+    if (observacoes) {
+
+        observacoes.value =
+            cliente.observacoes || "";
+
+    }
+
 
     const titulo =
-        document.querySelector(
-            "#telaNovoCliente h1"
+        document.getElementById(
+            "tituloNovoCliente"
         );
+
 
     if (titulo) {
 
         titulo.textContent =
-            "Editar Cliente";
+            "Editar cliente";
+
     }
+
 
     mostrarTela(
         "novoCliente"
     );
+
 }
 
 
@@ -1622,119 +1928,175 @@ function editarClienteAtual() {
 function excluirClienteAtual() {
 
     if (!clienteFichaAtual) {
+
         return;
+
     }
 
-    if (
-        !confirm(
-            `Excluir o cliente "${clienteFichaAtual.nome}"?`
-        )
-    ) {
+
+    const confirmar =
+        confirm(
+            "Deseja realmente excluir este cliente?"
+        );
+
+
+    if (!confirmar) {
+
         return;
+
     }
+
+
+    let clientes =
+        obterDados(
+            CHAVES.clientes
+        );
+
+
+    clientes =
+        clientes.filter(
+            function (cliente) {
+
+                return String(cliente.id) !==
+                    String(clienteFichaAtual);
+
+            }
+        );
+
+
+    salvarDados(
+        CHAVES.clientes,
+        clientes
+    );
+
+
+    clienteFichaAtual =
+        null;
+
+
+    atualizarSugestoesClientes();
+
+    renderizarClientes();
+
+
+    mostrarMensagem(
+        "Cliente excluído."
+    );
+
+
+    mostrarTela(
+        "clientes"
+    );
+
+}
+
+
+/* ==========================================================
+   WHATSAPP DO CLIENTE
+========================================================== */
+
+function abrirWhatsAppCliente() {
+
+    if (!clienteFichaAtual) {
+
+        return;
+
+    }
+
 
     const clientes =
         obterDados(
             CHAVES.clientes
         );
 
-    const novos =
-        clientes.filter(
-            cliente =>
-                String(cliente.id) !==
-                String(
-                    clienteFichaAtual.id
-                )
+
+    const cliente =
+        clientes.find(
+            function (item) {
+
+                return String(item.id) ===
+                    String(clienteFichaAtual);
+
+            }
         );
 
-    if (
-        !salvarDados(
-            CHAVES.clientes,
-            novos
-        )
-    ) {
+
+    if (!cliente) {
+
         return;
+
     }
 
-    clienteFichaAtual = null;
-
-    renderizarClientes();
-
-    atualizarSugestoesClientes();
-
-    mostrarMensagem(
-        "Cliente excluído."
-    );
-
-    mostrarTela(
-        "clientes"
-    );
-}
-
-
-/* ==========================================================
-   WHATSAPP
-========================================================== */
-
-function abrirWhatsAppCliente() {
-
-    if (!clienteFichaAtual) {
-        return;
-    }
 
     let telefone =
-        clienteFichaAtual.telefone ||
-        "";
-
-    telefone =
-        telefone.replace(
+        String(
+            cliente.telefone || ""
+        )
+        .replace(
             /\D/g,
             ""
         );
 
+
     if (!telefone) {
 
         mostrarMensagem(
-            "Cliente sem telefone."
+            "Este cliente não possui telefone."
         );
 
         return;
+
     }
 
+
     if (
-        !telefone.startsWith("55")
+        telefone.length === 10 ||
+        telefone.length === 11
     ) {
 
         telefone =
-            "55" + telefone;
+            "55" +
+            telefone;
+
     }
 
+
+    const mensagem =
+        encodeURIComponent(
+            `Olá ${cliente.nome}! Tudo bem?`
+        );
+
+
+    const url =
+        `https://wa.me/${telefone}?text=${mensagem}`;
+
+
     window.open(
-        `https://wa.me/${telefone}`,
+        url,
         "_blank"
     );
+
 }
 
 
 /* ==========================================================
-   AGENDA — CALENDÁRIO
+   AGENDA
 ========================================================== */
 
 function renderizarCalendario() {
 
     const container =
         document.getElementById(
-            "datasAgenda"
+            "calendarioDias"
         );
 
-    const mesTitulo =
-        document.getElementById(
-            "mesAgenda"
-        );
 
     if (!container) {
+
         return;
+
     }
+
 
     const ano =
         mesAgendaAtual.getFullYear();
@@ -1742,89 +2104,112 @@ function renderizarCalendario() {
     const mes =
         mesAgendaAtual.getMonth();
 
-    if (mesTitulo) {
 
-        mesTitulo.textContent =
-            `${nomeMes(mes)} ${ano}`;
-    }
+    const primeiroDia =
+        new Date(
+            ano,
+            mes,
+            1
+        );
+
 
     const ultimoDia =
         new Date(
             ano,
             mes + 1,
             0
-        ).getDate();
+        );
+
+
+    const totalDias =
+        ultimoDia.getDate();
+
+
+    const inicioSemana =
+        primeiroDia.getDay();
+
+
+    const hoje =
+        dataHojeISO();
+
 
     let html = "";
 
+
+    for (
+        let i = 0;
+        i < inicioSemana;
+        i++
+    ) {
+
+        html += `
+            <div class="dia-calendario vazio"></div>
+        `;
+
+    }
+
+
     for (
         let dia = 1;
-        dia <= ultimoDia;
+        dia <= totalDias;
         dia++
     ) {
 
         const data =
-            `${ano}-` +
-            `${String(mes + 1).padStart(2, "0")}-` +
-            `${String(dia).padStart(2, "0")}`;
+            `${ano}-${String(mes + 1).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
 
-        const selecionada =
-            data ===
-            dataAgendaSelecionada;
 
-        const hoje =
+        const selecionado =
             data ===
-            dataHojeISO();
+            dataAgendaSelecionada
+                ? "selecionado"
+                : "";
+
+
+        const hojeClasse =
+            data === hoje
+                ? "hoje"
+                : "";
+
 
         html += `
-
             <button
-                class="
-                    data-agenda
-                    ${selecionada ? "selecionada" : ""}
-                    ${hoje ? "hoje" : ""}
-                "
-                data-data="${data}"
                 type="button"
+                class="dia-calendario ${selecionado} ${hojeClasse}"
+                onclick="selecionarDataAgenda('${data}')"
             >
-
-                <span>
-                    ${nomeDiaSemana(data)}
-                </span>
-
-                <strong>
-                    ${dia}
-                </strong>
-
+                ${dia}
             </button>
-
         `;
+
     }
+
 
     container.innerHTML =
         html;
 
-    container
-        .querySelectorAll(
-            "[data-data]"
-        )
-        .forEach(botao => {
 
-            botao.addEventListener(
-                "click",
-                () => {
+    const tituloMes =
+        document.getElementById(
+            "mesAgenda"
+        );
 
-                    dataAgendaSelecionada =
-                        botao.dataset.data;
 
-                    renderizarCalendario();
+    if (tituloMes) {
 
-                    renderizarAgenda();
-                }
-            );
-        });
+        tituloMes.textContent =
+            nomeMes(mes) +
+            " " +
+            ano;
+
+    }
+
 }
 
+
+/* ==========================================================
+   NOME DO MÊS
+========================================================== */
 
 function nomeMes(mes) {
 
@@ -1845,14 +2230,28 @@ function nomeMes(mes) {
 
     ];
 
+
     return meses[mes];
+
 }
 
+
+/* ==========================================================
+   NOME DO DIA
+========================================================== */
 
 function nomeDiaSemana(data) {
 
     const partes =
-        data.split("-");
+        String(data).split("-");
+
+
+    if (partes.length !== 3) {
+
+        return "";
+
+    }
+
 
     const objeto =
         new Date(
@@ -1861,25 +2260,746 @@ function nomeDiaSemana(data) {
             Number(partes[2])
         );
 
+
     const dias = [
 
-        "Dom",
-        "Seg",
-        "Ter",
-        "Qua",
-        "Qui",
-        "Sex",
-        "Sáb"
+        "domingo",
+        "segunda-feira",
+        "terça-feira",
+        "quarta-feira",
+        "quinta-feira",
+        "sexta-feira",
+        "sábado"
 
     ];
+
 
     return dias[
         objeto.getDay()
     ];
+
 }
 
+
 /* ==========================================================
-   AGENDA — STATUS REAL DO FUNCIONAMENTO
+   SELECIONAR DATA
+========================================================== */
+
+function selecionarDataAgenda(data) {
+
+    dataAgendaSelecionada =
+        data;
+
+
+    renderizarCalendario();
+
+    renderizarAgenda();
+
+}
+
+
+/* ==========================================================
+   RENDERIZAR AGENDA
+========================================================== */
+
+function renderizarAgenda() {
+
+    const lista =
+        document.getElementById(
+            "listaAgendamentos"
+        );
+
+
+    if (!lista) {
+
+        return;
+
+    }
+
+
+    renderizarFuncionamentoAgenda();
+
+
+    const agendamentos =
+        obterDados(
+            CHAVES.agendamentos
+        );
+
+
+    const doDia =
+        agendamentos
+            .filter(
+                function (agendamento) {
+
+                    return (
+                        agendamento.data ===
+                        dataAgendaSelecionada
+                    );
+
+                }
+            )
+            .sort(
+                function (a, b) {
+
+                    return String(
+                        a.hora || ""
+                    ).localeCompare(
+                        String(
+                            b.hora || ""
+                        )
+                    );
+
+                }
+            );
+
+
+    const titulo =
+        document.getElementById(
+            "titulo-agenda-dia"
+        );
+
+
+    if (titulo) {
+
+        titulo.textContent =
+            formatarDataLonga(
+                dataAgendaSelecionada
+            );
+
+    }
+
+
+    if (doDia.length === 0) {
+
+        lista.innerHTML = `
+
+            <div class="estado-vazio">
+
+                <div class="estado-vazio-icone">
+                    ✂
+                </div>
+
+                <h3>
+                    Nenhum agendamento
+                </h3>
+
+                <p>
+                    Não há atendimentos para este dia.
+                </p>
+
+                <button
+                    type="button"
+                    class="botao-principal"
+                    onclick="abrirNovoAgendamento()"
+                >
+                    + Novo agendamento
+                </button>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    lista.innerHTML =
+        doDia
+            .map(
+                function (agendamento) {
+
+                    const status =
+                        agendamento.status ||
+                        "agendado";
+
+
+                    const statusTexto = {
+
+                        agendado:
+                            "Agendado",
+
+                        em_atendimento:
+                            "Em atendimento",
+
+                        concluido:
+                            "Concluído",
+
+                        cancelado:
+                            "Cancelado"
+
+                    };
+
+
+                    return `
+
+                        <button
+                            type="button"
+                            class="card-agendamento"
+                            onclick="abrirDetalhesAgendamento('${escaparHTML(agendamento.id)}')"
+                        >
+
+                            <div class="agendamento-hora">
+
+                                <strong>
+                                    ${escaparHTML(agendamento.hora || "")}
+                                </strong>
+
+                                <span>
+                                    ${formatarDuracao(agendamento.duracao || 0)}
+                                </span>
+
+                            </div>
+
+
+                            <div class="agendamento-info">
+
+                                <strong>
+                                    ${escaparHTML(agendamento.clienteNome || "Cliente")}
+                                </strong>
+
+                                <span>
+                                    ${escaparHTML(agendamento.servicoNome || "Serviço")}
+                                </span>
+
+                            </div>
+
+
+                            <span
+                                class="status-agendamento status-${escaparHTML(status)}"
+                            >
+                                ${statusTexto[status] || status}
+                            </span>
+
+                        </button>
+
+                    `;
+
+                }
+            )
+            .join("");
+
+}
+
+
+/* ==========================================================
+   CHAVE DO DIA
+========================================================== */
+
+function obterChaveDia(data) {
+
+    const partes =
+        String(data).split("-");
+
+
+    if (
+        partes.length !== 3
+    ) {
+
+        return null;
+
+    }
+
+
+    const dataObjeto =
+        new Date(
+            Number(partes[0]),
+            Number(partes[1]) - 1,
+            Number(partes[2])
+        );
+
+
+    const dias = [
+
+        "domingo",
+        "segunda",
+        "terca",
+        "quarta",
+        "quinta",
+        "sexta",
+        "sabado"
+
+    ];
+
+
+    return dias[
+        dataObjeto.getDay()
+    ];
+
+}
+
+
+/* ==========================================================
+   CONFIGURAÇÃO
+========================================================== */
+
+const CONFIG_CHAVE =
+    "barberpro_configuracoes";
+
+
+/* ==========================================================
+   HORÁRIOS PADRÃO
+========================================================== */
+
+const HORARIOS_PADRAO = {
+
+    segunda: {
+
+        nome: "Segunda-feira",
+
+        aberto: true,
+
+        abertura: "08:00",
+
+        inicioIntervalo: "13:00",
+
+        fimIntervalo: "15:00",
+
+        fechamento: "18:00"
+
+    },
+
+
+    terca: {
+
+        nome: "Terça-feira",
+
+        aberto: true,
+
+        abertura: "08:00",
+
+        inicioIntervalo: "13:00",
+
+        fimIntervalo: "15:00",
+
+        fechamento: "18:00"
+
+    },
+
+
+    quarta: {
+
+        nome: "Quarta-feira",
+
+        aberto: true,
+
+        abertura: "09:00",
+
+        inicioIntervalo: "13:00",
+
+        fimIntervalo: "15:00",
+
+        fechamento: "18:00"
+
+    },
+
+
+    quinta: {
+
+        nome: "Quinta-feira",
+
+        aberto: true,
+
+        abertura: "09:00",
+
+        inicioIntervalo: "13:00",
+
+        fimIntervalo: "15:00",
+
+        fechamento: "18:00"
+
+    },
+
+
+    sexta: {
+
+        nome: "Sexta-feira",
+
+        aberto: true,
+
+        abertura: "08:00",
+
+        inicioIntervalo: "13:00",
+
+        fimIntervalo: "15:00",
+
+        fechamento: "18:00"
+
+    },
+
+
+    sabado: {
+
+        nome: "Sábado",
+
+        aberto: true,
+
+        abertura: "08:00",
+
+        inicioIntervalo: "",
+
+        fimIntervalo: "",
+
+        fechamento: "14:00"
+
+    },
+
+
+    domingo: {
+
+        nome: "Domingo",
+
+        aberto: false,
+
+        abertura: "08:00",
+
+        inicioIntervalo: "",
+
+        fimIntervalo: "",
+
+        fechamento: "12:00"
+
+    }
+
+};
+
+
+/* ==========================================================
+   OBTER HORÁRIO DE FUNCIONAMENTO
+========================================================== */
+
+function obterHorarioFuncionamento(data) {
+
+    const dia =
+        obterChaveDia(data);
+
+
+    if (!dia) {
+
+        return null;
+
+    }
+
+
+    const padrao =
+        HORARIOS_PADRAO[dia];
+
+
+    if (!padrao) {
+
+        return null;
+
+    }
+
+
+    let configuracoes = {};
+
+
+    try {
+
+        configuracoes =
+            JSON.parse(
+                localStorage.getItem(
+                    CONFIG_CHAVE
+                )
+            ) || {};
+
+    } catch (erro) {
+
+        configuracoes = {};
+
+    }
+
+
+    const horarios =
+        configuracoes.horarios || {};
+
+
+    const salvo =
+        horarios[dia] || {};
+
+
+    return {
+
+        dia: dia,
+
+        nome:
+            padrao.nome,
+
+        aberto:
+            salvo.aberto !== undefined
+                ? salvo.aberto
+                : padrao.aberto,
+
+        abertura:
+            salvo.abertura ||
+            padrao.abertura,
+
+        inicioIntervalo:
+            salvo.inicioIntervalo !== undefined
+                ? salvo.inicioIntervalo
+                : padrao.inicioIntervalo,
+
+        fimIntervalo:
+            salvo.fimIntervalo !== undefined
+                ? salvo.fimIntervalo
+                : padrao.fimIntervalo,
+
+        fechamento:
+            salvo.fechamento ||
+            padrao.fechamento
+
+    };
+
+}
+
+
+/* ==========================================================
+   VALIDAR HORÁRIO DE FUNCIONAMENTO
+========================================================== */
+
+function validarHorarioFuncionamento(
+    data,
+    hora,
+    duracao
+) {
+
+    const horario =
+        obterHorarioFuncionamento(
+            data
+        );
+
+
+    if (!horario) {
+
+        return {
+
+            valido: false,
+
+            mensagem:
+                "Horário de funcionamento não definido."
+
+        };
+
+    }
+
+
+    if (!horario.aberto) {
+
+        return {
+
+            valido: false,
+
+            mensagem:
+                `A barbearia está fechada na ${horario.nome.toLowerCase()}.`
+
+        };
+
+    }
+
+
+    if (
+        !hora ||
+        !horario.abertura ||
+        !horario.fechamento
+    ) {
+
+        return {
+
+            valido: false,
+
+            mensagem:
+                "Informe um horário válido."
+
+        };
+
+    }
+
+
+    const minutosHora =
+        converterHoraParaMinutos(
+            hora
+        );
+
+
+    const abertura =
+        converterHoraParaMinutos(
+            horario.abertura
+        );
+
+
+    const fechamento =
+        converterHoraParaMinutos(
+            horario.fechamento
+        );
+
+
+    const duracaoMinutos =
+        Number(duracao) || 0;
+
+
+    const fimAtendimento =
+        minutosHora +
+        duracaoMinutos;
+
+
+    if (
+        minutosHora <
+        abertura
+    ) {
+
+        return {
+
+            valido: false,
+
+            mensagem:
+                `O atendimento começa às ${horario.abertura}.`
+
+        };
+
+    }
+
+
+    if (
+        minutosHora >=
+        fechamento
+    ) {
+
+        return {
+
+            valido: false,
+
+            mensagem:
+                `O atendimento deve começar antes das ${horario.fechamento}.`
+
+        };
+
+    }
+
+
+    if (
+        fimAtendimento >
+        fechamento
+    ) {
+
+        return {
+
+            valido: false,
+
+            mensagem:
+                "O serviço termina após o horário de fechamento."
+
+        };
+
+    }
+
+
+    const inicioIntervalo =
+        horario.inicioIntervalo
+            ? converterHoraParaMinutos(
+                horario.inicioIntervalo
+            )
+            : null;
+
+
+    const fimIntervalo =
+        horario.fimIntervalo
+            ? converterHoraParaMinutos(
+                horario.fimIntervalo
+            )
+            : null;
+
+
+    if (
+        inicioIntervalo !== null &&
+        fimIntervalo !== null
+    ) {
+
+        if (
+            minutosHora >=
+                inicioIntervalo &&
+            minutosHora <
+                fimIntervalo
+        ) {
+
+            return {
+
+                valido: false,
+
+                mensagem:
+                    `Esse horário está no intervalo da barbearia (${horario.inicioIntervalo} às ${horario.fimIntervalo}).`
+
+            };
+
+        }
+
+
+        if (
+            minutosHora <
+                inicioIntervalo &&
+            fimAtendimento >
+                inicioIntervalo
+        ) {
+
+            return {
+
+                valido: false,
+
+                mensagem:
+                    "O serviço atravessa o intervalo da barbearia."
+
+            };
+
+        }
+
+    }
+
+
+    return {
+
+        valido: true,
+
+        mensagem: ""
+
+    };
+
+}
+
+
+/* ==========================================================
+   CONVERTER HORA PARA MINUTOS
+========================================================== */
+
+function converterHoraParaMinutos(hora) {
+
+    if (!hora) {
+
+        return 0;
+
+    }
+
+
+    const partes =
+        String(hora).split(":");
+
+
+    if (partes.length < 2) {
+
+        return 0;
+
+    }
+
+
+    return (
+        Number(partes[0]) * 60 +
+        Number(partes[1])
+    );
+
+}
+
+
+/* ==========================================================
+   FUNCIONAMENTO NA AGENDA
 ========================================================== */
 
 function renderizarFuncionamentoAgenda() {
@@ -1889,20 +3009,24 @@ function renderizarFuncionamentoAgenda() {
             "funcionamentoStatus"
         );
 
+
     const indicador =
         document.getElementById(
             "funcionamentoIndicador"
         );
+
 
     const horarioFuncionamento =
         document.getElementById(
             "horarioFuncionamento"
         );
 
+
     const intervaloFuncionamento =
         document.getElementById(
             "intervaloFuncionamento"
         );
+
 
     const horarioIntervalo =
         document.getElementById(
@@ -1915,7 +3039,9 @@ function renderizarFuncionamentoAgenda() {
         !indicador ||
         !horarioFuncionamento
     ) {
+
         return;
+
     }
 
 
@@ -1924,10 +3050,6 @@ function renderizarFuncionamentoAgenda() {
             dataAgendaSelecionada
         );
 
-
-    /* ======================================================
-       HORÁRIO NÃO ENCONTRADO
-    ====================================================== */
 
     if (!horario) {
 
@@ -1940,6 +3062,7 @@ function renderizarFuncionamentoAgenda() {
         horarioFuncionamento.textContent =
             "Horário não definido";
 
+
         if (intervaloFuncionamento) {
 
             intervaloFuncionamento.style.display =
@@ -1948,12 +3071,9 @@ function renderizarFuncionamentoAgenda() {
         }
 
         return;
+
     }
 
-
-    /* ======================================================
-       DIA FECHADO
-    ====================================================== */
 
     if (!horario.aberto) {
 
@@ -1966,6 +3086,7 @@ function renderizarFuncionamentoAgenda() {
         horarioFuncionamento.textContent =
             "Não há atendimento neste dia";
 
+
         if (intervaloFuncionamento) {
 
             intervaloFuncionamento.style.display =
@@ -1974,20 +3095,21 @@ function renderizarFuncionamentoAgenda() {
         }
 
         return;
+
     }
 
 
-    /* ======================================================
-       MOSTRAR HORÁRIO DE ATENDIMENTO
-    ====================================================== */
+    status.textContent =
+        "Aberto";
+
+
+    indicador.textContent =
+        "●";
+
 
     horarioFuncionamento.textContent =
         `${horario.abertura} às ${horario.fechamento}`;
 
-
-    /* ======================================================
-       MOSTRAR INTERVALO
-    ====================================================== */
 
     const temIntervalo =
         horario.inicioIntervalo &&
@@ -2016,357 +3138,1260 @@ function renderizarFuncionamentoAgenda() {
 
     }
 
-
-    /* ======================================================
-       VERIFICAR SE A DATA É HOJE
-    ====================================================== */
-
-    const hoje =
-        dataHojeISO();
-
-
-    if (
-        dataAgendaSelecionada !== hoje
-    ) {
-
-        status.textContent =
-            "Aberto";
-
-        indicador.textContent =
-            "●";
-
-        return;
-    }
-
-
-    /* ======================================================
-       HORÁRIO ATUAL
-    ====================================================== */
-
-    const agora =
-        new Date();
-
-
-    const minutosAgora =
-        agora.getHours() * 60 +
-        agora.getMinutes();
-
-
-    /* ======================================================
-       CONVERTER HORÁRIOS
-    ====================================================== */
-
-    const abertura =
-        horaParaMinutos(
-            horario.abertura
-        );
-
-
-    const fechamento =
-        horaParaMinutos(
-            horario.fechamento
-        );
-
-
-    const inicioIntervalo =
-        horaParaMinutos(
-            horario.inicioIntervalo
-        );
-
-
-    const fimIntervalo =
-        horaParaMinutos(
-            horario.fimIntervalo
-        );
-
-
-    /* ======================================================
-       ANTES DA ABERTURA
-    ====================================================== */
-
-    if (
-        abertura !== null &&
-        minutosAgora < abertura
-    ) {
-
-        status.textContent =
-            "Fechado";
-
-        indicador.textContent =
-            "●";
-
-        return;
-    }
-
-
-    /* ======================================================
-       DEPOIS DO FECHAMENTO
-    ====================================================== */
-
-    if (
-        fechamento !== null &&
-        minutosAgora >= fechamento
-    ) {
-
-        status.textContent =
-            "Fechado";
-
-        indicador.textContent =
-            "●";
-
-        return;
-    }
-
-
-    /* ======================================================
-       DURANTE O INTERVALO
-    ====================================================== */
-
-    if (
-        inicioIntervalo !== null &&
-        fimIntervalo !== null &&
-        minutosAgora >= inicioIntervalo &&
-        minutosAgora < fimIntervalo
-    ) {
-
-        status.textContent =
-            "Intervalo";
-
-        indicador.textContent =
-            "●";
-
-        return;
-    }
-
-
-    /* ======================================================
-       DENTRO DO HORÁRIO
-    ====================================================== */
-
-    status.textContent =
-        "Aberto";
-
-    indicador.textContent =
-        "●";
 }
 
-
 /* ==========================================================
-   AGENDA — RENDERIZAÇÃO
+   NOVO AGENDAMENTO
 ========================================================== */
 
-/* ==========================================================
-   AGENDA — RENDERIZAÇÃO
-========================================================== */
+function abrirNovoAgendamento() {
 
-function renderizarAgenda() {
+    agendamentoAtual = null;
 
-    const lista =
+
+    const formulario =
         document.getElementById(
-            "listaAgenda"
+            "formNovoAgendamento"
         );
+
+
+    if (formulario) {
+
+        formulario.reset();
+
+    }
+
+
+    const id =
+        document.getElementById(
+            "agendamentoId"
+        );
+
+
+    if (id) {
+
+        id.value = "";
+
+    }
+
+
+    const data =
+        document.getElementById(
+            "agendamentoData"
+        );
+
+
+    if (data) {
+
+        data.value =
+            dataAgendaSelecionada ||
+            dataHojeISO();
+
+    }
+
+
+    atualizarSelectServicos();
+
+    atualizarSugestoesClientes();
+
 
     const titulo =
         document.getElementById(
-            "tituloDataAgenda"
+            "tituloNovoAgendamento"
         );
 
-    if (!lista) {
-    return;
-}
-
-renderizarFuncionamentoAgenda();
 
     if (titulo) {
 
-        if (
-            dataAgendaSelecionada ===
-            dataHojeISO()
-        ) {
+        titulo.textContent =
+            "Novo agendamento";
 
-            titulo.textContent =
-                "Hoje";
-
-        } else {
-
-            titulo.textContent =
-                formatarDataLonga(
-                    dataAgendaSelecionada
-                );
-        }
     }
+
+
+    atualizarValorServico();
+
+    mostrarTela(
+        "novoAgendamento"
+    );
+
+}
+
+
+/* ==========================================================
+   ABRIR EDIÇÃO DE AGENDAMENTO
+========================================================== */
+
+function editarAgendamento(id) {
 
     const agendamentos =
         obterDados(
             CHAVES.agendamentos
-        )
-        .filter(
-            item =>
-                item.data ===
-                dataAgendaSelecionada
-        )
-        .sort(
-            (a, b) =>
-                String(a.hora || "")
-                    .localeCompare(
-                        String(b.hora || "")
-                    )
         );
 
-    if (
-        agendamentos.length === 0
-    ) {
 
-        lista.innerHTML = `
+    const agendamento =
+        agendamentos.find(
+            function (item) {
 
-            <div class="estado-vazio">
+                return String(item.id) ===
+                    String(id);
 
-                <div class="estado-icone">
-                    📅
-                </div>
+            }
+        );
 
-                <h3>
-                    Agenda livre
-                </h3>
 
-                <p>
-                    Nenhum horário marcado para este dia.
-                </p>
+    if (!agendamento) {
 
-            </div>
-
-        `;
+        mostrarMensagem(
+            "Agendamento não encontrado."
+        );
 
         return;
+
     }
 
-    lista.innerHTML =
-        agendamentos.map(
-            item => {
 
-                const status =
-                    normalizarStatus(
-                        item.status
-                    );
+    agendamentoAtual =
+        agendamento.id;
 
-                return `
 
-                <button
-                    class="item-agenda"
-                    data-agendamento="${item.id}"
-                    type="button"
-                >
+    const campoId =
+        document.getElementById(
+            "agendamentoId"
+        );
 
-                    <div class="hora-agenda">
+    const campoCliente =
+        document.getElementById(
+            "agendamentoCliente"
+        );
 
-                        <strong>
-                            ${escaparHTML(
-                                item.hora ||
-                                "--:--"
-                            )}
-                        </strong>
+    const campoTelefone =
+        document.getElementById(
+            "agendamentoTelefone"
+        );
 
-                    </div>
+    const campoData =
+        document.getElementById(
+            "agendamentoData"
+        );
 
-                    <div class="avatar-agenda">
+    const campoHora =
+        document.getElementById(
+            "agendamentoHora"
+        );
 
-                        ${gerarIniciais(
-                            item.cliente
-                        )}
+    const campoServico =
+        document.getElementById(
+            "agendamentoServico"
+        );
 
-                    </div>
+    const campoObservacoes =
+        document.getElementById(
+            "agendamentoObservacoes"
+        );
 
-                    <div class="info-agenda">
 
-                        <strong>
-                            ${escaparHTML(
-                                item.cliente ||
-                                "Cliente"
-                            )}
-                        </strong>
+    if (campoId) {
 
-                        <span>
-                            ${escaparHTML(
-                                item.servico ||
-                                "Serviço"
-                            )}
-                        </span>
+        campoId.value =
+            agendamento.id;
 
-                    </div>
+    }
 
-                    <span
-                        class="
-                            status
-                            status-${status}
-                        "
-                    >
-                        ${textoStatus(status)}
-                    </span>
 
-                </button>
+    if (campoCliente) {
 
-                `;
-            }
-        ).join("");
+        campoCliente.value =
+            agendamento.clienteNome || "";
 
-    lista
-        .querySelectorAll(
-            "[data-agendamento]"
-        )
-        .forEach(botao => {
+    }
 
-            botao.addEventListener(
-                "click",
-                () =>
-                    abrirDetalhesAgendamento(
-                        botao.dataset
-                            .agendamento
-                    )
-            );
-        });
+
+    if (campoTelefone) {
+
+        campoTelefone.value =
+            agendamento.clienteTelefone || "";
+
+    }
+
+
+    if (campoData) {
+
+        campoData.value =
+            agendamento.data || "";
+
+    }
+
+
+    if (campoHora) {
+
+        campoHora.value =
+            agendamento.hora || "";
+
+    }
+
+
+    atualizarSelectServicos();
+
+
+    if (campoServico) {
+
+        campoServico.value =
+            agendamento.servicoId || "";
+
+    }
+
+
+    if (campoObservacoes) {
+
+        campoObservacoes.value =
+            agendamento.observacoes || "";
+
+    }
+
+
+    const titulo =
+        document.getElementById(
+            "tituloNovoAgendamento"
+        );
+
+
+    if (titulo) {
+
+        titulo.textContent =
+            "Editar agendamento";
+
+    }
+
+
+    atualizarValorServico();
+
+    mostrarTela(
+        "novoAgendamento"
+    );
+
 }
 
 
 /* ==========================================================
-   STATUS
+   ATUALIZAR VALOR DO SERVIÇO
 ========================================================== */
 
-function normalizarStatus(status) {
+function atualizarValorServico() {
 
-    if (
-        status === "atendimento" ||
-        status === "em_atendimento"
-    ) {
+    const select =
+        document.getElementById(
+            "agendamentoServico"
+        );
 
-        return "atendimento";
+
+    const campoPreco =
+        document.getElementById(
+            "agendamentoPreco"
+        );
+
+
+    const campoDuracao =
+        document.getElementById(
+            "agendamentoDuracao"
+        );
+
+
+    if (!select) {
+
+        return;
+
     }
 
+
+    const option =
+        select.options[
+            select.selectedIndex
+        ];
+
+
     if (
-        status === "concluido"
+        !option ||
+        !option.value
     ) {
 
-        return "concluido";
+        if (campoPreco) {
+
+            campoPreco.value =
+                "";
+
+        }
+
+
+        if (campoDuracao) {
+
+            campoDuracao.value =
+                "";
+
+        }
+
+        return;
+
     }
 
-    if (
-        status === "cancelado"
-    ) {
 
-        return "cancelado";
+    const preco =
+        Number(
+            option.dataset.preco
+        ) || 0;
+
+
+    const duracao =
+        Number(
+            option.dataset.duracao
+        ) || 0;
+
+
+    if (campoPreco) {
+
+        campoPreco.value =
+            preco;
+
     }
 
-    return "agendado";
+
+    if (campoDuracao) {
+
+        campoDuracao.value =
+            duracao;
+
+    }
+
 }
 
 
-function textoStatus(status) {
+/* ==========================================================
+   ENCONTRAR CLIENTE PELO NOME
+========================================================== */
+
+function encontrarClientePorNome(nome) {
+
+    const clientes =
+        obterDados(
+            CHAVES.clientes
+        );
+
+
+    if (!nome) {
+
+        return null;
+
+    }
+
+
+    const nomeNormalizado =
+        String(nome)
+            .trim()
+            .toLowerCase();
+
+
+    return clientes.find(
+        function (cliente) {
+
+            return String(
+                cliente.nome || ""
+            )
+            .trim()
+            .toLowerCase() ===
+                nomeNormalizado;
+
+        }
+    ) || null;
+
+}
+
+
+/* ==========================================================
+   PREENCHER TELEFONE DO CLIENTE
+========================================================== */
+
+function preencherTelefoneCliente() {
+
+    const campoCliente =
+        document.getElementById(
+            "agendamentoCliente"
+        );
+
+
+    const campoTelefone =
+        document.getElementById(
+            "agendamentoTelefone"
+        );
+
+
+    if (
+        !campoCliente ||
+        !campoTelefone
+    ) {
+
+        return;
+
+    }
+
+
+    const cliente =
+        encontrarClientePorNome(
+            campoCliente.value
+        );
+
+
+    if (cliente) {
+
+        campoTelefone.value =
+            cliente.telefone || "";
+
+    }
+
+}
+
+
+/* ==========================================================
+   VERIFICAR CONFLITO DE HORÁRIO
+========================================================== */
+
+function verificarConflitoHorario(
+    data,
+    hora,
+    duracao,
+    idIgnorar
+) {
+
+    const agendamentos =
+        obterDados(
+            CHAVES.agendamentos
+        );
+
+
+    const inicioNovo =
+        converterHoraParaMinutos(
+            hora
+        );
+
+
+    const fimNovo =
+        inicioNovo +
+        (Number(duracao) || 0);
+
+
+    const conflito =
+        agendamentos.find(
+            function (agendamento) {
+
+                if (
+                    agendamento.data !==
+                    data
+                ) {
+
+                    return false;
+
+                }
+
+
+                if (
+                    idIgnorar &&
+                    String(agendamento.id) ===
+                    String(idIgnorar)
+                ) {
+
+                    return false;
+
+                }
+
+
+                if (
+                    agendamento.status ===
+                    "cancelado"
+                ) {
+
+                    return false;
+
+                }
+
+
+                const inicioExistente =
+                    converterHoraParaMinutos(
+                        agendamento.hora
+                    );
+
+
+                const fimExistente =
+                    inicioExistente +
+                    (
+                        Number(
+                            agendamento.duracao
+                        ) || 0
+                    );
+
+
+                return (
+                    inicioNovo <
+                    fimExistente
+                )
+                &&
+                (
+                    fimNovo >
+                    inicioExistente
+                );
+
+            }
+        );
+
+
+    return conflito || null;
+
+}
+
+
+/* ==========================================================
+   SALVAR AGENDAMENTO
+========================================================== */
+
+function salvarAgendamento() {
+
+    const campoId =
+        document.getElementById(
+            "agendamentoId"
+        );
+
+
+    const campoCliente =
+        document.getElementById(
+            "agendamentoCliente"
+        );
+
+
+    const campoTelefone =
+        document.getElementById(
+            "agendamentoTelefone"
+        );
+
+
+    const campoData =
+        document.getElementById(
+            "agendamentoData"
+        );
+
+
+    const campoHora =
+        document.getElementById(
+            "agendamentoHora"
+        );
+
+
+    const campoServico =
+        document.getElementById(
+            "agendamentoServico"
+        );
+
+
+    const campoPreco =
+        document.getElementById(
+            "agendamentoPreco"
+        );
+
+
+    const campoDuracao =
+        document.getElementById(
+            "agendamentoDuracao"
+        );
+
+
+    const campoObservacoes =
+        document.getElementById(
+            "agendamentoObservacoes"
+        );
+
+
+    const id =
+        campoId?.value ||
+        gerarId();
+
+
+    const clienteNome =
+        campoCliente?.value
+            .trim() || "";
+
+
+    const clienteTelefone =
+        campoTelefone?.value
+            .trim() || "";
+
+
+    const data =
+        campoData?.value || "";
+
+
+    const hora =
+        campoHora?.value || "";
+
+
+    const servicoId =
+        campoServico?.value || "";
+
+
+    const preco =
+        Number(
+            campoPreco?.value
+        ) || 0;
+
+
+    const duracao =
+        Number(
+            campoDuracao?.value
+        ) || 0;
+
+
+    const observacoes =
+        campoObservacoes?.value
+            .trim() || "";
+
+
+    if (!clienteNome) {
+
+        mostrarMensagem(
+            "Informe o cliente."
+        );
+
+        return;
+
+    }
+
+
+    if (!data) {
+
+        mostrarMensagem(
+            "Informe a data."
+        );
+
+        return;
+
+    }
+
+
+    if (!hora) {
+
+        mostrarMensagem(
+            "Informe o horário."
+        );
+
+        return;
+
+    }
+
+
+    if (!servicoId) {
+
+        mostrarMensagem(
+            "Selecione um serviço."
+        );
+
+        return;
+
+    }
+
+
+    if (duracao <= 0) {
+
+        mostrarMensagem(
+            "O serviço precisa ter uma duração válida."
+        );
+
+        return;
+
+    }
+
+
+    /* ======================================================
+       VALIDAR HORÁRIO DE FUNCIONAMENTO
+    ====================================================== */
+
+    const duracaoSelecionada =
+        campoServico
+            ?.options[
+                campoServico.selectedIndex
+            ]
+            ?.dataset
+            ?.duracao || 0;
+
+
+    const validacaoHorario =
+        validarHorarioFuncionamento(
+            data,
+            hora,
+            Number(
+                duracaoSelecionada
+            )
+        );
+
+
+    if (
+        !validacaoHorario.valido
+    ) {
+
+        mostrarMensagem(
+            validacaoHorario.mensagem
+        );
+
+        return;
+
+    }
+
+
+    /* ======================================================
+       VERIFICAR CONFLITO
+    ====================================================== */
+
+    const conflito =
+        verificarConflitoHorario(
+            data,
+            hora,
+            duracao,
+            id
+        );
+
+
+    if (conflito) {
+
+        mostrarMensagem(
+            `Já existe um atendimento entre ${conflito.hora} e ${calcularHoraFinal(conflito.hora, conflito.duracao)}.`
+        );
+
+        return;
+
+    }
+
+
+    let clientes =
+        obterDados(
+            CHAVES.clientes
+        );
+
+
+    let cliente =
+        encontrarClientePorNome(
+            clienteNome
+        );
+
+
+    /* ======================================================
+       CRIAR CLIENTE AUTOMATICAMENTE
+    ====================================================== */
+
+    if (!cliente) {
+
+        cliente = {
+
+            id: gerarId(),
+
+            nome: clienteNome,
+
+            telefone:
+                clienteTelefone,
+
+            observacoes: "",
+
+            criadoEm:
+                new Date().toISOString(),
+
+            atualizadoEm:
+                new Date().toISOString()
+
+        };
+
+
+        clientes.push(
+            cliente
+        );
+
+
+        salvarDados(
+            CHAVES.clientes,
+            clientes
+        );
+
+    } else {
+
+        if (
+            clienteTelefone &&
+            cliente.telefone !==
+                clienteTelefone
+        ) {
+
+            cliente.telefone =
+                clienteTelefone;
+
+            cliente.atualizadoEm =
+                new Date().toISOString();
+
+
+            salvarDados(
+                CHAVES.clientes,
+                clientes
+            );
+
+        }
+
+    }
+
+
+    const servicos =
+        obterDados(
+            CHAVES.servicos
+        );
+
+
+    const servico =
+        servicos.find(
+            function (item) {
+
+                return String(
+                    item.id
+                ) ===
+                    String(servicoId);
+
+            }
+        );
+
+
+    if (!servico) {
+
+        mostrarMensagem(
+            "Serviço não encontrado."
+        );
+
+        return;
+
+    }
+
+
+    let agendamentos =
+        obterDados(
+            CHAVES.agendamentos
+        );
+
+
+    const indice =
+        agendamentos.findIndex(
+            function (item) {
+
+                return String(
+                    item.id
+                ) ===
+                    String(id);
+
+            }
+        );
+
+
+    const agendamentoAnterior =
+        indice >= 0
+            ? agendamentos[indice]
+            : null;
+
+
+    const agendamento = {
+
+        id: id,
+
+        clienteId:
+            cliente.id,
+
+        clienteNome:
+            cliente.nome,
+
+        clienteTelefone:
+            cliente.telefone ||
+            clienteTelefone,
+
+        data: data,
+
+        hora: hora,
+
+        servicoId:
+            servico.id,
+
+        servicoNome:
+            servico.nome,
+
+        preco:
+            preco || Number(
+                servico.preco
+            ) || 0,
+
+        duracao:
+            duracao || Number(
+                servico.duracao
+            ) || 0,
+
+        observacoes:
+            observacoes,
+
+        status:
+            agendamentoAnterior?.status ||
+            "agendado",
+
+        criadoEm:
+            agendamentoAnterior?.criadoEm ||
+            new Date().toISOString(),
+
+        atualizadoEm:
+            new Date().toISOString()
+
+    };
+
+
+    if (indice >= 0) {
+
+        agendamentos[indice] =
+            agendamento;
+
+    } else {
+
+        agendamentos.push(
+            agendamento
+        );
+
+    }
+
+
+    const salvo =
+        salvarDados(
+            CHAVES.agendamentos,
+            agendamentos
+        );
+
+
+    if (!salvo) {
+
+        return;
+
+    }
+
+
+    dataAgendaSelecionada =
+        data;
+
+
+    const partes =
+        String(data)
+            .split("-");
+
+
+    if (
+        partes.length === 3
+    ) {
+
+        mesAgendaAtual =
+            new Date(
+                Number(partes[0]),
+                Number(partes[1]) - 1,
+                1
+            );
+
+    }
+
+
+    atualizarSugestoesClientes();
+
+    renderizarCalendario();
+
+    renderizarAgenda();
+
+    renderizarClientes();
+
+    atualizarResumoHome();
+
+    renderizarFinanceiro();
+
+
+    mostrarMensagem(
+        indice >= 0
+            ? "Agendamento atualizado."
+            : "Agendamento realizado com sucesso."
+    );
+
+
+    mostrarTela(
+        "agenda"
+    );
+
+}
+
+
+/* ==========================================================
+   CALCULAR HORA FINAL
+========================================================== */
+
+function calcularHoraFinal(
+    hora,
+    duracao
+) {
+
+    const minutos =
+        converterHoraParaMinutos(
+            hora
+        );
+
+
+    const final =
+        minutos +
+        (
+            Number(duracao) || 0
+        );
+
+
+    const horas =
+        Math.floor(
+            final / 60
+        ) % 24;
+
+
+    const minutosFinais =
+        final % 60;
+
+
+    return (
+        String(horas)
+            .padStart(2, "0") +
+        ":" +
+        String(minutosFinais)
+            .padStart(2, "0")
+    );
+
+}
+
+
+/* ==========================================================
+   ABRIR DETALHES DO AGENDAMENTO
+========================================================== */
+
+function abrirDetalhesAgendamento(id) {
+
+    const agendamentos =
+        obterDados(
+            CHAVES.agendamentos
+        );
+
+
+    const agendamento =
+        agendamentos.find(
+            function (item) {
+
+                return String(
+                    item.id
+                ) ===
+                    String(id);
+
+            }
+        );
+
+
+    if (!agendamento) {
+
+        mostrarMensagem(
+            "Agendamento não encontrado."
+        );
+
+        return;
+
+    }
+
+
+    agendamentoAtual =
+        agendamento.id;
+
+
+    const cliente =
+        document.getElementById(
+            "detalhesClienteNome"
+        );
+
+
+    const telefone =
+        document.getElementById(
+            "detalhesClienteTelefone"
+        );
+
+
+    const servico =
+        document.getElementById(
+            "detalhesServico"
+        );
+
+
+    const data =
+        document.getElementById(
+            "detalhesData"
+        );
+
+
+    const hora =
+        document.getElementById(
+            "detalhesHora"
+        );
+
+
+    const preco =
+        document.getElementById(
+            "detalhesPreco"
+        );
+
+
+    const duracao =
+        document.getElementById(
+            "detalhesDuracao"
+        );
+
+
+    const observacoes =
+        document.getElementById(
+            "detalhesObservacoes"
+        );
+
+
+    const status =
+        document.getElementById(
+            "detalhesStatus"
+        );
+
+
+    const avatar =
+        document.getElementById(
+            "detalhesClienteAvatar"
+        );
+
+
+    if (cliente) {
+
+        cliente.textContent =
+            agendamento.clienteNome ||
+            "Cliente";
+
+    }
+
+
+    if (telefone) {
+
+        telefone.textContent =
+            agendamento.clienteTelefone ||
+            "Telefone não informado";
+
+    }
+
+
+    if (servico) {
+
+        servico.textContent =
+            agendamento.servicoNome ||
+            "Serviço";
+
+    }
+
+
+    if (data) {
+
+        data.textContent =
+            formatarData(
+                agendamento.data
+            );
+
+    }
+
+
+    if (hora) {
+
+        hora.textContent =
+            agendamento.hora || "";
+
+    }
+
+
+    if (preco) {
+
+        preco.textContent =
+            formatarMoeda(
+                agendamento.preco || 0
+            );
+
+    }
+
+
+    if (duracao) {
+
+        duracao.textContent =
+            formatarDuracao(
+                agendamento.duracao || 0
+            );
+
+    }
+
+
+    if (observacoes) {
+
+        observacoes.textContent =
+            agendamento.observacoes ||
+            "Nenhuma observação.";
+
+    }
+
+
+    if (status) {
+
+        status.textContent =
+            formatarStatus(
+                agendamento.status
+            );
+
+        status.className =
+            "status-agendamento status-" +
+            (
+                agendamento.status ||
+                "agendado"
+            );
+
+    }
+
+
+    if (avatar) {
+
+        avatar.textContent =
+            gerarIniciais(
+                agendamento.clienteNome
+            );
+
+    }
+
+
+    atualizarBotoesStatus(
+        agendamento
+    );
+
+
+    mostrarTela(
+        "detalhesAgendamento"
+    );
+
+}
+
+
+/* ==========================================================
+   FORMATAR STATUS
+========================================================== */
+
+function formatarStatus(status) {
 
     const nomes = {
 
         agendado:
             "Agendado",
 
-        atendimento:
+        em_atendimento:
             "Em atendimento",
 
         concluido:
@@ -2377,1369 +4402,105 @@ function textoStatus(status) {
 
     };
 
+
     return (
         nomes[status] ||
         "Agendado"
     );
-}
 
-/* ==========================================================
-   NOVO AGENDAMENTO
-========================================================== */
-
-function abrirNovoAgendamento() {
-
-    const form =
-        document.getElementById(
-            "formAgendamento"
-        );
-
-    if (form) {
-        form.reset();
-    }
-
-    atualizarSelectServicos();
-    atualizarSugestoesClientes();
-
-    const data =
-        document.getElementById(
-            "dataAgendamento"
-        );
-
-    if (data) {
-
-        data.value =
-            dataAgendaSelecionada ||
-            dataHojeISO();
-    }
-
-    const valor =
-        document.getElementById(
-            "valor"
-        );
-
-    if (valor) {
-        valor.value = "";
-    }
-
-    mostrarTela("novo");
-}
-
-/* ==========================================================
-   CONTROLE DE HORÁRIO DE FUNCIONAMENTO
-========================================================== */
-
-function obterChaveDia(data) {
-
-    const partes =
-        String(data).split("-");
-
-    if (partes.length !== 3) {
-        return null;
-    }
-
-    const dataObjeto =
-        new Date(
-            Number(partes[0]),
-            Number(partes[1]) - 1,
-            Number(partes[2])
-        );
-
-    const dias = [
-        "domingo",
-        "segunda",
-        "terca",
-        "quarta",
-        "quinta",
-        "sexta",
-        "sabado"
-    ];
-
-    return dias[
-        dataObjeto.getDay()
-    ];
 }
 
 
 /* ==========================================================
-   OBTER CONFIGURAÇÃO DOS HORÁRIOS
+   ATUALIZAR BOTÕES DE STATUS
 ========================================================== */
 
-function obterHorarioFuncionamento(data) {
-
-    const dia =
-        obterChaveDia(data);
-
-    if (!dia) {
-        return null;
-    }
-
-    let configuracoes = {};
-
-    try {
-
-        const salvo =
-            localStorage.getItem(
-                CONFIG_CHAVE
-            );
-
-        if (salvo) {
-
-            configuracoes =
-                JSON.parse(salvo);
-        }
-
-    } catch (erro) {
-
-        console.error(
-            "Erro ao ler horários:",
-            erro
-        );
-    }
-
-
-    const horarios =
-        configuracoes.horarios || {};
-
-
-    const padrao =
-        HORARIOS_PADRAO[dia];
-
-
-    const horarioSalvo =
-        horarios[dia] || {};
-
-
-    if (!padrao) {
-        return null;
-    }
-
-
-    return {
-
-        dia: dia,
-
-        nome:
-            padrao.nome,
-
-        aberto:
-            horarioSalvo.aberto !== undefined
-                ? horarioSalvo.aberto
-                : padrao.aberto,
-
-        abertura:
-            horarioSalvo.abertura ||
-            padrao.abertura,
-
-        inicioIntervalo:
-            horarioSalvo.inicioIntervalo ||
-            padrao.inicioIntervalo,
-
-        fimIntervalo:
-            horarioSalvo.fimIntervalo ||
-            padrao.fimIntervalo,
-
-        fechamento:
-            horarioSalvo.fechamento ||
-            padrao.fechamento
-
-    };
-}
-
-
-/* ==========================================================
-   CONVERTER HORA PARA MINUTOS
-========================================================== */
-
-function horaParaMinutos(hora) {
-
-    if (!hora) {
-        return null;
-    }
-
-    const partes =
-        String(hora).split(":");
-
-    if (partes.length !== 2) {
-        return null;
-    }
-
-    const horas =
-        Number(partes[0]);
-
-    const minutos =
-        Number(partes[1]);
-
-
-    if (
-        !Number.isFinite(horas) ||
-        !Number.isFinite(minutos)
-    ) {
-        return null;
-    }
-
-
-    return (
-        horas * 60 +
-        minutos
-    );
-}
-
-/* ==========================================================
-   HORÁRIOS DISPONÍVEIS PARA AGENDAMENTO
-========================================================== */
-
-function gerarHorariosDisponiveis(
-    data,
-    duracao
+function atualizarBotoesStatus(
+    agendamento
 ) {
 
-    const horario =
-        obterHorarioFuncionamento(data);
-
-    if (!horario || !horario.aberto) {
-        return [];
-    }
-
-
-    const duracaoNumerica =
-        Number(duracao || 0);
-
-
-    /*
-       Se o serviço não tiver duração,
-       usamos blocos de 30 minutos.
-    */
-
-    const duracaoBloco =
-        duracaoNumerica > 0
-            ? duracaoNumerica
-            : 30;
-
-
-    const abertura =
-        horaParaMinutos(
-            horario.abertura
-        );
-
-    const fechamento =
-        horaParaMinutos(
-            horario.fechamento
-        );
-
-
-    if (
-        abertura === null ||
-        fechamento === null
-    ) {
-
-        return [];
-    }
-
-
-    /* ------------------------------------------
-       INTERVALO
-    ------------------------------------------ */
-
-    const inicioIntervalo =
-        horaParaMinutos(
-            horario.inicioIntervalo
-        );
-
-    const fimIntervalo =
-        horaParaMinutos(
-            horario.fimIntervalo
-        );
-
-
-    const intervaloValido =
-        inicioIntervalo !== null &&
-        fimIntervalo !== null &&
-        fimIntervalo > inicioIntervalo;
-
-
-    /* ------------------------------------------
-       AGENDAMENTOS EXISTENTES
-    ------------------------------------------ */
-
-    const agendamentos =
-        obterDados(
-            CHAVES.agendamentos
-        )
-        .filter(item => {
-
-            if (item.data !== data) {
-                return false;
-            }
-
-            /*
-               Cancelados não ocupam horário.
-            */
-
-            return (
-                normalizarStatus(
-                    item.status
-                ) !== "cancelado"
-            );
-        });
-
-
-    const horariosDisponiveis = [];
-
-
-    /* ------------------------------------------
-       GERAR HORÁRIOS
-    ------------------------------------------ */
-
-    for (
-        let inicio = abertura;
-        inicio < fechamento;
-        inicio += duracaoBloco
-    ) {
-
-        const fim =
-            inicio +
-            duracaoNumerica;
-
-
-        /*
-           O serviço precisa terminar
-           antes ou exatamente no fechamento.
-        */
-
-        if (
-            duracaoNumerica > 0 &&
-            fim > fechamento
-        ) {
-            continue;
-        }
-
-
-        /*
-           VERIFICAR INTERVALO
-        */
-
-        if (intervaloValido) {
-
-            /*
-               Começa durante o intervalo.
-            */
-
-            if (
-                inicio >= inicioIntervalo &&
-                inicio < fimIntervalo
-            ) {
-
-                continue;
-            }
-
-
-            /*
-               Atravessa o intervalo.
-            */
-
-            if (
-                duracaoNumerica > 0 &&
-                inicio < inicioIntervalo &&
-                fim > inicioIntervalo
-            ) {
-
-                continue;
-            }
-        }
-
-
-        /*
-           VERIFICAR CONFLITO COM
-           AGENDAMENTOS EXISTENTES
-        */
-
-        const conflito =
-            agendamentos.some(
-                agendamento => {
-
-                    const inicioExistente =
-                        horaParaMinutos(
-                            agendamento.hora
-                        );
-
-                    if (
-                        inicioExistente === null
-                    ) {
-                        return false;
-                    }
-
-
-                    const duracaoExistente =
-                        Number(
-                            agendamento.duracao || 0
-                        );
-
-
-                    const fimExistente =
-                        inicioExistente +
-                        Math.max(
-                            duracaoExistente,
-                            0
-                        );
-
-
-                    /*
-                       Se o agendamento antigo
-                       não possuir duração,
-                       consideramos um bloco
-                       de 30 minutos.
-                    */
-
-                    const fimExistenteAjustado =
-                        duracaoExistente > 0
-                            ? fimExistente
-                            : inicioExistente + 30;
-
-
-                    /*
-                       Verifica se os períodos
-                       se sobrepõem.
-                    */
-
-                    return (
-                        inicio <
-                            fimExistenteAjustado &&
-                        (
-                            inicio +
-                            duracaoBloco
-                        ) >
-                            inicioExistente
-                    );
-
-                }
-            );
-
-
-        if (conflito) {
-            continue;
-        }
-
-
-        /*
-           CONVERTER MINUTOS PARA HH:MM
-        */
-
-        const horas =
-            Math.floor(
-                inicio / 60
-            );
-
-        const minutos =
-            inicio % 60;
-
-
-        const horaFormatada =
-            `${String(horas).padStart(2, "0")}:` +
-            `${String(minutos).padStart(2, "0")}`;
-
-
-        horariosDisponiveis.push(
-            horaFormatada
-        );
-    }
-
-
-    return horariosDisponiveis;
-}
-
-/* ==========================================================
-   VALIDAR HORÁRIO DO AGENDAMENTO
-========================================================== */
-
-function validarHorarioFuncionamento(
-    data,
-    hora,
-    duracao
-) {
-
-    const horario =
-        obterHorarioFuncionamento(data);
-
-
-    if (!horario) {
-
-        return {
-            valido: false,
-            mensagem:
-                "Não foi possível verificar o horário."
-        };
-    }
-
-
-    /* ------------------------------------------
-       DIA FECHADO
-    ------------------------------------------ */
-
-    if (!horario.aberto) {
-
-        return {
-            valido: false,
-            mensagem:
-                `A barbearia está fechada na ${horario.nome}.`
-        };
-    }
-
-
-    const inicio =
-        horaParaMinutos(hora);
-
-    const abertura =
-        horaParaMinutos(
-            horario.abertura
-        );
-
-    const fechamento =
-        horaParaMinutos(
-            horario.fechamento
-        );
-
-
-    if (
-        inicio === null ||
-        abertura === null ||
-        fechamento === null
-    ) {
-
-        return {
-            valido: false,
-            mensagem:
-                "Horário de funcionamento inválido."
-        };
-    }
-
-
-    /* ------------------------------------------
-       DURAÇÃO DO SERVIÇO
-    ------------------------------------------ */
-
-    const duracaoNumerica =
-        Number(duracao || 0);
-
-
-    const fim =
-        inicio +
-        Math.max(
-            duracaoNumerica,
-            0
-        );
-
-
-    /* ------------------------------------------
-       ANTES DA ABERTURA
-    ------------------------------------------ */
-
-    if (inicio < abertura) {
-
-        return {
-            valido: false,
-            mensagem:
-                `A barbearia abre às ${horario.abertura}.`
-        };
-    }
-
-
-    /* ------------------------------------------
-       DEPOIS DO FECHAMENTO
-    ------------------------------------------ */
-
-    if (inicio >= fechamento) {
-
-        return {
-            valido: false,
-            mensagem:
-                `A barbearia fecha às ${horario.fechamento}.`
-        };
-    }
-
-
-    /* ------------------------------------------
-       SERVIÇO TERMINA DEPOIS DO FECHAMENTO
-    ------------------------------------------ */
-
-    if (
-        duracaoNumerica > 0 &&
-        fim > fechamento
-    ) {
-
-        return {
-            valido: false,
-            mensagem:
-                `Esse serviço termina depois do fechamento (${horario.fechamento}).`
-        };
-    }
-
-
-    /* ------------------------------------------
-       INTERVALO
-    ------------------------------------------ */
-
-    const inicioIntervalo =
-        horaParaMinutos(
-            horario.inicioIntervalo
-        );
-
-    const fimIntervalo =
-        horaParaMinutos(
-            horario.fimIntervalo
-        );
-
-
-    const intervaloValido =
-        inicioIntervalo !== null &&
-        fimIntervalo !== null &&
-        fimIntervalo > inicioIntervalo;
-
-
-    if (intervaloValido) {
-
-
-        /* COMEÇA NO INTERVALO */
-
-        if (
-            inicio >= inicioIntervalo &&
-            inicio < fimIntervalo
-        ) {
-
-            return {
-                valido: false,
-                mensagem:
-                    `Este horário está no intervalo (${horario.inicioIntervalo} às ${horario.fimIntervalo}).`
-            };
-        }
-
-
-        /* ATRAVESSA O INTERVALO */
-
-        if (
-            duracaoNumerica > 0 &&
-            inicio < inicioIntervalo &&
-            fim > inicioIntervalo
-        ) {
-
-            return {
-                valido: false,
-                mensagem:
-                    `O serviço atravessa o intervalo (${horario.inicioIntervalo} às ${horario.fimIntervalo}).`
-            };
-        }
-
-    }
-
-
-    return {
-        valido: true,
-        mensagem: ""
-    };
-}
-
-
-/* ==========================================================
-   SALVAR AGENDAMENTO
-========================================================== */
-
-function salvarAgendamento(event) {
-
-    event.preventDefault();
-
-    try {
-
-        const form =
-            document.getElementById(
-                "formAgendamento"
-            );
-
-        const clienteInput =
-            document.getElementById(
-                "clienteNome"
-            );
-
-        const servicoSelect =
-            document.getElementById(
-                "servico"
-            );
-
-        const dataInput =
-            document.getElementById(
-                "dataAgendamento"
-            );
-
-        const horaInput =
-            document.getElementById(
-                "horaAgendamento"
-            );
-
-        const valorInput =
-            document.getElementById(
-                "valor"
-            );
-
-        const observacaoInput =
-            document.getElementById(
-                "observacao"
-            );
-
-        if (
-            !form ||
-            !clienteInput ||
-            !servicoSelect ||
-            !dataInput ||
-            !horaInput
-        ) {
-
-            mostrarMensagem(
-                "Erro no formulário."
-            );
-
-            return;
-        }
-
-        const clienteNome =
-            clienteInput.value.trim();
-
-        const servicoNome =
-            servicoSelect.value.trim();
-
-        const data =
-            dataInput.value;
-
-        const hora =
-            horaInput.value;
-
-        if (!clienteNome) {
-
-            mostrarMensagem(
-                "Digite o nome do cliente."
-            );
-
-            clienteInput.focus();
-
-            return;
-        }
-
-        if (!servicoNome) {
-
-            mostrarMensagem(
-                "Selecione um serviço."
-            );
-
-            return;
-        }
-
-        if (!data) {
-
-            mostrarMensagem(
-                "Informe a data."
-            );
-
-            return;
-        }
-
-        if (!hora) {
-
-            mostrarMensagem(
-                "Informe o horário."
-            );
-
-            return;
-        }
-
-        if (!testarArmazenamento()) {
-
-            mostrarMensagem(
-                "O armazenamento está indisponível."
-            );
-
-            return;
-        }
-
-        const agendamentos =
-            obterDados(
-                CHAVES.agendamentos
-            );
-
-        const clientes =
-            obterDados(
-                CHAVES.clientes
-            );
-
-        const servicos =
-            obterDados(
-                CHAVES.servicos
-            );
-
-
-        /* HORÁRIO DUPLICADO */
-
-        const horarioOcupado =
-            agendamentos.some(item => {
-
-                const mesmoDia =
-                    item.data === data;
-
-                const mesmaHora =
-                    item.hora === hora;
-
-                const cancelado =
-                    normalizarStatus(
-                        item.status
-                    ) === "cancelado";
-
-                return (
-                    mesmoDia &&
-                    mesmaHora &&
-                    !cancelado
-                );
-            });
-
-        if (horarioOcupado) {
-
-            mostrarMensagem(
-                "Este horário já está ocupado."
-            );
-
-            return;
-        }
-
-/* ==================================================
-   VERIFICAR HORÁRIO DE FUNCIONAMENTO
-================================================== */
-
-const duracaoSelecionada =
-    servicoSelect.options[
-        servicoSelect.selectedIndex
-    ]?.dataset.duracao || 0;
-
-
-const validacaoHorario =
-    validarHorarioFuncionamento(
-        data,
-        hora,
-        Number(duracaoSelecionada)
-    );
-
-
-if (!validacaoHorario.valido) {
-
-    mostrarMensagem(
-        validacaoHorario.mensagem
-    );
-
-    return;
-}
-        /* LOCALIZAR CLIENTE */
-
-        let cliente =
-            clientes.find(item =>
-                String(
-                    item.nome || ""
-                )
-                .trim()
-                .toLowerCase() ===
-                clienteNome.toLowerCase()
-            );
-
-
-        /* CRIAR CLIENTE AUTOMATICAMENTE */
-
-        if (!cliente) {
-
-            cliente = {
-
-                id:
-                    gerarId(),
-
-                nome:
-                    clienteNome,
-
-                telefone:
-                    "",
-
-                email:
-                    "",
-
-                observacao:
-                    "",
-
-                criadoEm:
-                    new Date()
-                        .toISOString()
-
-            };
-
-            clientes.push(cliente);
-
-            if (
-                !salvarDados(
-                    CHAVES.clientes,
-                    clientes
-                )
-            ) {
-
-                mostrarMensagem(
-                    "Não foi possível criar o cliente."
-                );
-
-                return;
-            }
-        }
-
-
-        /* LOCALIZAR SERVIÇO */
-
-        const servico =
-            servicos.find(item =>
-                String(
-                    item.nome || ""
-                ).trim() ===
-                servicoNome
-            );
-
-
-        /* VALOR */
-
-        let valor = 0;
-
-        if (
-            valorInput &&
-            valorInput.value !== ""
-        ) {
-
-            valor =
-                Number(
-                    String(
-                        valorInput.value
-                    )
-                    .trim()
-                    .replace(",", ".")
-                );
-        }
-
-        if (!Number.isFinite(valor)) {
-
-            valor =
-                servico
-                    ? Number(
-                        servico.preco || 0
-                    )
-                    : 0;
-        }
-
-
-        /* DURAÇÃO */
-
-        const duracao =
-            servico
-                ? Number(
-                    servico.duracao || 0
-                )
-                : 0;
-
-
-        /* OBSERVAÇÃO */
-
-        const observacao =
-            observacaoInput
-                ? observacaoInput.value.trim()
-                : "";
-
-
-        /* NOVO AGENDAMENTO */
-
-        const novoAgendamento = {
-
-            id:
-                gerarId(),
-
-            clienteId:
-                cliente.id,
-
-            cliente:
-                cliente.nome,
-
-            telefone:
-                cliente.telefone || "",
-
-            servico:
-                servicoNome,
-
-            data:
-                data,
-
-            hora:
-                hora,
-
-            valor:
-                valor,
-
-            duracao:
-                duracao,
-
-            observacao:
-                observacao,
-
-            status:
-                "agendado",
-
-            criadoEm:
-                new Date()
-                    .toISOString()
-
-        };
-
-
-        agendamentos.push(
-            novoAgendamento
-        );
-
-
-        if (
-            !salvarDados(
-                CHAVES.agendamentos,
-                agendamentos
-            )
-        ) {
-
-            mostrarMensagem(
-                "Não foi possível salvar o agendamento."
-            );
-
-            return;
-        }
-
-
-        /* CONFERÊNCIA */
-
-        const conferidos =
-            obterDados(
-                CHAVES.agendamentos
-            );
-
-        const encontrado =
-            conferidos.some(
-                item =>
-                    String(item.id) ===
-                    String(
-                        novoAgendamento.id
-                    )
-            );
-
-        if (!encontrado) {
-
-            mostrarMensagem(
-                "O agendamento não foi gravado."
-            );
-
-            return;
-        }
-
-
-        /* ATUALIZAR AGENDA */
-
-        dataAgendaSelecionada =
-            data;
-
-        const partes =
-            data.split("-");
-
-        if (partes.length === 3) {
-
-            mesAgendaAtual =
-                new Date(
-                    Number(partes[0]),
-                    Number(partes[1]) - 1,
-                    1
-                );
-        }
-
-
-        renderizarCalendario();
-        renderizarAgenda();
-        renderizarClientes();
-        atualizarSugestoesClientes();
-        atualizarResumoHome();
-        renderizarFinanceiro();
-
-
-        if (form) {
-            form.reset();
-        }
-
-        mostrarTela("agenda");
-
-        mostrarMensagem(
-            "Agendamento salvo com sucesso!"
-        );
-
-    } catch (erro) {
-
-        console.error(
-            "BARBERPRO ERRO:",
-            erro
-        );
-
-        mostrarMensagem(
-            "Erro ao salvar o agendamento."
-        );
-    }
-}
-
-
-/* ==========================================================
-   DETALHES DO AGENDAMENTO
-========================================================== */
-
-function abrirDetalhesAgendamento(id) {
-
-    const agendamentos =
-        obterDados(
-            CHAVES.agendamentos
-        );
-
-    const agendamento =
-        agendamentos.find(
-            item =>
-                String(item.id) ===
-                String(id)
-        );
-
-    if (!agendamento) {
-        return;
-    }
-
-    agendamentoAtual =
-        agendamento;
-
-    const clientes =
-        obterDados(
-            CHAVES.clientes
-        );
-
-    const cliente =
-        clientes.find(
-            item =>
-                String(item.id) ===
-                String(
-                    agendamento.clienteId
-                )
-        );
-
-    const servicos =
-        obterDados(
-            CHAVES.servicos
-        );
-
-    const servico =
-        servicos.find(
-            item =>
-                item.nome ===
-                agendamento.servico
-        );
-
-    const nome =
-        agendamento.cliente ||
-        cliente?.nome ||
-        "Cliente";
-
-    const telefone =
-        cliente?.telefone ||
-        agendamento.telefone ||
-        "Sem telefone";
-
-    const duracao =
-        Number(
-            agendamento.duracao ||
-            servico?.duracao ||
-            0
-        );
-
-    const valor =
-        Number(
-            agendamento.valor ??
-            servico?.preco ??
-            0
-        );
-
-    const status =
-        normalizarStatus(
-            agendamento.status
-        );
-
-
-    const avatar =
-        document.getElementById(
-            "detalheAvatar"
-        );
-
-    const nomeEl =
-        document.getElementById(
-            "detalheCliente"
-        );
-
-    const telefoneEl =
-        document.getElementById(
-            "detalheTelefone"
-        );
-
-    const servicoEl =
-        document.getElementById(
-            "detalheServico"
-        );
-
-    const dataEl =
-        document.getElementById(
-            "detalheData"
-        );
-
-    const horaEl =
-        document.getElementById(
-            "detalheHora"
-        );
-
-    const duracaoEl =
-        document.getElementById(
-            "detalheDuracao"
-        );
-
-    const valorEl =
-        document.getElementById(
-            "detalheValor"
-        );
-
-    const statusEl =
-        document.getElementById(
-            "detalheStatus"
-        );
-
-    const observacaoEl =
-        document.getElementById(
-            "detalheObservacao"
-        );
-
-
-    if (avatar) {
-        avatar.textContent =
-            gerarIniciais(nome);
-    }
-
-    if (nomeEl) {
-        nomeEl.textContent =
-            nome;
-    }
-
-    if (telefoneEl) {
-        telefoneEl.textContent =
-            telefone;
-    }
-
-    if (servicoEl) {
-        servicoEl.textContent =
-            agendamento.servico || "—";
-    }
-
-    if (dataEl) {
-        dataEl.textContent =
-            formatarData(
-                agendamento.data
-            );
-    }
-
-    if (horaEl) {
-        horaEl.textContent =
-            agendamento.hora || "—";
-    }
-
-    if (duracaoEl) {
-        duracaoEl.textContent =
-            formatarDuracao(duracao);
-    }
-
-    if (valorEl) {
-        valorEl.textContent =
-            formatarMoeda(valor);
-    }
-
-    if (statusEl) {
-
-        statusEl.className =
-            `status status-${status}`;
-
-        statusEl.textContent =
-            textoStatus(status);
-    }
-
-    if (observacaoEl) {
-
-        observacaoEl.textContent =
-            agendamento.observacao ||
-            "Nenhuma observação.";
-    }
-
-    atualizarBotoesAtendimento(
-        status
-    );
-
-    mostrarTela("detalhes");
-}
-
-
-/* ==========================================================
-   BOTÕES DE ATENDIMENTO
-========================================================== */
-
-function atualizarBotoesAtendimento(status) {
-
-    const iniciar =
+    const botaoIniciar =
         document.getElementById(
             "btnIniciarAtendimento"
         );
 
-    const concluir =
+
+    const botaoConcluir =
         document.getElementById(
             "btnConcluirAtendimento"
         );
 
-    const cancelar =
+
+    const botaoCancelar =
         document.getElementById(
-            "btnCancelarAtendimento"
+            "btnCancelarAgendamento"
         );
 
-    if (iniciar) {
 
-        iniciar.style.display =
-            status === "agendado"
-                ? "flex"
-                : "none";
-    }
+    const botaoReabrir =
+        document.getElementById(
+            "btnReabrirAgendamento"
+        );
 
-    if (concluir) {
 
-        concluir.style.display =
-            status === "atendimento"
-                ? "flex"
-                : "none";
-    }
+    if (botaoIniciar) {
 
-    if (cancelar) {
-
-        cancelar.style.display =
+        botaoIniciar.style.display =
             (
-                status === "concluido" ||
-                status === "cancelado"
+                agendamento.status ===
+                "agendado"
             )
-                ? "none"
-                : "flex";
+                ? "block"
+                : "none";
+
     }
+
+
+    if (botaoConcluir) {
+
+        botaoConcluir.style.display =
+            (
+                agendamento.status ===
+                "em_atendimento"
+            )
+                ? "block"
+                : "none";
+
+    }
+
+
+    if (botaoCancelar) {
+
+        botaoCancelar.style.display =
+            (
+                agendamento.status !==
+                "concluido" &&
+                agendamento.status !==
+                "cancelado"
+            )
+                ? "block"
+                : "none";
+
+    }
+
+
+    if (botaoReabrir) {
+
+        botaoReabrir.style.display =
+            (
+                agendamento.status ===
+                "cancelado"
+            )
+                ? "block"
+                : "none";
+
+    }
+
 }
 
 
 /* ==========================================================
-   ALTERAR STATUS
+   ALTERAR STATUS DO AGENDAMENTO
 ========================================================== */
 
 function alterarStatusAgendamento(
@@ -3747,1244 +4508,80 @@ function alterarStatusAgendamento(
 ) {
 
     if (!agendamentoAtual) {
+
+        mostrarMensagem(
+            "Agendamento não selecionado."
+        );
+
         return;
+
     }
 
-    const agendamentos =
+
+    let agendamentos =
         obterDados(
             CHAVES.agendamentos
         );
 
-    const index =
+
+    const indice =
         agendamentos.findIndex(
-            item =>
-                String(item.id) ===
-                String(
-                    agendamentoAtual.id
-                )
+            function (item) {
+
+                return String(
+                    item.id
+                ) ===
+                    String(
+                        agendamentoAtual
+                    );
+
+            }
         );
 
-    if (index === -1) {
+
+    if (indice < 0) {
+
+        mostrarMensagem(
+            "Agendamento não encontrado."
+        );
+
         return;
+
     }
 
-    agendamentos[index].status =
+
+    agendamentos[indice].status =
         novoStatus;
 
-    agendamentos[index].atualizadoEm =
-        new Date()
-            .toISOString();
 
-    if (
-        !salvarDados(
-            CHAVES.agendamentos,
-            agendamentos
-        )
-    ) {
-        return;
-    }
+    agendamentos[indice].atualizadoEm =
+        new Date().toISOString();
 
-    agendamentoAtual =
-        agendamentos[index];
 
-    atualizarBotoesAtendimento(
-        novoStatus
+    salvarDados(
+        CHAVES.agendamentos,
+        agendamentos
     );
 
-    const statusEl =
-        document.getElementById(
-            "detalheStatus"
-        );
 
-    if (statusEl) {
-
-        statusEl.className =
-            `status status-${novoStatus}`;
-
-        statusEl.textContent =
-            textoStatus(
-                novoStatus
-            );
-    }
+    atualizarResumoHome();
 
     renderizarAgenda();
+
     renderizarClientes();
-    atualizarResumoHome();
+
     renderizarFinanceiro();
 
+
+    abrirDetalhesAgendamento(
+        agendamentoAtual
+    );
+
+
     mostrarMensagem(
-        textoStatus(novoStatus)
-    );
-}
-
-
-/* ==========================================================
-   MÊS ANTERIOR
-========================================================== */
-
-function mesAnterior() {
-
-    mesAgendaAtual.setMonth(
-        mesAgendaAtual.getMonth() - 1
+        `Status alterado para ${formatarStatus(novoStatus)}.`
     );
 
-    ajustarDataParaMes();
-
-    renderizarCalendario();
-    renderizarAgenda();
-}
-
-
-/* ==========================================================
-   MÊS PRÓXIMO
-========================================================== */
-
-function mesProximo() {
-
-    mesAgendaAtual.setMonth(
-        mesAgendaAtual.getMonth() + 1
-    );
-
-    ajustarDataParaMes();
-
-    renderizarCalendario();
-    renderizarAgenda();
-}
-
-
-/* ==========================================================
-   AJUSTAR DATA AO MÊS
-========================================================== */
-
-function ajustarDataParaMes() {
-
-    const ano =
-        mesAgendaAtual.getFullYear();
-
-    const mes =
-        mesAgendaAtual.getMonth();
-
-    const partes =
-        dataAgendaSelecionada.split("-");
-
-    let dia =
-        Number(partes[2]);
-
-    const ultimo =
-        new Date(
-            ano,
-            mes + 1,
-            0
-        ).getDate();
-
-    if (dia > ultimo) {
-        dia = ultimo;
-    }
-
-    dataAgendaSelecionada =
-        `${ano}-` +
-        `${String(mes + 1).padStart(2, "0")}-` +
-        `${String(dia).padStart(2, "0")}`;
-}
-
-
-/* ==========================================================
-   IR PARA HOJE
-========================================================== */
-
-function irParaHoje() {
-
-    const hoje =
-        new Date();
-
-    dataAgendaSelecionada =
-        dataHojeISO();
-
-    mesAgendaAtual =
-        new Date(
-            hoje.getFullYear(),
-            hoje.getMonth(),
-            1
-        );
-
-    renderizarCalendario();
-    renderizarAgenda();
-}
-
-
-/* ==========================================================
-   RESUMO DA HOME
-========================================================== */
-
-function atualizarResumoHome() {
-
-    const hoje =
-        dataHojeISO();
-
-    const agendamentos =
-        obterDados(
-            CHAVES.agendamentos
-        );
-
-    const clientes =
-        obterDados(
-            CHAVES.clientes
-        );
-
-    const hojeAgendamentos =
-        agendamentos.filter(
-            item =>
-                item.data === hoje &&
-                normalizarStatus(
-                    item.status
-                ) !== "cancelado"
-        );
-
-    const concluidos =
-        hojeAgendamentos.filter(
-            item =>
-                normalizarStatus(
-                    item.status
-                ) === "concluido"
-        );
-
-    const faturamento =
-        concluidos.reduce(
-            (soma, item) =>
-                soma +
-                Number(item.valor || 0),
-            0
-        );
-
-    const cards =
-        document.querySelectorAll(
-            "#telaInicio .card-resumo"
-        );
-
-    if (cards.length >= 3) {
-
-        const atendimento =
-            cards[0].querySelector("strong");
-
-        const faturamentoEl =
-            cards[1].querySelector("strong");
-
-        const clientesEl =
-            cards[2].querySelector("strong");
-
-
-        if (atendimento) {
-
-            atendimento.textContent =
-                hojeAgendamentos.length;
-        }
-
-        if (faturamentoEl) {
-
-            faturamentoEl.textContent =
-                formatarMoeda(
-                    faturamento
-                ).replace(
-                    "R$ ",
-                    ""
-                );
-        }
-
-        if (clientesEl) {
-
-            clientesEl.textContent =
-                clientes.length;
-        }
-    }
-}
-
-
-/* ==========================================================
-   FINANCEIRO
-========================================================== */
-
-function obterDataObjeto(data) {
-
-    if (!data) {
-        return null;
-    }
-
-    const partes =
-        String(data).split("-");
-
-    if (partes.length !== 3) {
-        return null;
-    }
-
-    return new Date(
-        Number(partes[0]),
-        Number(partes[1]) - 1,
-        Number(partes[2])
-    );
-}
-
-
-/* ==========================================================
-   VERIFICAR SE É MESMO DIA
-========================================================== */
-
-function mesmoDia(data1, data2) {
-
-    return data1 === data2;
-}
-
-
-/* ==========================================================
-   VERIFICAR SEMANA ATUAL
-========================================================== */
-
-function pertenceSemanaAtual(data) {
-
-    const objeto =
-        obterDataObjeto(data);
-
-    if (!objeto) {
-        return false;
-    }
-
-    const hoje =
-        obterDataObjeto(
-            dataHojeISO()
-        );
-
-    if (!hoje) {
-        return false;
-    }
-
-    const diaSemana =
-        hoje.getDay();
-
-    const inicio =
-        new Date(hoje);
-
-    inicio.setDate(
-        hoje.getDate() -
-        diaSemana
-    );
-
-    inicio.setHours(
-        0, 0, 0, 0
-    );
-
-    const fim =
-        new Date(inicio);
-
-    fim.setDate(
-        inicio.getDate() + 6
-    );
-
-    fim.setHours(
-        23, 59, 59, 999
-    );
-
-    return (
-        objeto >= inicio &&
-        objeto <= fim
-    );
-}
-
-
-/* ==========================================================
-   FILTRAR CONCLUÍDOS
-========================================================== */
-
-function obterAtendimentosConcluidos() {
-
-    return obterDados(
-        CHAVES.agendamentos
-    ).filter(
-        item =>
-            normalizarStatus(
-                item.status
-            ) === "concluido"
-    );
-}
-
-
-/* ==========================================================
-   RENDERIZAR FINANCEIRO
-========================================================== */
-
-function renderizarFinanceiro() {
-
-    const tela =
-        document.getElementById(
-            "telaFinanceiro"
-        );
-
-    if (!tela) {
-        return;
-    }
-
-    const concluidos =
-        obterAtendimentosConcluidos();
-
-    const hoje =
-        dataHojeISO();
-
-    const anoAtual =
-        new Date().getFullYear();
-
-    const mesAtual =
-        new Date().getMonth();
-
-
-    /* ------------------------------------------
-       FATURAMENTO HOJE
-    ------------------------------------------ */
-
-    const hojeLista =
-        concluidos.filter(
-            item =>
-                mesmoDia(
-                    item.data,
-                    hoje
-                )
-        );
-
-    const faturamentoHoje =
-        hojeLista.reduce(
-            (total, item) =>
-                total +
-                Number(item.valor || 0),
-            0
-        );
-
-
-    /* ------------------------------------------
-       FATURAMENTO SEMANA
-    ------------------------------------------ */
-
-    const semanaLista =
-        concluidos.filter(
-            item =>
-                pertenceSemanaAtual(
-                    item.data
-                )
-        );
-
-    const faturamentoSemana =
-        semanaLista.reduce(
-            (total, item) =>
-                total +
-                Number(item.valor || 0),
-            0
-        );
-
-
-    /* ------------------------------------------
-       FATURAMENTO MÊS
-    ------------------------------------------ */
-
-    const mesLista =
-        concluidos.filter(item => {
-
-            const data =
-                obterDataObjeto(
-                    item.data
-                );
-
-            if (!data) {
-                return false;
-            }
-
-            return (
-                data.getFullYear() ===
-                anoAtual &&
-                data.getMonth() ===
-                mesAtual
-            );
-        });
-
-    const faturamentoMes =
-        mesLista.reduce(
-            (total, item) =>
-                total +
-                Number(item.valor || 0),
-            0
-        );
-
-
-    /* ------------------------------------------
-       TOTAL DE ATENDIMENTOS
-    ------------------------------------------ */
-
-    const totalAtendimentos =
-        mesLista.length;
-
-
-    /* ------------------------------------------
-       TICKET MÉDIO
-    ------------------------------------------ */
-
-    const ticketMedio =
-        totalAtendimentos > 0
-            ? faturamentoMes /
-              totalAtendimentos
-            : 0;
-
-
-    /* ------------------------------------------
-       ATUALIZAR HTML
-    ------------------------------------------ */
-
-    const elementoHoje =
-        document.getElementById(
-            "faturamentoHoje"
-        );
-
-    const elementoSemana =
-        document.getElementById(
-            "faturamentoSemana"
-        );
-
-    const elementoMes =
-        document.getElementById(
-            "faturamentoMes"
-        );
-
-    const elementoAtendimentos =
-        document.getElementById(
-            "totalAtendimentosFinanceiro"
-        );
-
-    const elementoTicket =
-        document.getElementById(
-            "ticketMedio"
-        );
-
-
-    if (elementoHoje) {
-
-        elementoHoje.textContent =
-            formatarMoeda(
-                faturamentoHoje
-            );
-    }
-
-    if (elementoSemana) {
-
-        elementoSemana.textContent =
-            formatarMoeda(
-                faturamentoSemana
-            );
-    }
-
-    if (elementoMes) {
-
-        elementoMes.textContent =
-            formatarMoeda(
-                faturamentoMes
-            );
-    }
-
-    if (elementoAtendimentos) {
-
-        elementoAtendimentos.textContent =
-            totalAtendimentos;
-    }
-
-    if (elementoTicket) {
-
-        elementoTicket.textContent =
-            formatarMoeda(
-                ticketMedio
-            );
-    }
-
-
-    renderizarServicosFinanceiro(
-        mesLista
-    );
-
-    renderizarHistoricoFinanceiro(
-        mesLista
-    );
-
-
-    const vazio =
-        document.getElementById(
-            "estadoVazioFinanceiro"
-        );
-
-    if (vazio) {
-
-        vazio.style.display =
-            mesLista.length === 0
-                ? "block"
-                : "none";
-    }
-}
-
-
-/* ==========================================================
-   SERVIÇOS DO FINANCEIRO
-========================================================== */
-
-function renderizarServicosFinanceiro(
-    atendimentos
-) {
-
-    const lista =
-        document.getElementById(
-            "listaFinanceiroServicos"
-        );
-
-    if (!lista) {
-        return;
-    }
-
-    if (!atendimentos.length) {
-
-        lista.innerHTML = "";
-
-        return;
-    }
-
-
-    const agrupados = {};
-
-
-    atendimentos.forEach(item => {
-
-        const nome =
-            item.servico ||
-            "Serviço";
-
-        if (!agrupados[nome]) {
-
-            agrupados[nome] = {
-
-                quantidade: 0,
-
-                total: 0
-
-            };
-        }
-
-        agrupados[nome].quantidade++;
-
-        agrupados[nome].total +=
-            Number(item.valor || 0);
-    });
-
-
-    const servicos =
-        Object.entries(
-            agrupados
-        )
-        .sort(
-            (a, b) =>
-                b[1].quantidade -
-                a[1].quantidade
-        );
-
-
-    lista.innerHTML =
-        servicos.map(
-            ([nome, dados]) => `
-
-            <div class="financeiro-servico-item">
-
-                <div class="financeiro-servico-info">
-
-                    <div class="financeiro-servico-icone">
-                        ✂
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            ${escaparHTML(nome)}
-                        </strong>
-
-                        <span>
-                            ${dados.quantidade}
-                            ${
-                                dados.quantidade === 1
-                                    ? "atendimento"
-                                    : "atendimentos"
-                            }
-                        </span>
-
-                    </div>
-
-                </div>
-
-                <div class="financeiro-servico-total">
-
-                    <strong>
-                        ${formatarMoeda(
-                            dados.total
-                        )}
-                    </strong>
-
-                    <small>
-                        faturado
-                    </small>
-
-                </div>
-
-            </div>
-
-            `
-        )
-        .join("");
-}
-
-
-/* ==========================================================
-   HISTÓRICO FINANCEIRO
-========================================================== */
-
-function renderizarHistoricoFinanceiro(
-    atendimentos
-) {
-
-    const lista =
-        document.getElementById(
-            "historicoFinanceiro"
-        );
-
-    if (!lista) {
-        return;
-    }
-
-    const ordenados =
-        [...atendimentos]
-            .sort(
-                (a, b) =>
-                    `${b.data}${b.hora}`
-                        .localeCompare(
-                            `${a.data}${a.hora}`
-                        )
-            );
-
-
-    if (!ordenados.length) {
-
-        lista.innerHTML = "";
-
-        return;
-    }
-
-
-    lista.innerHTML =
-        ordenados.map(
-            item => `
-
-            <div class="financeiro-historico-item">
-
-                <div class="financeiro-historico-info">
-
-                    <strong>
-                        ${escaparHTML(
-                            item.cliente ||
-                            "Cliente"
-                        )}
-                    </strong>
-
-                    <span>
-                        ${escaparHTML(
-                            item.servico ||
-                            "Serviço"
-                        )}
-                        ·
-                        ${formatarData(
-                            item.data
-                        )}
-                        ·
-                        ${escaparHTML(
-                            item.hora ||
-                            "--:--"
-                        )}
-                    </span>
-
-                </div>
-
-                <strong
-                    class="financeiro-historico-valor"
-                >
-                    ${formatarMoeda(
-                        item.valor
-                    )}
-                </strong>
-
-            </div>
-
-            `
-        )
-        .join("");
-}
-
-
-/* ==========================================================
-   NAVEGAÇÃO
-========================================================== */
-
-document
-    .querySelectorAll(".nav-item")
-    .forEach(item => {
-
-        item.addEventListener(
-            "click",
-            () => {
-
-                const destino =
-                    item.dataset.tela;
-
-                if (
-                    destino === "mais"
-                ) {
-
-                    renderizarFinanceiro();
-
-                    mostrarTela(
-                        "financeiro"
-                    );
-
-                    return;
-                }
-
-
-                if (
-                    destino === "agenda"
-                ) {
-
-                    renderizarCalendario();
-
-                    renderizarAgenda();
-                }
-
-
-                if (
-                    destino === "clientes"
-                ) {
-
-                    renderizarClientes();
-                }
-
-
-                if (
-                    destino === "servicos"
-                ) {
-
-                    renderizarServicos();
-                }
-
-
-                if (
-                    destino === "financeiro"
-                ) {
-
-                    renderizarFinanceiro();
-                }
-
-
-                mostrarTela(
-                    destino
-                );
-            }
-        );
-    });
-
-
-/* ==========================================================
-   HOME — NOVO AGENDAMENTO
-========================================================== */
-
-const btnInicioAgendamento =
-    document.getElementById(
-        "btnInicioAgendamento"
-    );
-
-if (btnInicioAgendamento) {
-
-    btnInicioAgendamento
-        .addEventListener(
-            "click",
-            abrirNovoAgendamento
-        );
-}
-
-
-/* ==========================================================
-   HOME — NOVO CLIENTE
-========================================================== */
-
-const btnInicioCliente =
-    document.getElementById(
-        "btnInicioCliente"
-    );
-
-if (btnInicioCliente) {
-
-    btnInicioCliente
-        .addEventListener(
-            "click",
-            abrirNovoCliente
-        );
-}
-
-
-/* ==========================================================
-   HOME — SERVIÇOS
-========================================================== */
-
-const btnInicioServicos =
-    document.getElementById(
-        "btnInicioServicos"
-    );
-
-if (btnInicioServicos) {
-
-    btnInicioServicos
-        .addEventListener(
-            "click",
-            () => {
-
-                renderizarServicos();
-
-                mostrarTela(
-                    "servicos"
-                );
-            }
-        );
-}
-
-
-/* ==========================================================
-   HOME — FINANCEIRO
-========================================================== */
-
-const btnInicioRelatorios =
-    document.getElementById(
-        "btnInicioRelatorios"
-    );
-
-if (btnInicioRelatorios) {
-
-    btnInicioRelatorios
-        .addEventListener(
-            "click",
-            () => {
-
-                renderizarFinanceiro();
-
-                mostrarTela(
-                    "financeiro"
-                );
-            }
-        );
-}
-
-
-/* ==========================================================
-   HOME — VER AGENDA
-========================================================== */
-
-const btnVerAgenda =
-    document.getElementById(
-        "btnVerAgenda"
-    );
-
-if (btnVerAgenda) {
-
-    btnVerAgenda
-        .addEventListener(
-            "click",
-            () => {
-
-                irParaHoje();
-
-                mostrarTela(
-                    "agenda"
-                );
-            }
-        );
-}
-
-
-/* ==========================================================
-   HOME — NOVO AGENDAMENTO
-========================================================== */
-
-const btnNovoAgendamento =
-    document.getElementById(
-        "btnNovoAgendamento"
-    );
-
-if (btnNovoAgendamento) {
-
-    btnNovoAgendamento
-        .addEventListener(
-            "click",
-            abrirNovoAgendamento
-        );
-}
-
-
-/* ==========================================================
-   AGENDA — BOTÃO +
-========================================================== */
-
-const btnAdicionarAgendamento =
-    document.getElementById(
-        "btnAdicionarAgendamento"
-    );
-
-if (btnAdicionarAgendamento) {
-
-    btnAdicionarAgendamento
-        .addEventListener(
-            "click",
-            abrirNovoAgendamento
-        );
-}
-
-
-/* ==========================================================
-   AGENDA — NOVO
-========================================================== */
-
-const btnNovoAgendamentoAgenda =
-    document.getElementById(
-        "btnNovoAgendamentoAgenda"
-    );
-
-if (btnNovoAgendamentoAgenda) {
-
-    btnNovoAgendamentoAgenda
-        .addEventListener(
-            "click",
-            abrirNovoAgendamento
-        );
-}
-
-
-/* ==========================================================
-   AGENDA — MÊS
-========================================================== */
-
-const btnMesAnterior =
-    document.getElementById(
-        "btnMesAnterior"
-    );
-
-if (btnMesAnterior) {
-
-    btnMesAnterior
-        .addEventListener(
-            "click",
-            mesAnterior
-        );
-}
-
-
-const btnMesProximo =
-    document.getElementById(
-        "btnMesProximo"
-    );
-
-if (btnMesProximo) {
-
-    btnMesProximo
-        .addEventListener(
-            "click",
-            mesProximo
-        );
-}
-
-
-/* ==========================================================
-   AGENDA — HOJE
-========================================================== */
-
-const btnHojeAgenda =
-    document.getElementById(
-        "btnHojeAgenda"
-    );
-
-if (btnHojeAgenda) {
-
-    btnHojeAgenda
-        .addEventListener(
-            "click",
-            irParaHoje
-        );
-}
-
-
-/* ==========================================================
-   VOLTAR AGENDA
-========================================================== */
-
-const voltarAgenda =
-    document.getElementById(
-        "voltarAgenda"
-    );
-
-if (voltarAgenda) {
-
-    voltarAgenda
-        .addEventListener(
-            "click",
-            () =>
-                mostrarTela("inicio")
-        );
-}
-
-
-/* ==========================================================
-   VOLTAR FINANCEIRO
-========================================================== */
-
-const voltarFinanceiro =
-    document.getElementById(
-        "voltarFinanceiro"
-    );
-
-if (voltarFinanceiro) {
-
-    voltarFinanceiro
-        .addEventListener(
-            "click",
-            () =>
-                mostrarTela("inicio")
-        );
-}
-
-
-/* ==========================================================
-   FORMULÁRIO DE AGENDAMENTO
-========================================================== */
-
-const formAgendamento =
-    document.getElementById(
-        "formAgendamento"
-    );
-
-if (formAgendamento) {
-
-    formAgendamento
-        .addEventListener(
-            "submit",
-            salvarAgendamento
-        );
-}
-
-
-/* ==========================================================
-   CLIENTE — SUGESTÕES
-========================================================== */
-
-const clienteNome =
-    document.getElementById(
-        "clienteNome"
-    );
-
-if (clienteNome) {
-
-    clienteNome
-        .addEventListener(
-            "focus",
-            atualizarSugestoesClientes
-        );
-}
-
-
-/* ==========================================================
-   SERVIÇO → PREÇO AUTOMÁTICO
-========================================================== */
-
-const servicoSelect =
-    document.getElementById(
-        "servico"
-    );
-
-if (servicoSelect) {
-
-    servicoSelect
-        .addEventListener(
-            "change",
-            () => {
-
-                const opcao =
-                    servicoSelect
-                        .options[
-                            servicoSelect
-                                .selectedIndex
-                        ];
-
-                const valor =
-                    document.getElementById(
-                        "valor"
-                    );
-
-                if (
-                    valor &&
-                    opcao &&
-                    opcao.dataset.preco
-                ) {
-
-                    valor.value =
-                        Number(
-                            opcao.dataset.preco
-                        ).toFixed(2);
-                }
-            }
-        );
-}
-
-
-/* ==========================================================
-   VOLTAR NOVO AGENDAMENTO
-========================================================== */
-
-const voltarNovoAgendamento =
-    document.getElementById(
-        "voltarNovoAgendamento"
-    );
-
-if (voltarNovoAgendamento) {
-
-    voltarNovoAgendamento
-        .addEventListener(
-            "click",
-            () =>
-                mostrarTela("agenda")
-        );
-}
-
-
-/* ==========================================================
-   DETALHES — VOLTAR
-========================================================== */
-
-const voltarDetalhes =
-    document.getElementById(
-        "voltarDetalhesAgendamento"
-    );
-
-if (voltarDetalhes) {
-
-    voltarDetalhes
-        .addEventListener(
-            "click",
-            () => {
-
-                renderizarAgenda();
-
-                mostrarTela(
-                    "agenda"
-                );
-            }
-        );
 }
 
 
@@ -4992,21 +4589,12 @@ if (voltarDetalhes) {
    INICIAR ATENDIMENTO
 ========================================================== */
 
-const btnIniciar =
-    document.getElementById(
-        "btnIniciarAtendimento"
+function iniciarAtendimento() {
+
+    alterarStatusAgendamento(
+        "em_atendimento"
     );
 
-if (btnIniciar) {
-
-    btnIniciar
-        .addEventListener(
-            "click",
-            () =>
-                alterarStatusAgendamento(
-                    "atendimento"
-                )
-        );
 }
 
 
@@ -5014,316 +4602,1060 @@ if (btnIniciar) {
    CONCLUIR ATENDIMENTO
 ========================================================== */
 
-const btnConcluir =
-    document.getElementById(
-        "btnConcluirAtendimento"
+function concluirAtendimento() {
+
+    alterarStatusAgendamento(
+        "concluido"
     );
 
-if (btnConcluir) {
-
-    btnConcluir
-        .addEventListener(
-            "click",
-            () =>
-                alterarStatusAgendamento(
-                    "concluido"
-                )
-        );
 }
 
 
 /* ==========================================================
-   CANCELAR ATENDIMENTO
+   CANCELAR AGENDAMENTO
 ========================================================== */
 
-const btnCancelar =
-    document.getElementById(
-        "btnCancelarAtendimento"
+function cancelarAgendamento() {
+
+    if (!agendamentoAtual) {
+
+        return;
+
+    }
+
+
+    const confirmar =
+        confirm(
+            "Deseja realmente cancelar este agendamento?"
+        );
+
+
+    if (!confirmar) {
+
+        return;
+
+    }
+
+
+    alterarStatusAgendamento(
+        "cancelado"
     );
 
-if (btnCancelar) {
+}
 
-    btnCancelar
-        .addEventListener(
-            "click",
-            () => {
+
+/* ==========================================================
+   REABRIR AGENDAMENTO
+========================================================== */
+
+function reabrirAgendamento() {
+
+    alterarStatusAgendamento(
+        "agendado"
+    );
+
+}
+
+
+/* ==========================================================
+   EXCLUIR AGENDAMENTO
+========================================================== */
+
+function excluirAgendamento() {
+
+    if (!agendamentoAtual) {
+
+        return;
+
+    }
+
+
+    const confirmar =
+        confirm(
+            "Deseja realmente excluir este agendamento?\n\nEssa ação não poderá ser desfeita."
+        );
+
+
+    if (!confirmar) {
+
+        return;
+
+    }
+
+
+    let agendamentos =
+        obterDados(
+            CHAVES.agendamentos
+        );
+
+
+    agendamentos =
+        agendamentos.filter(
+            function (agendamento) {
+
+                return String(
+                    agendamento.id
+                ) !==
+                    String(
+                        agendamentoAtual
+                    );
+
+            }
+        );
+
+
+    salvarDados(
+        CHAVES.agendamentos,
+        agendamentos
+    );
+
+
+    agendamentoAtual =
+        null;
+
+
+    renderizarAgenda();
+
+    atualizarResumoHome();
+
+    renderizarClientes();
+
+    renderizarFinanceiro();
+
+
+    mostrarMensagem(
+        "Agendamento excluído."
+    );
+
+
+    mostrarTela(
+        "agenda"
+    );
+
+}
+
+
+/* ==========================================================
+   PRÓXIMO MÊS
+========================================================== */
+
+function proximoMesAgenda() {
+
+    mesAgendaAtual.setMonth(
+        mesAgendaAtual.getMonth() + 1
+    );
+
+
+    renderizarCalendario();
+
+}
+
+
+/* ==========================================================
+   MÊS ANTERIOR
+========================================================== */
+
+function mesAnteriorAgenda() {
+
+    mesAgendaAtual.setMonth(
+        mesAgendaAtual.getMonth() - 1
+    );
+
+
+    renderizarCalendario();
+
+}
+
+
+/* ==========================================================
+   IR PARA HOJE
+========================================================== */
+
+function irParaHojeAgenda() {
+
+    const hoje =
+        dataHojeISO();
+
+
+    dataAgendaSelecionada =
+        hoje;
+
+
+    const partes =
+        hoje.split("-");
+
+
+    mesAgendaAtual =
+        new Date(
+            Number(partes[0]),
+            Number(partes[1]) - 1,
+            1
+        );
+
+
+    renderizarCalendario();
+
+    renderizarAgenda();
+
+}
+
+
+/* ==========================================================
+   ATUALIZAR RESUMO DA HOME
+========================================================== */
+
+function atualizarResumoHome() {
+
+    const agendamentos =
+        obterDados(
+            CHAVES.agendamentos
+        );
+
+
+    const hoje =
+        dataHojeISO();
+
+
+    const agendamentosHoje =
+        agendamentos.filter(
+            function (agendamento) {
+
+                return (
+                    agendamento.data ===
+                    hoje
+                )
+                &&
+                agendamento.status !==
+                    "cancelado";
+
+            }
+        );
+
+
+    const concluidosHoje =
+        agendamentos.filter(
+            function (agendamento) {
+
+                return (
+                    agendamento.data ===
+                    hoje
+                )
+                &&
+                agendamento.status ===
+                    "concluido";
+
+            }
+        );
+
+
+    const faturamentoHoje =
+        concluidosHoje.reduce(
+            function (total, agendamento) {
+
+                return total +
+                    Number(
+                        agendamento.preco ||
+                        0
+                    );
+
+            },
+            0
+        );
+
+
+    const totalClientes =
+        obterDados(
+            CHAVES.clientes
+        ).length;
+
+
+    const elementoAgendamentos =
+        document.getElementById(
+            "resumoAgendamentos"
+        );
+
+
+    const elementoClientes =
+        document.getElementById(
+            "resumoClientes"
+        );
+
+
+    const elementoFaturamento =
+        document.getElementById(
+            "resumoFaturamento"
+        );
+
+
+    if (elementoAgendamentos) {
+
+        elementoAgendamentos.textContent =
+            agendamentosHoje.length;
+
+    }
+
+
+    if (elementoClientes) {
+
+        elementoClientes.textContent =
+            totalClientes;
+
+    }
+
+
+    if (elementoFaturamento) {
+
+        elementoFaturamento.textContent =
+            "••••••";
+
+    }
+
+}
+
+
+/* ==========================================================
+   FINANCEIRO
+========================================================== */
+
+function renderizarFinanceiro() {
+
+    const agendamentos =
+        obterDados(
+            CHAVES.agendamentos
+        );
+
+
+    const hoje =
+        new Date();
+
+
+    const ano =
+        hoje.getFullYear();
+
+
+    const mes =
+        hoje.getMonth();
+
+
+    const inicioMes =
+        new Date(
+            ano,
+            mes,
+            1
+        );
+
+
+    const fimMes =
+        new Date(
+            ano,
+            mes + 1,
+            0
+        );
+
+
+    const faturamento =
+        agendamentos
+            .filter(
+                function (agendamento) {
+
+                    if (
+                        agendamento.status !==
+                        "concluido"
+                    ) {
+
+                        return false;
+
+                    }
+
+
+                    const data =
+                        String(
+                            agendamento.data
+                        ).split("-");
+
+
+                    if (
+                        data.length !== 3
+                    ) {
+
+                        return false;
+
+                    }
+
+
+                    const objeto =
+                        new Date(
+                            Number(data[0]),
+                            Number(data[1]) - 1,
+                            Number(data[2])
+                        );
+
+
+                    return (
+                        objeto >=
+                        inicioMes &&
+                        objeto <=
+                        fimMes
+                    );
+
+                }
+            )
+            .reduce(
+                function (
+                    total,
+                    agendamento
+                ) {
+
+                    return total +
+                        Number(
+                            agendamento.preco ||
+                            0
+                        );
+
+                },
+                0
+            );
+
+
+    const elemento =
+        document.getElementById(
+            "financeiroTotal"
+        );
+
+
+    if (elemento) {
+
+        elemento.textContent =
+            formatarMoeda(
+                faturamento
+            );
+
+    }
+
+
+    const quantidade =
+        document.getElementById(
+            "financeiroAtendimentos"
+        );
+
+
+    const atendimentos =
+        agendamentos
+            .filter(
+                function (agendamento) {
+
+                    if (
+                        agendamento.status !==
+                        "concluido"
+                    ) {
+
+                        return false;
+
+                    }
+
+
+                    const partes =
+                        String(
+                            agendamento.data
+                        ).split("-");
+
+
+                    if (
+                        partes.length !== 3
+                    ) {
+
+                        return false;
+
+                    }
+
+
+                    return (
+                        Number(partes[0]) ===
+                            ano &&
+                        Number(partes[1]) - 1 ===
+                            mes
+                    );
+
+                }
+            )
+            .length;
+
+
+    if (quantidade) {
+
+        quantidade.textContent =
+            atendimentos;
+
+    }
+
+
+    renderizarResumoServicosFinanceiro(
+        agendamentos
+    );
+
+}
+
+
+/* ==========================================================
+   RESUMO POR SERVIÇO
+========================================================== */
+
+function renderizarResumoServicosFinanceiro(
+    agendamentos
+) {
+
+    const lista =
+        document.getElementById(
+            "listaResumoServicos"
+        );
+
+
+    if (!lista) {
+
+        return;
+
+    }
+
+
+    const hoje =
+        new Date();
+
+
+    const ano =
+        hoje.getFullYear();
+
+
+    const mes =
+        hoje.getMonth();
+
+
+    const concluido =
+        agendamentos.filter(
+            function (agendamento) {
 
                 if (
-                    !confirm(
-                        "Cancelar este atendimento?"
-                    )
+                    agendamento.status !==
+                    "concluido"
                 ) {
-                    return;
+
+                    return false;
+
                 }
 
-                alterarStatusAgendamento(
-                    "cancelado"
+
+                const partes =
+                    String(
+                        agendamento.data
+                    ).split("-");
+
+
+                return (
+                    partes.length === 3 &&
+                    Number(partes[0]) === ano &&
+                    Number(partes[1]) - 1 === mes
                 );
+
             }
         );
+
+
+    const agrupado = {};
+
+
+    concluido.forEach(
+        function (agendamento) {
+
+            const nome =
+                agendamento.servicoNome ||
+                "Serviço";
+
+
+            if (!agrupado[nome]) {
+
+                agrupado[nome] = {
+
+                    quantidade: 0,
+
+                    valor: 0
+
+                };
+
+            }
+
+
+            agrupado[nome].quantidade += 1;
+
+
+            agrupado[nome].valor +=
+                Number(
+                    agendamento.preco ||
+                    0
+                );
+
+        }
+    );
+
+
+    const nomes =
+        Object.keys(
+            agrupado
+        );
+
+
+    if (nomes.length === 0) {
+
+        lista.innerHTML = `
+            <div class="estado-vazio pequeno">
+
+                <p>
+                    Nenhum atendimento concluído neste mês.
+                </p>
+
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    lista.innerHTML =
+        nomes
+            .sort(
+                function (a, b) {
+
+                    return (
+                        agrupado[b].valor -
+                        agrupado[a].valor
+                    );
+
+                }
+            )
+            .map(
+                function (nome) {
+
+                    const item =
+                        agrupado[nome];
+
+
+                    return `
+
+                        <div class="financeiro-servico">
+
+                            <div>
+
+                                <strong>
+                                    ${escaparHTML(nome)}
+                                </strong>
+
+                                <span>
+                                    ${item.quantidade}
+                                    atendimento(s)
+                                </span>
+
+                            </div>
+
+                            <strong>
+                                ${formatarMoeda(item.valor)}
+                            </strong>
+
+                        </div>
+
+                    `;
+
+                }
+            )
+            .join("");
+
 }
 
 
 /* ==========================================================
-   CLIENTES — BUSCA
+   BOTÃO INÍCIO → RELATÓRIOS / FINANCEIRO
 ========================================================== */
 
-const buscaCliente =
+const btnInicioRelatorios =
     document.getElementById(
-        "buscaCliente"
+        "btnInicioRelatorios"
     );
 
-if (buscaCliente) {
 
-    buscaCliente
-        .addEventListener(
-            "input",
-            () =>
-                renderizarClientes(
-                    buscaCliente.value
+if (btnInicioRelatorios) {
+
+    btnInicioRelatorios.addEventListener(
+        "click",
+        function () {
+
+            renderizarFinanceiro();
+
+            mostrarTela(
+                "financeiro"
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   MENU LATERAL
+========================================================== */
+
+function abrirMenu() {
+
+    const menu =
+        document.getElementById(
+            "menuLateral"
+        );
+
+
+    const overlay =
+        document.getElementById(
+            "menuOverlay"
+        );
+
+
+    if (menu) {
+
+        menu.classList.add(
+            "aberto"
+        );
+
+    }
+
+
+    if (overlay) {
+
+        overlay.classList.add(
+            "ativo"
+        );
+
+    }
+
+
+    document.body.classList.add(
+        "menu-aberto"
+    );
+
+}
+
+
+/* ==========================================================
+   FECHAR MENU
+========================================================== */
+
+function fecharMenu() {
+
+    const menu =
+        document.getElementById(
+            "menuLateral"
+        );
+
+
+    const overlay =
+        document.getElementById(
+            "menuOverlay"
+        );
+
+
+    if (menu) {
+
+        menu.classList.remove(
+            "aberto"
+        );
+
+    }
+
+
+    if (overlay) {
+
+        overlay.classList.remove(
+            "ativo"
+        );
+
+    }
+
+
+    document.body.classList.remove(
+        "menu-aberto"
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÃO MENU
+========================================================== */
+
+const btnMenu =
+    document.getElementById(
+        "btnMenu"
+    );
+
+
+if (btnMenu) {
+
+    btnMenu.addEventListener(
+        "click",
+        function () {
+
+            const menu =
+                document.getElementById(
+                    "menuLateral"
+                );
+
+
+            if (
+                menu &&
+                menu.classList.contains(
+                    "aberto"
                 )
-        );
-}
+            ) {
 
+                fecharMenu();
 
-/* ==========================================================
-   CLIENTES — ADICIONAR
-========================================================== */
+            } else {
 
-const btnAdicionarCliente =
-    document.getElementById(
-        "btnAdicionarCliente"
-    );
+                abrirMenu();
 
-if (btnAdicionarCliente) {
-
-    btnAdicionarCliente
-        .addEventListener(
-            "click",
-            abrirNovoCliente
-        );
-}
-
-
-const btnCadastrarPrimeiroCliente =
-    document.getElementById(
-        "btnCadastrarPrimeiroCliente"
-    );
-
-if (btnCadastrarPrimeiroCliente) {
-
-    btnCadastrarPrimeiroCliente
-        .addEventListener(
-            "click",
-            abrirNovoCliente
-        );
-}
-
-
-/* ==========================================================
-   CLIENTES — FORM
-========================================================== */
-
-const formCliente =
-    document.getElementById(
-        "formCliente"
-    );
-
-if (formCliente) {
-
-    formCliente
-        .addEventListener(
-            "submit",
-            salvarCliente
-        );
-}
-
-
-/* ==========================================================
-   CLIENTES — VOLTAR
-========================================================== */
-
-const voltarClientes =
-    document.getElementById(
-        "voltarClientes"
-    );
-
-if (voltarClientes) {
-
-    voltarClientes
-        .addEventListener(
-            "click",
-            () =>
-                mostrarTela("inicio")
-        );
-}
-
-
-const voltarNovoCliente =
-    document.getElementById(
-        "voltarNovoCliente"
-    );
-
-if (voltarNovoCliente) {
-
-    voltarNovoCliente
-        .addEventListener(
-            "click",
-            () =>
-                mostrarTela("clientes")
-        );
-}
-
-
-const voltarFichaCliente =
-    document.getElementById(
-        "voltarFichaCliente"
-    );
-
-if (voltarFichaCliente) {
-
-    voltarFichaCliente
-        .addEventListener(
-            "click",
-            () => {
-
-                clienteFichaAtual =
-                    null;
-
-                renderizarClientes();
-
-                mostrarTela(
-                    "clientes"
-                );
             }
-        );
+
+        }
+    );
+
 }
 
 
 /* ==========================================================
-   EDITAR CLIENTE
+   OVERLAY DO MENU
 ========================================================== */
 
-const btnEditarCliente =
+const menuOverlay =
     document.getElementById(
-        "btnEditarCliente"
+        "menuOverlay"
     );
 
-if (btnEditarCliente) {
 
-    btnEditarCliente
-        .addEventListener(
-            "click",
-            editarClienteAtual
-        );
+if (menuOverlay) {
+
+    menuOverlay.addEventListener(
+        "click",
+        fecharMenu
+    );
+
 }
 
 
 /* ==========================================================
-   EXCLUIR CLIENTE
+   ITENS DO MENU
 ========================================================== */
 
-const btnExcluirCliente =
-    document.getElementById(
-        "btnExcluirCliente"
+document
+    .querySelectorAll(".menu-item")
+    .forEach(
+        function (item) {
+
+            item.addEventListener(
+                "click",
+                function () {
+
+                    const tela =
+                        item.dataset.menuTela;
+
+
+                    if (!tela) {
+
+                        return;
+
+                    }
+
+
+                    fecharMenu();
+
+
+                    setTimeout(
+                        function () {
+
+                            if (
+                                tela ===
+                                "agenda"
+                            ) {
+
+                                renderizarCalendario();
+
+                                renderizarAgenda();
+
+                            }
+
+
+                            if (
+                                tela ===
+                                "clientes"
+                            ) {
+
+                                renderizarClientes();
+
+                            }
+
+
+                            if (
+                                tela ===
+                                "servicos"
+                            ) {
+
+                                renderizarServicos();
+
+                            }
+
+
+                            if (
+                                tela ===
+                                "financeiro"
+                            ) {
+
+                                renderizarFinanceiro();
+
+                            }
+
+
+                            if (
+                                tela ===
+                                "configuracoes"
+                            ) {
+
+                                carregarConfiguracoes();
+
+                            }
+
+
+                            mostrarTela(
+                                tela
+                            );
+
+                        },
+                        150
+                    );
+
+                }
+            );
+
+        }
     );
 
-if (btnExcluirCliente) {
 
-    btnExcluirCliente
-        .addEventListener(
-            "click",
-            excluirClienteAtual
-        );
+/* ==========================================================
+   BOTÕES DE VOLTAR
+========================================================== */
+
+document
+    .querySelectorAll("[data-voltar]")
+    .forEach(
+        function (botao) {
+
+            botao.addEventListener(
+                "click",
+                function () {
+
+                    const destino =
+                        botao.dataset.voltar ||
+                        "inicio";
+
+
+                    mostrarTela(
+                        destino
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+/* ==========================================================
+   BOTÕES DE NOVO AGENDAMENTO
+========================================================== */
+
+document
+    .querySelectorAll(
+        "[data-acao='novo-agendamento']"
+    )
+    .forEach(
+        function (botao) {
+
+            botao.addEventListener(
+                "click",
+                abrirNovoAgendamento
+            );
+
+        }
+    );
+
+
+/* ==========================================================
+   BOTÃO NOVO CLIENTE
+========================================================== */
+
+const btnNovoCliente =
+    document.getElementById(
+        "btnNovoCliente"
+    );
+
+
+if (btnNovoCliente) {
+
+    btnNovoCliente.addEventListener(
+        "click",
+        abrirNovoCliente
+    );
+
 }
 
 
 /* ==========================================================
-   WHATSAPP
+   BOTÃO NOVO SERVIÇO
 ========================================================== */
 
-const btnWhatsAppCliente =
+const btnNovoServico =
     document.getElementById(
-        "btnWhatsAppCliente"
+        "btnNovoServico"
     );
 
-if (btnWhatsAppCliente) {
 
-    btnWhatsAppCliente
-        .addEventListener(
-            "click",
-            abrirWhatsAppCliente
-        );
+if (btnNovoServico) {
+
+    btnNovoServico.addEventListener(
+        "click",
+        abrirNovoServico
+    );
+
 }
 
 
 /* ==========================================================
-   SERVIÇOS — BOTÕES
+   FORMULÁRIO DE CLIENTE
 ========================================================== */
 
-const btnAdicionarServico =
+const formNovoCliente =
     document.getElementById(
-        "btnAdicionarServico"
+        "formNovoCliente"
     );
 
-if (btnAdicionarServico) {
 
-    btnAdicionarServico
-        .addEventListener(
-            "click",
-            abrirNovoServico
-        );
-}
+if (formNovoCliente) {
 
+    formNovoCliente.addEventListener(
+        "submit",
+        function (evento) {
 
-const btnCadastrarPrimeiroServico =
-    document.getElementById(
-        "btnCadastrarPrimeiroServico"
+            evento.preventDefault();
+
+            salvarCliente();
+
+        }
     );
 
-if (btnCadastrarPrimeiroServico) {
-
-    btnCadastrarPrimeiroServico
-        .addEventListener(
-            "click",
-            abrirNovoServico
-        );
-}
-
-
-/* ==========================================================
-   SERVIÇOS — VOLTAR
-========================================================== */
-
-const voltarServicos =
-    document.getElementById(
-        "voltarServicos"
-    );
-
-if (voltarServicos) {
-
-    voltarServicos
-        .addEventListener(
-            "click",
-            () =>
-                mostrarTela("inicio")
-        );
-}
-
-
-const voltarNovoServico =
-    document.getElementById(
-        "voltarNovoServico"
-    );
-
-if (voltarNovoServico) {
-
-    voltarNovoServico
-        .addEventListener(
-            "click",
-            () =>
-                mostrarTela("servicos")
-        );
 }
 
 
@@ -5331,539 +5663,791 @@ if (voltarNovoServico) {
    FORMULÁRIO DE SERVIÇO
 ========================================================== */
 
-const formServico =
+const formNovoServico =
     document.getElementById(
-        "formServico"
+        "formNovoServico"
     );
 
-if (formServico) {
 
-    formServico
-        .addEventListener(
-            "submit",
-            event => {
+if (formNovoServico) {
 
-                event.preventDefault();
+    formNovoServico.addEventListener(
+        "submit",
+        function (evento) {
 
-                const nome =
-                    document.getElementById(
-                        "novoServicoNome"
-                    );
-
-                const preco =
-                    document.getElementById(
-                        "novoServicoPreco"
-                    );
-
-                const duracao =
-                    document.getElementById(
-                        "novoServicoDuracao"
-                    );
-
-                const ativo =
-                    document.getElementById(
-                        "novoServicoAtivo"
-                    );
-
-                if (
-                    !nome ||
-                    !nome.value.trim()
-                ) {
-
-                    mostrarMensagem(
-                        "Digite o nome do serviço."
-                    );
-
-                    return;
-                }
-
-                const servicos =
-                    obterDados(
-                        CHAVES.servicos
-                    );
-
-                const editando =
-                    formServico
-                        .dataset
-                        .editando;
+            evento.preventDefault();
 
 
-                if (editando) {
-
-                    const index =
-                        servicos.findIndex(
-                            item =>
-                                String(
-                                    item.id
-                                ) ===
-                                String(
-                                    editando
-                                )
-                        );
-
-                    if (
-                        index === -1
-                    ) {
-
-                        mostrarMensagem(
-                            "Serviço não encontrado."
-                        );
-
-                        return;
-                    }
-
-                    servicos[index].nome =
-                        nome.value.trim();
-
-                    servicos[index].preco =
-                        Number(
-                            preco?.value || 0
-                        );
-
-                    servicos[index].duracao =
-                        Number(
-                            duracao?.value || 0
-                        );
-
-                    servicos[index].ativo =
-                        ativo
-                            ? ativo.checked
-                            : true;
-
-                    mostrarMensagem(
-                        "Serviço atualizado."
-                    );
-
-                } else {
-
-                    servicos.push({
-
-                        id:
-                            gerarId(),
-
-                        nome:
-                            nome.value.trim(),
-
-                        preco:
-                            Number(
-                                preco?.value || 0
-                            ),
-
-                        duracao:
-                            Number(
-                                duracao?.value || 0
-                            ),
-
-                        ativo:
-                            ativo
-                                ? ativo.checked
-                                : true,
-
-                        criadoEm:
-                            new Date()
-                                .toISOString()
-
-                    });
-
-                    mostrarMensagem(
-                        "Serviço cadastrado."
-                    );
-                }
-
-
-                if (
-                    !salvarDados(
-                        CHAVES.servicos,
-                        servicos
-                    )
-                ) {
-                    return;
-                }
-
-                delete formServico
-                    .dataset
-                    .editando;
-
-                renderizarServicos();
-
-                atualizarSelectServicos();
-
-                mostrarTela(
-                    "servicos"
+            const campoId =
+                document.getElementById(
+                    "servicoId"
                 );
+
+
+            const campoNome =
+                document.getElementById(
+                    "servicoNome"
+                );
+
+
+            const campoPreco =
+                document.getElementById(
+                    "servicoPreco"
+                );
+
+
+            const campoDuracao =
+                document.getElementById(
+                    "servicoDuracao"
+                );
+
+
+            const id =
+                campoId?.value ||
+                gerarId();
+
+
+            const nome =
+                campoNome?.value
+                    .trim() || "";
+
+
+            const preco =
+                Number(
+                    campoPreco?.value
+                ) || 0;
+
+
+            const duracao =
+                Number(
+                    campoDuracao?.value
+                ) || 0;
+
+
+            if (!nome) {
+
+                mostrarMensagem(
+                    "Informe o nome do serviço."
+                );
+
+                return;
+
             }
-        );
+
+
+            if (preco <= 0) {
+
+                mostrarMensagem(
+                    "Informe um preço válido."
+                );
+
+                return;
+
+            }
+
+
+            if (duracao <= 0) {
+
+                mostrarMensagem(
+                    "Informe a duração do serviço."
+                );
+
+                return;
+
+            }
+
+
+            let servicos =
+                obterDados(
+                    CHAVES.servicos
+                );
+
+
+            const indice =
+                servicos.findIndex(
+                    function (servico) {
+
+                        return String(
+                            servico.id
+                        ) ===
+                            String(id);
+
+                    }
+                );
+
+
+            const servico = {
+
+                id: id,
+
+                nome: nome,
+
+                preco: preco,
+
+                duracao: duracao,
+
+                ativo: true,
+
+                atualizadoEm:
+                    new Date().toISOString()
+
+            };
+
+
+            if (indice >= 0) {
+
+                servicos[indice] =
+                    {
+                        ...servicos[indice],
+                        ...servico
+                    };
+
+            } else {
+
+                servico.criadoEm =
+                    new Date().toISOString();
+
+                servicos.push(
+                    servico
+                );
+
+            }
+
+
+            salvarDados(
+                CHAVES.servicos,
+                servicos
+            );
+
+
+            atualizarSelectServicos();
+
+            renderizarServicos();
+
+
+            mostrarMensagem(
+                indice >= 0
+                    ? "Serviço atualizado."
+                    : "Serviço cadastrado."
+            );
+
+
+            mostrarTela(
+                "servicos"
+            );
+
+        }
+    );
+
 }
 
 
 /* ==========================================================
-   MENU
+   FORMULÁRIO DE AGENDAMENTO
 ========================================================== */
 
-/* =====================================================
-   MENU LATERAL
-   ===================================================== */
-
-const menuLateral = document.getElementById("menuLateral");
-const menuOverlay = document.getElementById("menuOverlay");
-const btnMenu = document.getElementById("btnMenu");
-const btnFecharMenu = document.getElementById("btnFecharMenu");
+const formNovoAgendamento =
+    document.getElementById(
+        "formNovoAgendamento"
+    );
 
 
-function abrirMenu() {
+if (formNovoAgendamento) {
 
-    if (!menuLateral || !menuOverlay) return;
+    formNovoAgendamento.addEventListener(
+        "submit",
+        function (evento) {
 
-    menuLateral.classList.add("ativo");
-    menuOverlay.classList.add("ativo");
+            evento.preventDefault();
 
-    document.body.classList.add("menu-aberto");
-}
+            salvarAgendamento();
 
-
-function fecharMenu() {
-
-    if (!menuLateral || !menuOverlay) return;
-
-    menuLateral.classList.remove("ativo");
-    menuOverlay.classList.remove("ativo");
-
-    document.body.classList.remove("menu-aberto");
-}
-
-
-/* BOTÃO HAMBÚRGUER */
-
-if (btnMenu) {
-
-    btnMenu.addEventListener("click", function () {
-
-        abrirMenu();
-
-    });
+        }
+    );
 
 }
 
 
-/* BOTÃO X */
+/* ==========================================================
+   SELECT DE SERVIÇO
+========================================================== */
 
-if (btnFecharMenu) {
-
-    btnFecharMenu.addEventListener("click", function () {
-
-        fecharMenu();
-
-    });
-
-}
+const selectAgendamentoServico =
+    document.getElementById(
+        "agendamentoServico"
+    );
 
 
-/* CLICAR FORA */
+if (selectAgendamentoServico) {
 
-if (menuOverlay) {
-
-    menuOverlay.addEventListener("click", function () {
-
-        fecharMenu();
-
-    });
+    selectAgendamentoServico.addEventListener(
+        "change",
+        atualizarValorServico
+    );
 
 }
 
 
-/* ITENS DO MENU */
+/* ==========================================================
+   CLIENTE DO AGENDAMENTO
+========================================================== */
 
-document.querySelectorAll(".menu-item").forEach(function (item) {
+const campoAgendamentoCliente =
+    document.getElementById(
+        "agendamentoCliente"
+    );
 
-    item.addEventListener("click", function () {
 
-        const tela =
-            item.dataset.menuTela;
+if (campoAgendamentoCliente) {
 
-        if (!tela) {
-            return;
+    campoAgendamentoCliente.addEventListener(
+        "change",
+        preencherTelefoneCliente
+    );
+
+    campoAgendamentoCliente.addEventListener(
+        "blur",
+        preencherTelefoneCliente
+    );
+
+}
+
+
+/* ==========================================================
+   CALENDÁRIO — BOTÕES
+========================================================== */
+
+const btnMesAnterior =
+    document.getElementById(
+        "btnMesAnterior"
+    );
+
+
+if (btnMesAnterior) {
+
+    btnMesAnterior.addEventListener(
+        "click",
+        mesAnteriorAgenda
+    );
+
+}
+
+
+const btnProximoMes =
+    document.getElementById(
+        "btnProximoMes"
+    );
+
+
+if (btnProximoMes) {
+
+    btnProximoMes.addEventListener(
+        "click",
+        proximoMesAgenda
+    );
+
+}
+
+
+const btnHojeAgenda =
+    document.getElementById(
+        "btnHojeAgenda"
+    );
+
+
+if (btnHojeAgenda) {
+
+    btnHojeAgenda.addEventListener(
+        "click",
+        irParaHojeAgenda
+    );
+
+}
+
+/* ==========================================================
+   BOTÕES DA HOME
+========================================================== */
+
+const btnHomeAgenda =
+    document.getElementById(
+        "btnHomeAgenda"
+    );
+
+
+if (btnHomeAgenda) {
+
+    btnHomeAgenda.addEventListener(
+        "click",
+        function () {
+
+            renderizarCalendario();
+
+            renderizarAgenda();
+
+            mostrarTela(
+                "agenda"
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÃO HOME — CLIENTES
+========================================================== */
+
+const btnHomeClientes =
+    document.getElementById(
+        "btnHomeClientes"
+    );
+
+
+if (btnHomeClientes) {
+
+    btnHomeClientes.addEventListener(
+        "click",
+        function () {
+
+            renderizarClientes();
+
+            mostrarTela(
+                "clientes"
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÃO HOME — SERVIÇOS
+========================================================== */
+
+const btnHomeServicos =
+    document.getElementById(
+        "btnHomeServicos"
+    );
+
+
+if (btnHomeServicos) {
+
+    btnHomeServicos.addEventListener(
+        "click",
+        function () {
+
+            renderizarServicos();
+
+            mostrarTela(
+                "servicos"
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÃO HOME — NOVO AGENDAMENTO
+========================================================== */
+
+const btnHomeNovoAgendamento =
+    document.getElementById(
+        "btnHomeNovoAgendamento"
+    );
+
+
+if (btnHomeNovoAgendamento) {
+
+    btnHomeNovoAgendamento.addEventListener(
+        "click",
+        abrirNovoAgendamento
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÃO HOME — NOVO CLIENTE
+========================================================== */
+
+const btnHomeNovoCliente =
+    document.getElementById(
+        "btnHomeNovoCliente"
+    );
+
+
+if (btnHomeNovoCliente) {
+
+    btnHomeNovoCliente.addEventListener(
+        "click",
+        abrirNovoCliente
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÃO HOME — CONFIGURAÇÕES
+========================================================== */
+
+const btnHomeConfiguracoes =
+    document.getElementById(
+        "btnHomeConfiguracoes"
+    );
+
+
+if (btnHomeConfiguracoes) {
+
+    btnHomeConfiguracoes.addEventListener(
+        "click",
+        function () {
+
+            carregarConfiguracoes();
+
+            mostrarTela(
+                "configuracoes"
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÃO NOTIFICAÇÃO
+========================================================== */
+
+const btnNotificacao =
+    document.getElementById(
+        "btnNotificacao"
+    );
+
+
+if (btnNotificacao) {
+
+    btnNotificacao.addEventListener(
+        "click",
+        function () {
+
+            mostrarMensagem(
+                "Você está em dia! Nenhuma nova notificação."
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   BUSCA DE CLIENTES
+========================================================== */
+
+const buscaClientes =
+    document.getElementById(
+        "buscaClientes"
+    );
+
+
+if (buscaClientes) {
+
+    buscaClientes.addEventListener(
+        "input",
+        function () {
+
+            const termo =
+                buscaClientes.value
+                    .trim()
+                    .toLowerCase();
+
+
+            const lista =
+                document.getElementById(
+                    "listaClientes"
+                );
+
+
+            if (!lista) {
+
+                return;
+
+            }
+
+
+            const clientes =
+                obterDados(
+                    CHAVES.clientes
+                );
+
+
+            const filtrados =
+                clientes.filter(
+                    function (cliente) {
+
+                        const nome =
+                            String(
+                                cliente.nome || ""
+                            )
+                            .toLowerCase();
+
+
+                        const telefone =
+                            String(
+                                cliente.telefone || ""
+                            )
+                            .toLowerCase();
+
+
+                        return (
+                            nome.includes(termo) ||
+                            telefone.includes(termo)
+                        );
+
+                    }
+                );
+
+
+            if (
+                filtrados.length === 0
+            ) {
+
+                lista.innerHTML = `
+
+                    <div class="estado-vazio">
+
+                        <div class="estado-vazio-icone">
+                            🔎
+                        </div>
+
+                        <h3>
+                            Nenhum cliente encontrado
+                        </h3>
+
+                        <p>
+                            Tente pesquisar por outro nome ou telefone.
+                        </p>
+
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+
+            lista.innerHTML =
+                filtrados
+                    .sort(
+                        function (a, b) {
+
+                            return String(
+                                a.nome || ""
+                            ).localeCompare(
+                                String(
+                                    b.nome || ""
+                                ),
+                                "pt-BR"
+                            );
+
+                        }
+                    )
+                    .map(
+                        function (cliente) {
+
+                            return `
+
+                                <button
+                                    type="button"
+                                    class="card-cliente"
+                                    onclick="abrirFichaCliente('${escaparHTML(cliente.id)}')"
+                                >
+
+                                    <div class="cliente-avatar">
+                                        ${gerarIniciais(cliente.nome)}
+                                    </div>
+
+                                    <div class="cliente-info">
+
+                                        <strong>
+                                            ${escaparHTML(cliente.nome)}
+                                        </strong>
+
+                                        <span>
+                                            ${escaparHTML(cliente.telefone || "Sem telefone")}
+                                        </span>
+
+                                    </div>
+
+                                    <div class="cliente-atendimentos">
+
+                                        <strong>
+                                            ${contarAtendimentosCliente(cliente.id)}
+                                        </strong>
+
+                                        <span>
+                                            atendimentos
+                                        </span>
+
+                                    </div>
+
+                                </button>
+
+                            `;
+
+                        }
+                    )
+                    .join("");
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   MÁSCARA DE TELEFONE
+========================================================== */
+
+function aplicarMascaraTelefone(campo) {
+
+    if (!campo) {
+
+        return;
+
+    }
+
+
+    let valor =
+        campo.value.replace(
+            /\D/g,
+            ""
+        );
+
+
+    if (valor.length > 11) {
+
+        valor =
+            valor.substring(
+                0,
+                11
+            );
+
+    }
+
+
+    if (valor.length <= 10) {
+
+        if (valor.length >= 7) {
+
+            valor =
+                valor.replace(
+                    /^(\d{2})(\d{4})(\d{0,4}).*/,
+                    "($1) $2-$3"
+                );
+
+        } else if (valor.length >= 3) {
+
+            valor =
+                valor.replace(
+                    /^(\d{2})(\d{0,4}).*/,
+                    "($1) $2"
+                );
+
         }
 
-        fecharMenu();
+    } else {
 
+        valor =
+            valor.replace(
+                /^(\d{2})(\d{5})(\d{0,4}).*/,
+                "($1) $2-$3"
+            );
 
-        setTimeout(function () {
-
-            /* ==============================
-               AGENDA
-            ============================== */
-
-            if (tela === "agenda") {
-
-                renderizarCalendario();
-
-                renderizarAgenda();
-            }
-
-
-            /* ==============================
-               CLIENTES
-            ============================== */
-
-            if (tela === "clientes") {
-
-                renderizarClientes();
-            }
-
-
-            /* ==============================
-               SERVIÇOS
-            ============================== */
-
-            if (tela === "servicos") {
-
-                renderizarServicos();
-            }
-
-
-            /* ==============================
-               FINANCEIRO
-            ============================== */
-
-            if (tela === "financeiro") {
-
-                renderizarFinanceiro();
-            }
-
-
-            mostrarTela(tela);
-
-        }, 150);
-
-    });
-
-});
-/* ==========================================================
-   INICIALIZAÇÃO
-========================================================== */
-
-function iniciarBarberPro() {
-
-    console.log(
-        "================================"
-    );
-
-    console.log(
-        "BARBERPRO INICIANDO..."
-    );
-
-    console.log(
-        "================================"
-    );
-
-
-    if (!testarArmazenamento()) {
-
-        console.error(
-            "LocalStorage não disponível."
-        );
-
-        mostrarMensagem(
-            "Atenção: armazenamento indisponível."
-        );
     }
 
 
-    criarServicosPadrao();
+    campo.value =
+        valor;
 
-    atualizarSelectServicos();
-
-    atualizarSugestoesClientes();
-
-    renderizarCalendario();
-
-    renderizarAgenda();
-
-    renderizarClientes();
-
-    renderizarServicos();
-
-    atualizarResumoHome();
-
-    renderizarFinanceiro();
-
-    mostrarTela(
-        "inicio"
-    );
-
-
-    console.log(
-        "Agendamentos:",
-        obterDados(
-            CHAVES.agendamentos
-        )
-    );
-
-    console.log(
-        "Clientes:",
-        obterDados(
-            CHAVES.clientes
-        )
-    );
-
-    console.log(
-        "Serviços:",
-        obterDados(
-            CHAVES.servicos
-        )
-    );
-
-    console.log(
-        "BARBERPRO pronto."
-    );
 }
 
 
 /* ==========================================================
-   INICIAR
+   MÁSCARA DE TELEFONE — CAMPOS
 ========================================================== */
 
-if (
-    document.readyState ===
-    "loading"
-) {
-
-    document.addEventListener(
-        "DOMContentLoaded",
-        iniciarBarberPro
+const camposTelefone =
+    document.querySelectorAll(
+        "#clienteTelefone, #agendamentoTelefone, #configWhatsApp"
     );
 
-} else {
 
-    iniciarBarberPro();
-}
-/* =========================================
+camposTelefone.forEach(
+    function (campo) {
+
+        campo.addEventListener(
+            "input",
+            function () {
+
+                aplicarMascaraTelefone(
+                    campo
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* ==========================================================
    CONFIGURAÇÕES DA BARBEARIA
-========================================= */
-
-const CONFIG_CHAVE = "barberpro_configuracoes";
-
-
-/* =========================================
-   HORÁRIOS PADRÃO
-========================================= */
-
-const HORARIOS_PADRAO = {
-
-    segunda: {
-        nome: "Segunda-feira",
-        aberto: true,
-        abertura: "08:00",
-        inicioIntervalo: "13:00",
-        fimIntervalo: "15:00",
-        fechamento: "18:00"
-    },
-
-    terca: {
-        nome: "Terça-feira",
-        aberto: true,
-        abertura: "08:00",
-        inicioIntervalo: "13:00",
-        fimIntervalo: "15:00",
-        fechamento: "18:00"
-    },
-
-    quarta: {
-        nome: "Quarta-feira",
-        aberto: true,
-        abertura: "08:00",
-        inicioIntervalo: "13:00",
-        fimIntervalo: "15:00",
-        fechamento: "18:00"
-    },
-
-    quinta: {
-        nome: "Quinta-feira",
-        aberto: true,
-        abertura: "08:00",
-        inicioIntervalo: "13:00",
-        fimIntervalo: "15:00",
-        fechamento: "18:00"
-    },
-
-    sexta: {
-        nome: "Sexta-feira",
-        aberto: true,
-        abertura: "08:00",
-        inicioIntervalo: "13:00",
-        fimIntervalo: "15:00",
-        fechamento: "18:00"
-    },
-
-    sabado: {
-        nome: "Sábado",
-        aberto: true,
-        abertura: "08:00",
-        inicioIntervalo: "",
-        fimIntervalo: "",
-        fechamento: "14:00"
-    },
-
-    domingo: {
-        nome: "Domingo",
-        aberto: false,
-        abertura: "08:00",
-        inicioIntervalo: "",
-        fimIntervalo: "",
-        fechamento: "12:00"
-    }
-
-};
-
-
-/* =========================================
-   CARREGAR CONFIGURAÇÕES
-========================================= */
+========================================================== */
 
 function carregarConfiguracoes() {
 
     let configuracoes = {};
 
+
     try {
 
-        const dadosSalvos =
-            localStorage.getItem(CONFIG_CHAVE);
-
-        if (dadosSalvos) {
-
-            configuracoes =
-                JSON.parse(dadosSalvos);
-        }
+        configuracoes =
+            JSON.parse(
+                localStorage.getItem(
+                    CONFIG_CHAVE
+                )
+            ) || {};
 
     } catch (erro) {
 
-        console.error(
-            "Erro ao carregar configurações:",
-            erro
-        );
-
         configuracoes = {};
+
     }
 
-
-    /* -----------------------------------------
-       PERFIL
-    ----------------------------------------- */
 
     const nomeBarbearia =
         document.getElementById(
             "configNomeBarbearia"
         );
 
+
     const nomeBarbeiro =
         document.getElementById(
             "configNomeBarbeiro"
         );
 
+
     const whatsapp =
         document.getElementById(
             "configWhatsApp"
         );
+
 
     const endereco =
         document.getElementById(
@@ -5874,346 +6458,349 @@ function carregarConfiguracoes() {
     if (nomeBarbearia) {
 
         nomeBarbearia.value =
-            configuracoes.nomeBarbearia || "";
+            configuracoes.nomeBarbearia ||
+            "";
+
     }
+
 
     if (nomeBarbeiro) {
 
         nomeBarbeiro.value =
-            configuracoes.nomeBarbeiro || "";
+            configuracoes.nomeBarbeiro ||
+            "";
+
     }
+
 
     if (whatsapp) {
 
         whatsapp.value =
-            configuracoes.whatsapp || "";
+            configuracoes.whatsapp ||
+            "";
+
     }
+
 
     if (endereco) {
 
         endereco.value =
-            configuracoes.endereco || "";
+            configuracoes.endereco ||
+            "";
+
     }
 
-
-    /* -----------------------------------------
-       HORÁRIOS
-    ----------------------------------------- */
 
     const horarios =
-        configuracoes.horarios || {};
+        configuracoes.horarios ||
+        {};
 
 
-    Object.keys(HORARIOS_PADRAO)
-        .forEach(function(dia) {
+    document
+        .querySelectorAll(
+            ".dia-aberto"
+        )
+        .forEach(
+            function (campo) {
 
-            const padrao =
-                HORARIOS_PADRAO[dia];
-
-            const salvo =
-                horarios[dia] || {};
-
-
-            const checkbox =
-                document.querySelector(
-                    '.dia-aberto[data-dia="' +
-                    dia +
-                    '"]'
-                );
-
-            const abertura =
-                document.querySelector(
-                    '.hora-abertura[data-dia="' +
-                    dia +
-                    '"]'
-                );
-
-            const inicioIntervalo =
-                document.querySelector(
-                    '.hora-inicio-intervalo[data-dia="' +
-                    dia +
-                    '"]'
-                );
-
-            const fimIntervalo =
-                document.querySelector(
-                    '.hora-fim-intervalo[data-dia="' +
-                    dia +
-                    '"]'
-                );
-
-            const fechamento =
-                document.querySelector(
-                    '.hora-fechamento[data-dia="' +
-                    dia +
-                    '"]'
-                );
+                const dia =
+                    campo.dataset.dia;
 
 
-            if (checkbox) {
+                if (
+                    horarios[dia] &&
+                    horarios[dia].aberto !==
+                        undefined
+                ) {
 
-                checkbox.checked =
-                    salvo.aberto !== undefined
-                        ? salvo.aberto
-                        : padrao.aberto;
+                    campo.checked =
+                        horarios[dia].aberto;
+
+                } else if (
+                    HORARIOS_PADRAO[dia]
+                ) {
+
+                    campo.checked =
+                        HORARIOS_PADRAO[dia]
+                            .aberto;
+
+                }
+
             }
+        );
 
 
-            if (abertura) {
+    document
+        .querySelectorAll(
+            ".hora-abertura"
+        )
+        .forEach(
+            function (campo) {
 
-                abertura.value =
-                    salvo.abertura ||
-                    padrao.abertura;
+                const dia =
+                    campo.dataset.dia;
+
+
+                campo.value =
+                    horarios[dia]?.abertura ||
+                    HORARIOS_PADRAO[dia]
+                        ?.abertura ||
+                    "";
+
             }
+        );
 
 
-            if (inicioIntervalo) {
+    document
+        .querySelectorAll(
+            ".hora-inicio-intervalo"
+        )
+        .forEach(
+            function (campo) {
 
-                inicioIntervalo.value =
-                    salvo.inicioIntervalo ||
-                    padrao.inicioIntervalo;
+                const dia =
+                    campo.dataset.dia;
+
+
+                campo.value =
+                    horarios[dia]
+                        ?.inicioIntervalo ??
+                    HORARIOS_PADRAO[dia]
+                        ?.inicioIntervalo ??
+                    "";
+
             }
+        );
 
 
-            if (fimIntervalo) {
+    document
+        .querySelectorAll(
+            ".hora-fim-intervalo"
+        )
+        .forEach(
+            function (campo) {
 
-                fimIntervalo.value =
-                    salvo.fimIntervalo ||
-                    padrao.fimIntervalo;
+                const dia =
+                    campo.dataset.dia;
+
+
+                campo.value =
+                    horarios[dia]
+                        ?.fimIntervalo ??
+                    HORARIOS_PADRAO[dia]
+                        ?.fimIntervalo ??
+                    "";
+
             }
+        );
 
 
-            if (fechamento) {
+    document
+        .querySelectorAll(
+            ".hora-fechamento"
+        )
+        .forEach(
+            function (campo) {
 
-                fechamento.value =
-                    salvo.fechamento ||
-                    padrao.fechamento;
+                const dia =
+                    campo.dataset.dia;
+
+
+                campo.value =
+                    horarios[dia]?.fechamento ||
+                    HORARIOS_PADRAO[dia]
+                        ?.fechamento ||
+                    "";
+
             }
+        );
 
 
-            atualizarVisualHorario(dia);
+    atualizarEstadoHorarios();
 
-        });
 }
 
 
-/* =========================================
-   VISUAL ABERTO / FECHADO
-========================================= */
+/* ==========================================================
+   ATUALIZAR ESTADO DOS HORÁRIOS
+========================================================== */
 
-function atualizarVisualHorario(dia) {
+function atualizarEstadoHorarios() {
 
-    const checkbox =
-        document.querySelector(
-            '.dia-aberto[data-dia="' +
-            dia +
-            '"]'
-        );
-
-    if (!checkbox) {
-        return;
-    }
-
-
-    const bloco =
-        checkbox.closest(
-            ".horario-dia"
-        );
-
-    if (!bloco) {
-        return;
-    }
-
-
-    if (checkbox.checked) {
-
-        bloco.classList.remove(
-            "fechado"
-        );
-
-    } else {
-
-        bloco.classList.add(
-            "fechado"
-        );
-    }
-}
-
-
-/* =========================================
-   EVENTOS DOS DIAS
-========================================= */
-
-document
-    .querySelectorAll(".dia-aberto")
-    .forEach(function(checkbox) {
-
-        checkbox.addEventListener(
-            "change",
-            function() {
-
-                atualizarVisualHorario(
-                    checkbox.dataset.dia
-                );
-
-            }
-        );
-
-    });
-
-
-/* =========================================
-   SALVAR CONFIGURAÇÕES
-========================================= */
-
-function salvarConfiguracoes(event) {
-
-    if (event) {
-
-        event.preventDefault();
-        event.stopPropagation();
-    }
-
-
-    try {
-
-        const configuracoes = {};
-
-
-        /* -------------------------------------
-           PERFIL
-        ------------------------------------- */
-
-        const nomeBarbearia =
-            document.getElementById(
-                "configNomeBarbearia"
-            );
-
-        const nomeBarbeiro =
-            document.getElementById(
-                "configNomeBarbeiro"
-            );
-
-        const whatsapp =
-            document.getElementById(
-                "configWhatsApp"
-            );
-
-        const endereco =
-            document.getElementById(
-                "configEndereco"
-            );
-
-
-        configuracoes.nomeBarbearia =
-            nomeBarbearia
-                ? nomeBarbearia.value.trim()
-                : "";
-
-        configuracoes.nomeBarbeiro =
-            nomeBarbeiro
-                ? nomeBarbeiro.value.trim()
-                : "";
-
-        configuracoes.whatsapp =
-            whatsapp
-                ? whatsapp.value.trim()
-                : "";
-
-        configuracoes.endereco =
-            endereco
-                ? endereco.value.trim()
-                : "";
-
-
-        /* -------------------------------------
-           HORÁRIOS
-        ------------------------------------- */
-
-        configuracoes.horarios = {};
-
-
-        Object.keys(HORARIOS_PADRAO)
-            .forEach(function(dia) {
-
-                const padrao =
-                    HORARIOS_PADRAO[dia];
-
+    document
+        .querySelectorAll(
+            ".dia-config"
+        )
+        .forEach(
+            function (bloco) {
 
                 const checkbox =
-                    document.querySelector(
-                        '.dia-aberto[data-dia="' +
-                        dia +
-                        '"]'
+                    bloco.querySelector(
+                        ".dia-aberto"
                     );
+
+
+                if (!checkbox) {
+
+                    return;
+
+                }
+
+
+                const campos =
+                    bloco.querySelectorAll(
+                        "input[type='time']"
+                    );
+
+
+                campos.forEach(
+                    function (campo) {
+
+                        campo.disabled =
+                            !checkbox.checked;
+
+                    }
+                );
+
+
+                bloco.classList.toggle(
+                    "dia-fechado",
+                    !checkbox.checked
+                );
+
+            }
+        );
+
+}
+
+
+/* ==========================================================
+   SALVAR CONFIGURAÇÕES
+========================================================== */
+
+function salvarConfiguracoes() {
+
+    const nomeBarbearia =
+        document.getElementById(
+            "configNomeBarbearia"
+        )
+        ?.value
+        .trim() || "";
+
+
+    const nomeBarbeiro =
+        document.getElementById(
+            "configNomeBarbeiro"
+        )
+        ?.value
+        .trim() || "";
+
+
+    const whatsapp =
+        document.getElementById(
+            "configWhatsApp"
+        )
+        ?.value
+        .trim() || "";
+
+
+    const endereco =
+        document.getElementById(
+            "configEndereco"
+        )
+        ?.value
+        .trim() || "";
+
+
+    const horarios = {};
+
+
+    document
+        .querySelectorAll(
+            ".dia-aberto"
+        )
+        .forEach(
+            function (checkbox) {
+
+                const dia =
+                    checkbox.dataset.dia;
+
 
                 const abertura =
                     document.querySelector(
-                        '.hora-abertura[data-dia="' +
-                        dia +
-                        '"]'
+                        `.hora-abertura[data-dia="${dia}"]`
                     );
+
 
                 const inicioIntervalo =
                     document.querySelector(
-                        '.hora-inicio-intervalo[data-dia="' +
-                        dia +
-                        '"]'
+                        `.hora-inicio-intervalo[data-dia="${dia}"]`
                     );
+
 
                 const fimIntervalo =
                     document.querySelector(
-                        '.hora-fim-intervalo[data-dia="' +
-                        dia +
-                        '"]'
+                        `.hora-fim-intervalo[data-dia="${dia}"]`
                     );
+
 
                 const fechamento =
                     document.querySelector(
-                        '.hora-fechamento[data-dia="' +
-                        dia +
-                        '"]'
+                        `.hora-fechamento[data-dia="${dia}"]`
                     );
 
 
-                configuracoes.horarios[dia] = {
-
-                    nome:
-                        padrao.nome,
+                horarios[dia] = {
 
                     aberto:
-                        checkbox
-                            ? checkbox.checked
-                            : padrao.aberto,
+                        checkbox.checked,
 
                     abertura:
-                        abertura
-                            ? abertura.value
-                            : padrao.abertura,
+                        abertura?.value ||
+                        "",
 
                     inicioIntervalo:
-                        inicioIntervalo
-                            ? inicioIntervalo.value
-                            : padrao.inicioIntervalo,
+                        inicioIntervalo?.value ||
+                        "",
 
                     fimIntervalo:
-                        fimIntervalo
-                            ? fimIntervalo.value
-                            : padrao.fimIntervalo,
+                        fimIntervalo?.value ||
+                        "",
 
                     fechamento:
-                        fechamento
-                            ? fechamento.value
-                            : padrao.fechamento
+                        fechamento?.value ||
+                        ""
 
                 };
 
-            });
+            }
+        );
 
 
-        /* -------------------------------------
-           SALVAR
-        ------------------------------------- */
+    const configuracoes = {
+
+        nomeBarbearia:
+            nomeBarbearia,
+
+        nomeBarbeiro:
+            nomeBarbeiro,
+
+        whatsapp:
+            whatsapp,
+
+        endereco:
+            endereco,
+
+        horarios:
+            horarios,
+
+        atualizadoEm:
+            new Date().toISOString()
+
+    };
+
+
+    try {
 
         localStorage.setItem(
             CONFIG_CHAVE,
@@ -6223,82 +6810,33 @@ function salvarConfiguracoes(event) {
         );
 
 
-        /* -------------------------------------
-           CONFERIR SE REALMENTE GRAVOU
-        ------------------------------------- */
-
-        const conferencia =
-            localStorage.getItem(
-                CONFIG_CHAVE
-            );
-
-
-        if (!conferencia) {
-
-            throw new Error(
-                "Configurações não foram gravadas."
-            );
-        }
-
-
-        console.log(
-            "BARBERPRO - CONFIGURAÇÕES SALVAS:",
-            configuracoes
-        );
-
-
-        /* -------------------------------------
-           STATUS
-        ------------------------------------- */
-
-        const status =
-            document.getElementById(
-                "configStatus"
-            );
-
-        if (status) {
-
-            status.textContent =
-                "✓ Configurações salvas com sucesso!";
-
-            status.style.color =
-                "#4d8b5c";
-        }
-
-
         mostrarMensagem(
-            "Configurações salvas!"
+            "Configurações salvas com sucesso."
         );
 
 
-        setTimeout(function() {
-
-            if (status) {
-
-                status.textContent = "";
-            }
-
-        }, 3000);
-
+        renderizarFuncionamentoAgenda();
 
     } catch (erro) {
 
         console.error(
-            "BARBERPRO - ERRO AO SALVAR CONFIGURAÇÕES:",
+            "Erro ao salvar configurações:",
             erro
         );
 
 
         mostrarMensagem(
-            "Erro ao salvar configurações."
+            "Não foi possível salvar as configurações."
         );
+
     }
+
 }
 
 
-/* =========================================
-   BOTÃO SALVAR
-========================================= */
+/* ==========================================================
+   BOTÃO SALVAR CONFIGURAÇÕES
+========================================================== */
 
 const btnSalvarConfiguracoes =
     document.getElementById(
@@ -6308,10 +6846,6 @@ const btnSalvarConfiguracoes =
 
 if (btnSalvarConfiguracoes) {
 
-    btnSalvarConfiguracoes.type =
-        "button";
-
-
     btnSalvarConfiguracoes.addEventListener(
         "click",
         salvarConfiguracoes
@@ -6320,26 +6854,564 @@ if (btnSalvarConfiguracoes) {
 }
 
 
-/* =========================================
-   VOLTAR CONFIGURAÇÕES
-========================================= */
+/* ==========================================================
+   CHECKBOXES DOS DIAS
+========================================================== */
 
-const voltarConfiguracoes =
-    document.getElementById(
-        "voltarConfiguracoes"
+document
+    .querySelectorAll(
+        ".dia-aberto"
+    )
+    .forEach(
+        function (checkbox) {
+
+            checkbox.addEventListener(
+                "change",
+                atualizarEstadoHorarios
+            );
+
+        }
     );
 
 
-if (voltarConfiguracoes) {
+/* ==========================================================
+   VALIDAR INTERVALO DE HORÁRIO
+========================================================== */
 
-    voltarConfiguracoes.addEventListener(
+function validarConfiguracaoHorario(
+    abertura,
+    inicioIntervalo,
+    fimIntervalo,
+    fechamento
+) {
+
+    const a =
+        converterHoraParaMinutos(
+            abertura
+        );
+
+
+    const i =
+        inicioIntervalo
+            ? converterHoraParaMinutos(
+                inicioIntervalo
+            )
+            : null;
+
+
+    const f =
+        fimIntervalo
+            ? converterHoraParaMinutos(
+                fimIntervalo
+            )
+            : null;
+
+
+    const c =
+        converterHoraParaMinutos(
+            fechamento
+        );
+
+
+    if (
+        !abertura ||
+        !fechamento
+    ) {
+
+        return {
+
+            valido: false,
+
+            mensagem:
+                "Informe abertura e fechamento."
+
+        };
+
+    }
+
+
+    if (a >= c) {
+
+        return {
+
+            valido: false,
+
+            mensagem:
+                "A abertura deve ser antes do fechamento."
+
+        };
+
+    }
+
+
+    if (
+        i !== null &&
+        f !== null
+    ) {
+
+        if (i <= a) {
+
+            return {
+
+                valido: false,
+
+                mensagem:
+                    "O início do intervalo deve ser depois da abertura."
+
+            };
+
+        }
+
+
+        if (f <= i) {
+
+            return {
+
+                valido: false,
+
+                mensagem:
+                    "O fim do intervalo deve ser depois do início."
+
+            };
+
+        }
+
+
+        if (f >= c) {
+
+            return {
+
+                valido: false,
+
+                mensagem:
+                    "O intervalo deve terminar antes do fechamento."
+
+            };
+
+        }
+
+    }
+
+
+    return {
+
+        valido: true,
+
+        mensagem: ""
+
+    };
+
+}
+
+
+/* ==========================================================
+   VALIDAÇÃO ANTES DE SALVAR CONFIGURAÇÕES
+========================================================== */
+
+function validarTodosHorariosConfiguracao() {
+
+    let valido =
+        true;
+
+
+    let mensagem =
+        "";
+
+
+    document
+        .querySelectorAll(
+            ".dia-aberto"
+        )
+        .forEach(
+            function (checkbox) {
+
+                if (!valido) {
+
+                    return;
+
+                }
+
+
+                if (!checkbox.checked) {
+
+                    return;
+
+                }
+
+
+                const dia =
+                    checkbox.dataset.dia;
+
+
+                const abertura =
+                    document.querySelector(
+                        `.hora-abertura[data-dia="${dia}"]`
+                    )?.value || "";
+
+
+                const inicioIntervalo =
+                    document.querySelector(
+                        `.hora-inicio-intervalo[data-dia="${dia}"]`
+                    )?.value || "";
+
+
+                const fimIntervalo =
+                    document.querySelector(
+                        `.hora-fim-intervalo[data-dia="${dia}"]`
+                    )?.value || "";
+
+
+                const fechamento =
+                    document.querySelector(
+                        `.hora-fechamento[data-dia="${dia}"]`
+                    )?.value || "";
+
+
+                const resultado =
+                    validarConfiguracaoHorario(
+                        abertura,
+                        inicioIntervalo,
+                        fimIntervalo,
+                        fechamento
+                    );
+
+
+                if (!resultado.valido) {
+
+                    valido =
+                        false;
+
+
+                    const nome =
+                        HORARIOS_PADRAO[dia]
+                            ?.nome ||
+                        dia;
+
+
+                    mensagem =
+                        `${nome}: ${resultado.mensagem}`;
+
+                }
+
+            }
+        );
+
+
+    if (!valido) {
+
+        mostrarMensagem(
+            mensagem
+        );
+
+    }
+
+
+    return valido;
+
+}
+
+
+/* ==========================================================
+   SUBSTITUIR SALVAMENTO ORIGINAL POR VALIDAÇÃO
+========================================================== */
+
+if (btnSalvarConfiguracoes) {
+
+    btnSalvarConfiguracoes.onclick =
+        function () {
+
+            if (
+                !validarTodosHorariosConfiguracao()
+            ) {
+
+                return;
+
+            }
+
+
+            salvarConfiguracoes();
+
+        };
+
+}
+
+
+/* ==========================================================
+   ATUALIZAR NOME DA BARBEARIA NA INTERFACE
+========================================================== */
+
+function atualizarIdentidadeBarbearia() {
+
+    let configuracoes = {};
+
+
+    try {
+
+        configuracoes =
+            JSON.parse(
+                localStorage.getItem(
+                    CONFIG_CHAVE
+                )
+            ) || {};
+
+    } catch (erro) {
+
+        configuracoes = {};
+
+    }
+
+
+    const nomeBarbearia =
+        configuracoes.nomeBarbearia ||
+        "Barbearia";
+
+
+    document
+        .querySelectorAll(
+            "[data-nome-barbearia]"
+        )
+        .forEach(
+            function (elemento) {
+
+                elemento.textContent =
+                    nomeBarbearia;
+
+            }
+        );
+
+
+    document
+        .querySelectorAll(
+            "[data-nome-barbeiro]"
+        )
+        .forEach(
+            function (elemento) {
+
+                elemento.textContent =
+                    configuracoes.nomeBarbeiro ||
+                    "";
+
+            }
+        );
+
+}
+
+
+/* ==========================================================
+   DATA DA AGENDA — ATUALIZAÇÃO AUTOMÁTICA
+========================================================== */
+
+function atualizarDataAgendaHome() {
+
+    const elemento =
+        document.getElementById(
+            "dataAgendaHome"
+        );
+
+
+    if (!elemento) {
+
+        return;
+
+    }
+
+
+    elemento.textContent =
+        formatarDataLonga(
+            dataAgendaSelecionada
+        );
+
+}
+
+
+/* ==========================================================
+   RESUMO DA AGENDA NA HOME
+========================================================== */
+
+function renderizarAgendaHome() {
+
+    const lista =
+        document.getElementById(
+            "listaAgendaHome"
+        );
+
+
+    if (!lista) {
+
+        return;
+
+    }
+
+
+    const hoje =
+        dataHojeISO();
+
+
+    const agendamentos =
+        obterDados(
+            CHAVES.agendamentos
+        );
+
+
+    const agendaHoje =
+        agendamentos
+            .filter(
+                function (agendamento) {
+
+                    return (
+                        agendamento.data ===
+                        hoje
+                    )
+                    &&
+                    agendamento.status !==
+                        "cancelado";
+
+                }
+            )
+            .sort(
+                function (a, b) {
+
+                    return String(
+                        a.hora || ""
+                    ).localeCompare(
+                        String(
+                            b.hora || ""
+                        )
+                    );
+
+                }
+            )
+            .slice(
+                0,
+                5
+            );
+
+
+    if (
+        agendaHoje.length === 0
+    ) {
+
+        lista.innerHTML = `
+
+            <div class="estado-agenda-home">
+
+                <div class="estado-agenda-home-icone">
+                    ✂
+                </div>
+
+                <div>
+
+                    <strong>
+                        Agenda livre
+                    </strong>
+
+                    <span>
+                        Nenhum atendimento marcado para hoje.
+                    </span>
+
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    lista.innerHTML =
+        agendaHoje
+            .map(
+                function (agendamento) {
+
+                    return `
+
+                        <button
+                            type="button"
+                            class="item-agenda-home"
+                            onclick="abrirDetalhesAgendamento('${escaparHTML(agendamento.id)}')"
+                        >
+
+                            <div class="item-agenda-home-hora">
+
+                                <strong>
+                                    ${escaparHTML(agendamento.hora || "")}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="item-agenda-home-info">
+
+                                <strong>
+                                    ${escaparHTML(agendamento.clienteNome || "Cliente")}
+                                </strong>
+
+                                <span>
+                                    ${escaparHTML(agendamento.servicoNome || "Serviço")}
+                                </span>
+
+                            </div>
+
+
+                            <span
+                                class="status-agendamento status-${escaparHTML(agendamento.status || "agendado")}"
+                            >
+                                ${formatarStatus(agendamento.status)}
+                            </span>
+
+                        </button>
+
+                    `;
+
+                }
+            )
+            .join("");
+
+}
+
+
+/* ==========================================================
+   ATUALIZAR HOME COMPLETA
+========================================================== */
+
+function atualizarHomeCompleta() {
+
+    atualizarResumoHome();
+
+    renderizarAgendaHome();
+
+    atualizarIdentidadeBarbearia();
+
+    atualizarDataAgendaHome();
+
+}
+
+
+/* ==========================================================
+   ATUALIZAR AO VOLTAR PARA HOME
+========================================================== */
+
+const menuInicio =
+    document.querySelector(
+        ".menu-item[data-menu-tela='inicio']"
+    );
+
+
+if (menuInicio) {
+
+    menuInicio.addEventListener(
         "click",
-        function(event) {
+        function () {
 
-            event.preventDefault();
+            setTimeout(
+                function () {
 
-            mostrarTela(
-                "inicio"
+                    atualizarHomeCompleta();
+
+                },
+                180
             );
 
         }
@@ -6348,46 +7420,72 @@ if (voltarConfiguracoes) {
 }
 
 
-/* =========================================
-   CARREGAR CONFIGURAÇÕES
-========================================= */
+/* ==========================================================
+   ATALHOS DE TECLADO
+========================================================== */
 
-carregarConfiguracoes();
+document.addEventListener(
+    "keydown",
+    function (evento) {
+
+        if (
+            evento.key ===
+            "Escape"
+        ) {
+
+            fecharMenu();
+
+        }
+
+    }
+);
+
 
 /* ==========================================================
    BACKUP E RESTAURAÇÃO — BARBERPRO
-========================================================== */
-
-
-/* ==========================================================
-   OBTER DADOS DO BARBERPRO
 ========================================================== */
 
 function obterDadosBackupBarberPro() {
 
     const dados = {};
 
-    for (let i = 0; i < localStorage.length; i++) {
 
-        const chave = localStorage.key(i);
+    for (
+        let i = 0;
+        i < localStorage.length;
+        i++
+    ) {
+
+        const chave =
+            localStorage.key(i);
+
 
         if (
             chave &&
-            chave.startsWith("barberpro_")
+            chave.startsWith(
+                "barberpro_"
+            )
         ) {
 
             try {
 
                 const valor =
-                    localStorage.getItem(chave);
+                    localStorage.getItem(
+                        chave
+                    );
+
 
                 dados[chave] =
-                    JSON.parse(valor);
+                    JSON.parse(
+                        valor
+                    );
 
             } catch (erro) {
 
                 dados[chave] =
-                    localStorage.getItem(chave);
+                    localStorage.getItem(
+                        chave
+                    );
 
             }
 
@@ -6395,12 +7493,14 @@ function obterDadosBackupBarberPro() {
 
     }
 
+
     return dados;
+
 }
 
 
 /* ==========================================================
-   FAZER BACKUP + COMPARTILHAR
+   FAZER BACKUP
 ========================================================== */
 
 async function fazerBackupBarberPro() {
@@ -6413,14 +7513,17 @@ async function fazerBackupBarberPro() {
 
         const backup = {
 
-            aplicativo: "BarberPro",
+            aplicativo:
+                "BarberPro",
 
-            versaoBackup: "1.0",
+            versaoBackup:
+                "1.0",
 
             dataBackup:
                 new Date().toISOString(),
 
-            dados: dados
+            dados:
+                dados
 
         };
 
@@ -6435,7 +7538,9 @@ async function fazerBackupBarberPro() {
 
         const arquivo =
             new Blob(
-                [conteudo],
+                [
+                    conteudo
+                ],
                 {
                     type:
                         "application/json"
@@ -6454,34 +7559,46 @@ async function fazerBackupBarberPro() {
         const mes =
             String(
                 agora.getMonth() + 1
-            ).padStart(2, "0");
+            )
+            .padStart(
+                2,
+                "0"
+            );
 
 
         const dia =
             String(
                 agora.getDate()
-            ).padStart(2, "0");
+            )
+            .padStart(
+                2,
+                "0"
+            );
 
 
         const hora =
             String(
                 agora.getHours()
-            ).padStart(2, "0");
+            )
+            .padStart(
+                2,
+                "0"
+            );
 
 
         const minuto =
             String(
                 agora.getMinutes()
-            ).padStart(2, "0");
+            )
+            .padStart(
+                2,
+                "0"
+            );
 
 
         const nomeArquivo =
             `BarberPro_Backup_${ano}-${mes}-${dia}_${hora}-${minuto}.json`;
 
-
-        /* ==================================================
-           TENTAR COMPARTILHAR PELO CELULAR
-        ================================================== */
 
         if (
             navigator.share &&
@@ -6490,7 +7607,9 @@ async function fazerBackupBarberPro() {
 
             const arquivoBackup =
                 new File(
-                    [arquivo],
+                    [
+                        arquivo
+                    ],
                     nomeArquivo,
                     {
                         type:
@@ -6500,6 +7619,7 @@ async function fazerBackupBarberPro() {
 
 
             const dadosCompartilhamento = {
+
                 title:
                     "Backup do BarberPro",
 
@@ -6507,7 +7627,10 @@ async function fazerBackupBarberPro() {
                     "Backup dos dados da minha barbearia.",
 
                 files:
-                    [arquivoBackup]
+                    [
+                        arquivoBackup
+                    ]
+
             };
 
 
@@ -6533,10 +7656,6 @@ async function fazerBackupBarberPro() {
 
         }
 
-
-        /* ==================================================
-           SE O CELULAR NÃO SUPORTAR COMPARTILHAMENTO
-        ================================================== */
 
         const url =
             URL.createObjectURL(
@@ -6580,17 +7699,12 @@ async function fazerBackupBarberPro() {
             "Backup salvo no dispositivo."
         );
 
-
     } catch (erro) {
-
-        /* ================================================
-           CANCELAMENTO DO COMPARTILHAMENTO
-        ================================================ */
 
         if (
             erro &&
             erro.name ===
-            "AbortError"
+                "AbortError"
         ) {
 
             return;
@@ -6611,3 +7725,2775 @@ async function fazerBackupBarberPro() {
     }
 
 }
+
+
+/* ==========================================================
+   SELECIONAR BACKUP
+========================================================== */
+
+function selecionarBackupBarberPro() {
+
+    const input =
+        document.getElementById(
+            "inputBackupBarberPro"
+        );
+
+
+    if (!input) {
+
+        mostrarMensagem(
+            "Campo de backup não encontrado."
+        );
+
+        return;
+
+    }
+
+
+    input.click();
+
+}
+
+
+/* ==========================================================
+   RESTAURAR BACKUP
+========================================================== */
+
+function restaurarBackupBarberPro(
+    event
+) {
+
+    const arquivo =
+        event.target.files[0];
+
+
+    if (!arquivo) {
+
+        return;
+
+    }
+
+
+    if (
+        !arquivo.name
+            .toLowerCase()
+            .endsWith(".json")
+    ) {
+
+        alert(
+            "Selecione um arquivo de backup válido do BarberPro."
+        );
+
+
+        event.target.value =
+            "";
+
+
+        return;
+
+    }
+
+
+    const leitor =
+        new FileReader();
+
+
+    leitor.onload =
+        function (e) {
+
+            try {
+
+                const backup =
+                    JSON.parse(
+                        e.target.result
+                    );
+
+
+                if (
+                    !backup ||
+                    backup.aplicativo !==
+                        "BarberPro" ||
+                    !backup.dados ||
+                    typeof backup.dados !==
+                        "object"
+                ) {
+
+                    alert(
+                        "Este arquivo não é um backup válido do BarberPro."
+                    );
+
+
+                    return;
+
+                }
+
+
+                const chaves =
+                    Object.keys(
+                        backup.dados
+                    );
+
+
+                if (
+                    chaves.length ===
+                    0
+                ) {
+
+                    alert(
+                        "O backup não possui dados para restaurar."
+                    );
+
+
+                    return;
+
+                }
+
+
+                const confirmar =
+                    confirm(
+                        "⚠️ RESTAURAR BACKUP\n\n" +
+                        "A restauração substituirá os dados atuais " +
+                        "do BarberPro.\n\n" +
+                        "Dados encontrados: " +
+                        chaves.length +
+                        "\n\n" +
+                        "Deseja continuar?"
+                    );
+
+
+                if (!confirmar) {
+
+                    event.target.value =
+                        "";
+
+
+                    return;
+
+                }
+
+
+                chaves.forEach(
+                    function (chave) {
+
+                        const valor =
+                            backup.dados[
+                                chave
+                            ];
+
+
+                        if (
+                            typeof valor ===
+                            "string"
+                        ) {
+
+                            localStorage.setItem(
+                                chave,
+                                valor
+                            );
+
+                        } else {
+
+                            localStorage.setItem(
+                                chave,
+                                JSON.stringify(
+                                    valor
+                                )
+                            );
+
+                        }
+
+                    }
+                );
+
+
+                alert(
+                    "Backup restaurado com sucesso!\n\n" +
+                    "O BarberPro será atualizado agora."
+                );
+
+
+                window.location.reload();
+
+            } catch (erro) {
+
+                console.error(
+                    "Erro ao restaurar backup:",
+                    erro
+                );
+
+
+                alert(
+                    "Não foi possível ler o arquivo de backup."
+                );
+
+            }
+
+
+            event.target.value =
+                "";
+
+        };
+
+
+    leitor.readAsText(
+        arquivo
+    );
+
+}
+
+/* ==========================================================
+   CONFIGURAÇÃO — ATUALIZAR CAMPOS VISUAIS
+========================================================== */
+
+function atualizarCamposConfiguracao() {
+
+    const configuracoes =
+        obterConfiguracoes();
+
+
+    const nomeBarbearia =
+        document.getElementById(
+            "configNomeBarbearia"
+        );
+
+
+    const nomeBarbeiro =
+        document.getElementById(
+            "configNomeBarbeiro"
+        );
+
+
+    const whatsapp =
+        document.getElementById(
+            "configWhatsApp"
+        );
+
+
+    const endereco =
+        document.getElementById(
+            "configEndereco"
+        );
+
+
+    if (nomeBarbearia) {
+
+        nomeBarbearia.value =
+            configuracoes.nomeBarbearia || "";
+
+    }
+
+
+    if (nomeBarbeiro) {
+
+        nomeBarbeiro.value =
+            configuracoes.nomeBarbeiro || "";
+
+    }
+
+
+    if (whatsapp) {
+
+        whatsapp.value =
+            configuracoes.whatsapp || "";
+
+    }
+
+
+    if (endereco) {
+
+        endereco.value =
+            configuracoes.endereco || "";
+
+    }
+
+}
+
+
+/* ==========================================================
+   OBTER CONFIGURAÇÕES
+========================================================== */
+
+function obterConfiguracoes() {
+
+    try {
+
+        const dados =
+            localStorage.getItem(
+                CONFIG_CHAVE
+            );
+
+
+        if (!dados) {
+
+            return {
+
+                nomeBarbearia: "",
+
+                nomeBarbeiro: "",
+
+                whatsapp: "",
+
+                endereco: "",
+
+                horarios: {}
+
+            };
+
+        }
+
+
+        const configuracoes =
+            JSON.parse(
+                dados
+            );
+
+
+        return {
+
+            nomeBarbearia:
+                configuracoes.nomeBarbearia ||
+                "",
+
+            nomeBarbeiro:
+                configuracoes.nomeBarbeiro ||
+                "",
+
+            whatsapp:
+                configuracoes.whatsapp ||
+                "",
+
+            endereco:
+                configuracoes.endereco ||
+                "",
+
+            horarios:
+                configuracoes.horarios ||
+                {}
+
+        };
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao obter configurações:",
+            erro
+        );
+
+
+        return {
+
+            nomeBarbearia: "",
+
+            nomeBarbeiro: "",
+
+            whatsapp: "",
+
+            endereco: "",
+
+            horarios: {}
+
+        };
+
+    }
+
+}
+
+
+/* ==========================================================
+   ATUALIZAR INTERFACE DA BARBEARIA
+========================================================== */
+
+function atualizarInterfaceBarbearia() {
+
+    const configuracoes =
+        obterConfiguracoes();
+
+
+    const nome =
+        configuracoes.nomeBarbearia ||
+        "BarberPro";
+
+
+    document
+        .querySelectorAll(
+            "[data-nome-barbearia]"
+        )
+        .forEach(
+            function (elemento) {
+
+                elemento.textContent =
+                    nome;
+
+            }
+        );
+
+
+    document
+        .querySelectorAll(
+            "[data-nome-barbeiro]"
+        )
+        .forEach(
+            function (elemento) {
+
+                elemento.textContent =
+                    configuracoes.nomeBarbeiro ||
+                    "";
+
+            }
+        );
+
+}
+
+
+/* ==========================================================
+   FORMATAÇÃO DE TELEFONE PARA WHATSAPP
+========================================================== */
+
+function formatarTelefoneWhatsApp(
+    telefone
+) {
+
+    let numero =
+        String(
+            telefone || ""
+        )
+        .replace(
+            /\D/g,
+            ""
+        );
+
+
+    if (!numero) {
+
+        return "";
+
+    }
+
+
+    if (
+        numero.length === 10 ||
+        numero.length === 11
+    ) {
+
+        numero =
+            "55" +
+            numero;
+
+    }
+
+
+    return numero;
+
+}
+
+
+/* ==========================================================
+   WHATSAPP DA BARBEARIA
+========================================================== */
+
+function abrirWhatsAppBarbearia() {
+
+    const configuracoes =
+        obterConfiguracoes();
+
+
+    const numero =
+        formatarTelefoneWhatsApp(
+            configuracoes.whatsapp
+        );
+
+
+    if (!numero) {
+
+        mostrarMensagem(
+            "Cadastre o WhatsApp da barbearia nas configurações."
+        );
+
+        return;
+
+    }
+
+
+    const mensagem =
+        encodeURIComponent(
+            "Olá! Gostaria de agendar um horário."
+        );
+
+
+    window.open(
+        `https://wa.me/${numero}?text=${mensagem}`,
+        "_blank"
+    );
+
+}
+
+
+/* ==========================================================
+   RESUMO DO DIA
+========================================================== */
+
+function obterResumoDia(
+    data
+) {
+
+    const agendamentos =
+        obterDados(
+            CHAVES.agendamentos
+        );
+
+
+    const doDia =
+        agendamentos.filter(
+            function (agendamento) {
+
+                return (
+                    agendamento.data ===
+                    data
+                );
+
+            }
+        );
+
+
+    const ativos =
+        doDia.filter(
+            function (agendamento) {
+
+                return (
+                    agendamento.status !==
+                    "cancelado"
+                );
+
+            }
+        );
+
+
+    const concluidos =
+        doDia.filter(
+            function (agendamento) {
+
+                return (
+                    agendamento.status ===
+                    "concluido"
+                );
+
+            }
+        );
+
+
+    const faturamento =
+        concluidos.reduce(
+            function (
+                total,
+                agendamento
+            ) {
+
+                return total +
+                    Number(
+                        agendamento.preco ||
+                        0
+                    );
+
+            },
+            0
+        );
+
+
+    return {
+
+        total:
+            ativos.length,
+
+        concluidos:
+            concluidos.length,
+
+        faturamento:
+            faturamento
+
+    };
+
+}
+
+
+/* ==========================================================
+   ATUALIZAR CARDS DA HOME
+========================================================== */
+
+function atualizarCardsHome() {
+
+    const hoje =
+        dataHojeISO();
+
+
+    const resumo =
+        obterResumoDia(
+            hoje
+        );
+
+
+    const total =
+        document.getElementById(
+            "resumoAgendamentos"
+        );
+
+
+    const clientes =
+        document.getElementById(
+            "resumoClientes"
+        );
+
+
+    const faturamento =
+        document.getElementById(
+            "resumoFaturamento"
+        );
+
+
+    if (total) {
+
+        total.textContent =
+            resumo.total;
+
+    }
+
+
+    if (clientes) {
+
+        clientes.textContent =
+            obterDados(
+                CHAVES.clientes
+            ).length;
+
+    }
+
+
+    /* ======================================================
+       PRIVACIDADE FINANCEIRA
+       O valor permanece oculto na HOME.
+    ====================================================== */
+
+    if (faturamento) {
+
+        faturamento.textContent =
+            "••••••";
+
+    }
+
+}
+
+
+/* ==========================================================
+   MOSTRAR FATURAMENTO
+========================================================== */
+
+function mostrarFinanceiro() {
+
+    renderizarFinanceiro();
+
+    mostrarTela(
+        "financeiro"
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÕES DE NAVEGAÇÃO DOS DETALHES
+========================================================== */
+
+const btnEditarAgendamento =
+    document.getElementById(
+        "btnEditarAgendamento"
+    );
+
+
+if (btnEditarAgendamento) {
+
+    btnEditarAgendamento.addEventListener(
+        "click",
+        function () {
+
+            if (
+                agendamentoAtual
+            ) {
+
+                editarAgendamento(
+                    agendamentoAtual
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÃO EXCLUIR AGENDAMENTO
+========================================================== */
+
+const btnExcluirAgendamento =
+    document.getElementById(
+        "btnExcluirAgendamento"
+    );
+
+
+if (btnExcluirAgendamento) {
+
+    btnExcluirAgendamento.addEventListener(
+        "click",
+        excluirAgendamento
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÃO INICIAR ATENDIMENTO
+========================================================== */
+
+const btnIniciarAtendimento =
+    document.getElementById(
+        "btnIniciarAtendimento"
+    );
+
+
+if (btnIniciarAtendimento) {
+
+    btnIniciarAtendimento.addEventListener(
+        "click",
+        iniciarAtendimento
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÃO CONCLUIR ATENDIMENTO
+========================================================== */
+
+const btnConcluirAtendimento =
+    document.getElementById(
+        "btnConcluirAtendimento"
+    );
+
+
+if (btnConcluirAtendimento) {
+
+    btnConcluirAtendimento.addEventListener(
+        "click",
+        concluirAtendimento
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÃO CANCELAR AGENDAMENTO
+========================================================== */
+
+const btnCancelarAgendamento =
+    document.getElementById(
+        "btnCancelarAgendamento"
+    );
+
+
+if (btnCancelarAgendamento) {
+
+    btnCancelarAgendamento.addEventListener(
+        "click",
+        cancelarAgendamento
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÃO REABRIR AGENDAMENTO
+========================================================== */
+
+const btnReabrirAgendamento =
+    document.getElementById(
+        "btnReabrirAgendamento"
+    );
+
+
+if (btnReabrirAgendamento) {
+
+    btnReabrirAgendamento.addEventListener(
+        "click",
+        reabrirAgendamento
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÃO WHATSAPP — DETALHES
+========================================================== */
+
+const btnWhatsAppAgendamento =
+    document.getElementById(
+        "btnWhatsAppAgendamento"
+    );
+
+
+if (btnWhatsAppAgendamento) {
+
+    btnWhatsAppAgendamento.addEventListener(
+        "click",
+        function () {
+
+            if (!agendamentoAtual) {
+
+                return;
+
+            }
+
+
+            const agendamentos =
+                obterDados(
+                    CHAVES.agendamentos
+                );
+
+
+            const agendamento =
+                agendamentos.find(
+                    function (item) {
+
+                        return String(
+                            item.id
+                        ) ===
+                            String(
+                                agendamentoAtual
+                            );
+
+                    }
+                );
+
+
+            if (!agendamento) {
+
+                return;
+
+            }
+
+
+            const telefone =
+                formatarTelefoneWhatsApp(
+                    agendamento.clienteTelefone
+                );
+
+
+            if (!telefone) {
+
+                mostrarMensagem(
+                    "O cliente não possui WhatsApp cadastrado."
+                );
+
+                return;
+
+            }
+
+
+            const mensagem =
+                encodeURIComponent(
+                    `Olá ${agendamento.clienteNome}! Seu atendimento está agendado para ${formatarData(agendamento.data)} às ${agendamento.hora}.`
+                );
+
+
+            window.open(
+                `https://wa.me/${telefone}?text=${mensagem}`,
+                "_blank"
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÃO WHATSAPP — FICHA DO CLIENTE
+========================================================== */
+
+const btnWhatsAppCliente =
+    document.getElementById(
+        "btnWhatsAppCliente"
+    );
+
+
+if (btnWhatsAppCliente) {
+
+    btnWhatsAppCliente.addEventListener(
+        "click",
+        abrirWhatsAppCliente
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÃO EDITAR CLIENTE
+========================================================== */
+
+const btnEditarCliente =
+    document.getElementById(
+        "btnEditarCliente"
+    );
+
+
+if (btnEditarCliente) {
+
+    btnEditarCliente.addEventListener(
+        "click",
+        editarClienteAtual
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÃO EXCLUIR CLIENTE
+========================================================== */
+
+const btnExcluirCliente =
+    document.getElementById(
+        "btnExcluirCliente"
+    );
+
+
+if (btnExcluirCliente) {
+
+    btnExcluirCliente.addEventListener(
+        "click",
+        excluirClienteAtual
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÃO VOLTAR DA FICHA
+========================================================== */
+
+const btnVoltarFichaCliente =
+    document.getElementById(
+        "btnVoltarFichaCliente"
+    );
+
+
+if (btnVoltarFichaCliente) {
+
+    btnVoltarFichaCliente.addEventListener(
+        "click",
+        function () {
+
+            clienteFichaAtual =
+                null;
+
+            renderizarClientes();
+
+            mostrarTela(
+                "clientes"
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÃO VOLTAR DOS DETALHES
+========================================================== */
+
+const btnVoltarDetalhes =
+    document.getElementById(
+        "btnVoltarDetalhes"
+    );
+
+
+if (btnVoltarDetalhes) {
+
+    btnVoltarDetalhes.addEventListener(
+        "click",
+        function () {
+
+            agendamentoAtual =
+                null;
+
+            renderizarAgenda();
+
+            mostrarTela(
+                "agenda"
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÃO VOLTAR NOVO AGENDAMENTO
+========================================================== */
+
+const btnVoltarNovoAgendamento =
+    document.getElementById(
+        "btnVoltarNovoAgendamento"
+    );
+
+
+if (btnVoltarNovoAgendamento) {
+
+    btnVoltarNovoAgendamento.addEventListener(
+        "click",
+        function () {
+
+            agendamentoAtual =
+                null;
+
+            renderizarAgenda();
+
+            mostrarTela(
+                "agenda"
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÃO VOLTAR NOVO CLIENTE
+========================================================== */
+
+const btnVoltarNovoCliente =
+    document.getElementById(
+        "btnVoltarNovoCliente"
+    );
+
+
+if (btnVoltarNovoCliente) {
+
+    btnVoltarNovoCliente.addEventListener(
+        "click",
+        function () {
+
+            renderizarClientes();
+
+            mostrarTela(
+                "clientes"
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÃO VOLTAR NOVO SERVIÇO
+========================================================== */
+
+const btnVoltarNovoServico =
+    document.getElementById(
+        "btnVoltarNovoServico"
+    );
+
+
+if (btnVoltarNovoServico) {
+
+    btnVoltarNovoServico.addEventListener(
+        "click",
+        function () {
+
+            renderizarServicos();
+
+            mostrarTela(
+                "servicos"
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÃO VOLTAR CONFIGURAÇÕES
+========================================================== */
+
+const botoesVoltarConfiguracoes =
+    document.querySelectorAll(
+        "[data-voltar='inicio']"
+    );
+
+
+botoesVoltarConfiguracoes.forEach(
+    function (botao) {
+
+        botao.addEventListener(
+            "click",
+            function () {
+
+                atualizarHomeCompleta();
+
+            }
+        );
+
+    }
+);
+
+
+/* ==========================================================
+   FECHAR MENU AO CLICAR EM TELA
+========================================================== */
+
+document.addEventListener(
+    "click",
+    function (evento) {
+
+        const menu =
+            document.getElementById(
+                "menuLateral"
+            );
+
+
+        if (!menu) {
+
+            return;
+
+        }
+
+
+        if (
+            !menu.classList.contains(
+                "aberto"
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        const dentroMenu =
+            menu.contains(
+                evento.target
+            );
+
+
+        const botaoMenu =
+            document.getElementById(
+                "btnMenu"
+            );
+
+
+        const clicouBotao =
+            botaoMenu &&
+            botaoMenu.contains(
+                evento.target
+            );
+
+
+        if (
+            !dentroMenu &&
+            !clicouBotao
+        ) {
+
+            fecharMenu();
+
+        }
+
+    }
+);
+
+
+/* ==========================================================
+   PREVENIR SUBMISSÃO ACIDENTAL
+========================================================== */
+
+document
+    .querySelectorAll(
+        "form"
+    )
+    .forEach(
+        function (formulario) {
+
+            formulario.addEventListener(
+                "keydown",
+                function (evento) {
+
+                    if (
+                        evento.key ===
+                        "Enter"
+                    ) {
+
+                        const elemento =
+                            evento.target;
+
+
+                        if (
+                            elemento.tagName ===
+                            "TEXTAREA"
+                        ) {
+
+                            return;
+
+                        }
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+/* ==========================================================
+   MANTER A DATA DA AGENDA
+========================================================== */
+
+function atualizarDataAgendaSelecionada() {
+
+    if (!dataAgendaSelecionada) {
+
+        dataAgendaSelecionada =
+            dataHojeISO();
+
+    }
+
+
+    const partes =
+        dataAgendaSelecionada
+            .split("-");
+
+
+    if (
+        partes.length !== 3
+    ) {
+
+        dataAgendaSelecionada =
+            dataHojeISO();
+
+    }
+
+}
+
+
+/* ==========================================================
+   ATUALIZAÇÃO GERAL DO SISTEMA
+========================================================== */
+
+function atualizarSistema() {
+
+    atualizarDataAgendaSelecionada();
+
+    atualizarSelectServicos();
+
+    atualizarSugestoesClientes();
+
+    renderizarCalendario();
+
+    renderizarAgenda();
+
+    renderizarClientes();
+
+    renderizarServicos();
+
+    atualizarCardsHome();
+
+    renderizarAgendaHome();
+
+    renderizarFinanceiro();
+
+    atualizarInterfaceBarbearia();
+
+}
+
+
+/* ==========================================================
+   VISIBILIDADE DO FINANCEIRO
+========================================================== */
+
+function protegerResumoFinanceiroHome() {
+
+    const elemento =
+        document.getElementById(
+            "resumoFaturamento"
+        );
+
+
+    if (!elemento) {
+
+        return;
+
+    }
+
+
+    elemento.textContent =
+        "••••••";
+
+}
+
+
+/* ==========================================================
+   VOLTAR PARA HOME
+========================================================== */
+
+function voltarParaInicio() {
+
+    atualizarHomeCompleta();
+
+    protegerResumoFinanceiroHome();
+
+    mostrarTela(
+        "inicio"
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÕES COM AÇÃO VOLTAR
+========================================================== */
+
+document
+    .querySelectorAll(
+        "[data-acao='inicio']"
+    )
+    .forEach(
+        function (botao) {
+
+            botao.addEventListener(
+                "click",
+                voltarParaInicio
+            );
+
+        }
+    );
+
+
+/* ==========================================================
+   ATUALIZAÇÃO QUANDO A ABA VOLTA A FICAR VISÍVEL
+========================================================== */
+
+document.addEventListener(
+    "visibilitychange",
+    function () {
+
+        if (
+            document.visibilityState ===
+            "visible"
+        ) {
+
+            atualizarSistema();
+
+        }
+
+    }
+);
+
+
+/* ==========================================================
+   ATUALIZAÇÃO AO RETORNAR PARA A JANELA
+========================================================== */
+
+window.addEventListener(
+    "focus",
+    function () {
+
+        atualizarSistema();
+
+    }
+);
+
+
+/* ==========================================================
+   INÍCIO DA PARTE 4
+========================================================== */
+/* ==========================================================
+   CONFIGURAÇÕES — HORÁRIOS
+========================================================== */
+
+function prepararConfiguracoesHorarios() {
+
+    document
+        .querySelectorAll(
+            ".dia-config"
+        )
+        .forEach(
+            function (bloco) {
+
+                const checkbox =
+                    bloco.querySelector(
+                        ".dia-aberto"
+                    );
+
+
+                if (!checkbox) {
+
+                    return;
+
+                }
+
+
+                checkbox.addEventListener(
+                    "change",
+                    function () {
+
+                        atualizarEstadoHorarios();
+
+                    }
+                );
+
+            }
+        );
+
+
+    atualizarEstadoHorarios();
+
+}
+
+
+/* ==========================================================
+   BOTÃO CANCELAR CONFIGURAÇÕES
+========================================================== */
+
+const btnCancelarConfiguracoes =
+    document.getElementById(
+        "btnCancelarConfiguracoes"
+    );
+
+
+if (btnCancelarConfiguracoes) {
+
+    btnCancelarConfiguracoes.addEventListener(
+        "click",
+        function () {
+
+            carregarConfiguracoes();
+
+            mostrarTela(
+                "inicio"
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   CONFIGURAÇÃO — TESTAR WHATSAPP
+========================================================== */
+
+const btnTestarWhatsApp =
+    document.getElementById(
+        "btnTestarWhatsApp"
+    );
+
+
+if (btnTestarWhatsApp) {
+
+    btnTestarWhatsApp.addEventListener(
+        "click",
+        function () {
+
+            abrirWhatsAppBarbearia();
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   CONFIGURAÇÃO — LIMPAR DADOS
+========================================================== */
+
+function limparDadosBarberPro() {
+
+    const confirmar =
+        confirm(
+            "⚠️ ATENÇÃO\n\n" +
+            "Isso apagará os agendamentos, clientes e serviços cadastrados neste aparelho.\n\n" +
+            "Essa ação não poderá ser desfeita sem um backup.\n\n" +
+            "Deseja continuar?"
+        );
+
+
+    if (!confirmar) {
+
+        return;
+
+    }
+
+
+    const confirmarNovamente =
+        confirm(
+            "Tem certeza que deseja apagar os dados do BarberPro?"
+        );
+
+
+    if (!confirmarNovamente) {
+
+        return;
+
+    }
+
+
+    localStorage.removeItem(
+        CHAVES.agendamentos
+    );
+
+
+    localStorage.removeItem(
+        CHAVES.clientes
+    );
+
+
+    localStorage.removeItem(
+        CHAVES.servicos
+    );
+
+
+    mostrarMensagem(
+        "Dados apagados."
+    );
+
+
+    setTimeout(
+        function () {
+
+            criarServicosPadrao();
+
+            atualizarSistema();
+
+            mostrarTela(
+                "inicio"
+            );
+
+        },
+        300
+    );
+
+}
+
+
+/* ==========================================================
+   BOTÃO LIMPAR DADOS
+========================================================== */
+
+const btnLimparDados =
+    document.getElementById(
+        "btnLimparDados"
+    );
+
+
+if (btnLimparDados) {
+
+    btnLimparDados.addEventListener(
+        "click",
+        limparDadosBarberPro
+    );
+
+}
+
+
+/* ==========================================================
+   EXPORTAR DADOS EM TEXTO
+========================================================== */
+
+function gerarResumoBackup() {
+
+    const agendamentos =
+        obterDados(
+            CHAVES.agendamentos
+        );
+
+
+    const clientes =
+        obterDados(
+            CHAVES.clientes
+        );
+
+
+    const servicos =
+        obterDados(
+            CHAVES.servicos
+        );
+
+
+    const configuracoes =
+        obterConfiguracoes();
+
+
+    return {
+
+        agendamentos:
+            agendamentos.length,
+
+        clientes:
+            clientes.length,
+
+        servicos:
+            servicos.length,
+
+        nomeBarbearia:
+            configuracoes.nomeBarbearia ||
+            "Não informado"
+
+    };
+
+}
+
+
+/* ==========================================================
+   INFORMAÇÕES DO BACKUP
+========================================================== */
+
+function atualizarInformacoesBackup() {
+
+    const elemento =
+        document.getElementById(
+            "informacoesBackup"
+        );
+
+
+    if (!elemento) {
+
+        return;
+
+    }
+
+
+    const resumo =
+        gerarResumoBackup();
+
+
+    elemento.innerHTML = `
+
+        <div class="backup-info-linha">
+
+            <span>
+                Clientes
+            </span>
+
+            <strong>
+                ${resumo.clientes}
+            </strong>
+
+        </div>
+
+
+        <div class="backup-info-linha">
+
+            <span>
+                Agendamentos
+            </span>
+
+            <strong>
+                ${resumo.agendamentos}
+            </strong>
+
+        </div>
+
+
+        <div class="backup-info-linha">
+
+            <span>
+                Serviços
+            </span>
+
+            <strong>
+                ${resumo.servicos}
+            </strong>
+
+        </div>
+
+    `;
+
+}
+
+
+/* ==========================================================
+   ATUALIZAR INFORMAÇÕES AO ABRIR CONFIGURAÇÕES
+========================================================== */
+
+const menuConfiguracoes =
+    document.querySelector(
+        ".menu-item[data-menu-tela='configuracoes']"
+    );
+
+
+if (menuConfiguracoes) {
+
+    menuConfiguracoes.addEventListener(
+        "click",
+        function () {
+
+            setTimeout(
+                function () {
+
+                    carregarConfiguracoes();
+
+                    atualizarInformacoesBackup();
+
+                },
+                180
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   ATUALIZAR INFORMAÇÕES AO FAZER BACKUP
+========================================================== */
+
+const botaoBackup =
+    document.querySelector(
+        "[onclick='fazerBackupBarberPro()']"
+    );
+
+
+if (botaoBackup) {
+
+    botaoBackup.addEventListener(
+        "click",
+        function () {
+
+            setTimeout(
+                function () {
+
+                    atualizarInformacoesBackup();
+
+                },
+                500
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   INSTALAÇÃO COMO PWA
+========================================================== */
+
+let eventoInstalacaoPWA = null;
+
+
+/* ==========================================================
+   CAPTURAR EVENTO DE INSTALAÇÃO
+========================================================== */
+
+window.addEventListener(
+    "beforeinstallprompt",
+    function (evento) {
+
+        evento.preventDefault();
+
+        eventoInstalacaoPWA =
+            evento;
+
+
+        const botao =
+            document.getElementById(
+                "btnInstalarApp"
+            );
+
+
+        if (botao) {
+
+            botao.style.display =
+                "flex";
+
+        }
+
+    }
+);
+
+
+/* ==========================================================
+   INSTALAR APP
+========================================================== */
+
+async function instalarBarberPro() {
+
+    if (!eventoInstalacaoPWA) {
+
+        mostrarMensagem(
+            "A instalação ainda não está disponível neste navegador."
+        );
+
+        return;
+
+    }
+
+
+    eventoInstalacaoPWA.prompt();
+
+
+    const resultado =
+        await eventoInstalacaoPWA
+            .userChoice;
+
+
+    console.log(
+        "Resultado da instalação:",
+        resultado.outcome
+    );
+
+
+    eventoInstalacaoPWA =
+        null;
+
+
+    const botao =
+        document.getElementById(
+            "btnInstalarApp"
+        );
+
+
+    if (botao) {
+
+        botao.style.display =
+            "none";
+
+    }
+
+}
+
+
+/* ==========================================================
+   BOTÃO INSTALAR
+========================================================== */
+
+const btnInstalarApp =
+    document.getElementById(
+        "btnInstalarApp"
+    );
+
+
+if (btnInstalarApp) {
+
+    btnInstalarApp.addEventListener(
+        "click",
+        instalarBarberPro
+    );
+
+}
+
+
+/* ==========================================================
+   DETECTAR APP JÁ INSTALADO
+========================================================== */
+
+window.addEventListener(
+    "appinstalled",
+    function () {
+
+        eventoInstalacaoPWA =
+            null;
+
+
+        const botao =
+            document.getElementById(
+                "btnInstalarApp"
+            );
+
+
+        if (botao) {
+
+            botao.style.display =
+                "none";
+
+        }
+
+
+        mostrarMensagem(
+            "BarberPro instalado com sucesso!"
+        );
+
+    }
+);
+
+
+/* ==========================================================
+   MODO STANDALONE
+========================================================== */
+
+function verificarModoInstalado() {
+
+    const instalado =
+        window.matchMedia &&
+        window.matchMedia(
+            "(display-mode: standalone)"
+        ).matches;
+
+
+    if (instalado) {
+
+        document.body.classList.add(
+            "barberpro-instalado"
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   VERIFICAR CONEXÃO
+========================================================== */
+
+function atualizarStatusConexao() {
+
+    const indicador =
+        document.getElementById(
+            "statusConexao"
+        );
+
+
+    if (!indicador) {
+
+        return;
+
+    }
+
+
+    if (navigator.onLine) {
+
+        indicador.textContent =
+            "Online";
+
+        indicador.classList.remove(
+            "offline"
+        );
+
+    } else {
+
+        indicador.textContent =
+            "Offline";
+
+        indicador.classList.add(
+            "offline"
+        );
+
+    }
+
+}
+
+
+/* ==========================================================
+   EVENTOS DE CONEXÃO
+========================================================== */
+
+window.addEventListener(
+    "online",
+    function () {
+
+        atualizarStatusConexao();
+
+        mostrarMensagem(
+            "Conexão restabelecida."
+        );
+
+    }
+);
+
+
+window.addEventListener(
+    "offline",
+    function () {
+
+        atualizarStatusConexao();
+
+        mostrarMensagem(
+            "Você está offline. Os dados continuam salvos neste aparelho."
+        );
+
+    }
+);
+
+
+/* ==========================================================
+   RELÓGIO DO SISTEMA
+========================================================== */
+
+function atualizarRelogioBarberPro() {
+
+    const elemento =
+        document.getElementById(
+            "relogioBarberPro"
+        );
+
+
+    if (!elemento) {
+
+        return;
+
+    }
+
+
+    const agora =
+        new Date();
+
+
+    const hora =
+        String(
+            agora.getHours()
+        )
+        .padStart(
+            2,
+            "0"
+        );
+
+
+    const minuto =
+        String(
+            agora.getMinutes()
+        )
+        .padStart(
+            2,
+            "0"
+        );
+
+
+    elemento.textContent =
+        `${hora}:${minuto}`;
+
+}
+
+
+setInterval(
+    atualizarRelogioBarberPro,
+    30000
+);
+
+
+/* ==========================================================
+   DATA ATUAL NO SISTEMA
+========================================================== */
+
+function atualizarDataSistema() {
+
+    const elementos =
+        document.querySelectorAll(
+            "[data-data-atual]"
+        );
+
+
+    if (!elementos.length) {
+
+        return;
+
+    }
+
+
+    const hoje =
+        dataHojeISO();
+
+
+    elementos.forEach(
+        function (elemento) {
+
+            elemento.textContent =
+                formatarData(
+                    hoje
+                );
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   ATUALIZAÇÃO DO STATUS DA AGENDA
+========================================================== */
+
+function atualizarStatusAgendaAtual() {
+
+    const horario =
+        obterHorarioFuncionamento(
+            dataAgendaSelecionada
+        );
+
+
+    const elemento =
+        document.getElementById(
+            "statusAgendaAtual"
+        );
+
+
+    if (!elemento) {
+
+        return;
+
+    }
+
+
+    if (!horario) {
+
+        elemento.textContent =
+            "Horário não definido";
+
+        return;
+
+    }
+
+
+    if (!horario.aberto) {
+
+        elemento.textContent =
+            "Fechado";
+
+        return;
+
+    }
+
+
+    elemento.textContent =
+        `${horario.abertura} às ${horario.fechamento}`;
+
+}
+
+
+/* ==========================================================
+   ATUALIZAR TODAS AS INFORMAÇÕES VISUAIS
+========================================================== */
+
+function atualizarInterfaceCompleta() {
+
+    atualizarDataAgendaSelecionada();
+
+    atualizarInterfaceBarbearia();
+
+    atualizarDataSistema();
+
+    atualizarRelogioBarberPro();
+
+    atualizarStatusConexao();
+
+    atualizarStatusAgendaAtual();
+
+    atualizarCardsHome();
+
+    renderizarAgendaHome();
+
+    renderizarFuncionamentoAgenda();
+
+}
+
+
+/* ==========================================================
+   MUDANÇA DE DATA NA AGENDA
+========================================================== */
+
+function aoMudarDataAgenda() {
+
+    atualizarDataAgendaSelecionada();
+
+    atualizarStatusAgendaAtual();
+
+    renderizarFuncionamentoAgenda();
+
+    renderizarAgenda();
+
+}
+
+
+/* ==========================================================
+   OBSERVAR ALTERAÇÕES DE DATA
+========================================================== */
+
+const campoDataAgenda =
+    document.getElementById(
+        "agendamentoData"
+    );
+
+
+if (campoDataAgenda) {
+
+    campoDataAgenda.addEventListener(
+        "change",
+        function () {
+
+            if (
+                campoDataAgenda.value
+            ) {
+
+                const partes =
+                    campoDataAgenda
+                        .value
+                        .split("-");
+
+
+                if (
+                    partes.length ===
+                    3
+                ) {
+
+                    dataAgendaSelecionada =
+                        campoDataAgenda.value;
+
+
+                    mesAgendaAtual =
+                        new Date(
+                            Number(partes[0]),
+                            Number(partes[1]) - 1,
+                            1
+                        );
+
+                }
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ==========================================================
+   OBSERVAR ALTERAÇÃO DE SERVIÇO
+========================================================== */
+
+document.addEventListener(
+    "change",
+    function (evento) {
+
+        if (
+            evento.target &&
+            evento.target.id ===
+                "agendamentoServico"
+        ) {
+
+            atualizarValorServico();
+
+        }
+
+    }
+);
+
+
+/* ==========================================================
+   ATUALIZAR AGENDA APÓS QUALQUER ALTERAÇÃO
+========================================================== */
+
+function atualizarDepoisDeSalvar() {
+
+    atualizarSelectServicos();
+
+    atualizarSugestoesClientes();
+
+    renderizarCalendario();
+
+    renderizarAgenda();
+
+    renderizarClientes();
+
+    renderizarServicos();
+
+    atualizarHomeCompleta();
+
+    renderizarFinanceiro();
+
+    atualizarInformacoesBackup();
+
+}
+
+
+/* ==========================================================
+   EVENTO STORAGE
+========================================================== */
+
+window.addEventListener(
+    "storage",
+    function (evento) {
+
+        if (
+            !evento.key
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            evento.key.startsWith(
+                "barberpro_"
+            )
+        ) {
+
+            atualizarDepoisDeSalvar();
+
+        }
+
+    }
+);
+
+
+/* ==========================================================
+   PROTEÇÃO CONTRA DUPLO CLIQUE
+========================================================== */
+
+let ultimoCliqueFormulario =
+    0;
+
+
+function podeEnviarFormulario() {
+
+    const agora =
+        Date.now();
+
+
+    if (
+        agora -
+        ultimoCliqueFormulario <
+        700
+    ) {
+
+        return false;
+
+    }
+
+
+    ultimoCliqueFormulario =
+        agora;
+
+
+    return true;
+
+}
+
+
+/* ==========================================================
+   PROTEÇÃO DOS FORMULÁRIOS
+========================================================== */
+
+document
+    .querySelectorAll(
+        "form"
+    )
+    .forEach(
+        function (formulario) {
+
+            formulario.addEventListener(
+                "submit",
+                function (evento) {
+
+                    if (
+                        !podeEnviarFormulario()
+                    ) {
+
+                        evento.preventDefault();
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+/* ==========================================================
+   GARANTIR SERVIÇOS PADRÃO
+========================================================== */
+
+function garantirServicosPadrao() {
+
+    const servicos =
+        obterDados(
+            CHAVES.servicos
+        );
+
+
+    if (
+        !Array.isArray(servicos) ||
+        servicos.length === 0
+    ) {
+
+        criarServicosPadrao();
+
+    }
+
+}
+
+
+/* ==========================================================
+   GARANTIR DATA INICIAL
+========================================================== */
+
+function garantirDataInicial() {
+
+    if (
+        !dataAgendaSelecionada
+    ) {
+
+        dataAgendaSelecionada =
+            dataHojeISO();
+
+    }
+
+
+    const partes =
+        dataAgendaSelecionada
+            .split("-");
+
+
+    if (
+        partes.length !== 3
+    ) {
+
+        dataAgendaSelecionada =
+            dataHojeISO();
+
+    }
+
+
+    const data =
+        dataAgendaSelecionada
+            .split("-");
+
+
+    mesAgendaAtual =
+        new Date(
+            Number(data[0]),
+            Number(data[1]) - 1,
+            1
+        );
+
+}
+
+
+/* ==========================================================
+   VERIFICAR ELEMENTOS ESSENCIAIS
+========================================================== */
+
+function verificarEstruturaBarberPro() {
+
+    const elementosObrigatorios = [
+
+        "telaInicio",
+
+        "telaAgenda",
+
+        "telaNovoAgendamento",
+
+        "telaClientes",
+
+        "telaServicos",
+
+        "telaFinanceiro",
+
+        "telaConfiguracoes"
+
+    ];
+
+
+    const ausentes =
+        elementosObrigatorios.filter(
+            function (id) {
+
+                return !document.getElementById(
+                    id
+                );
+
+            }
+        );
+
+
+    if (
+        ausentes.length > 0
+    ) {
+
+        console.warn(
+            "Elementos ausentes:",
+            ausentes
+        );
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
+
+
+/* ==========================================================
+   PREPARAR APLICAÇÃO
+========================================================== */
+
+function prepararBarberPro() {
+
+    verificarEstruturaBarberPro();
+
+    garantirDataInicial();
+
+    garantirServicosPadrao();
+
+    prepararConfiguracoesHorarios();
+
+    atualizarEstadoHorarios();
+
+    atualizarInterfaceCompleta();
+
+}
+
+
+/* ==========================================================
+   FINAL DA PARTE 5
+========================================================== */
+/* ==========================================================
+   INICIALIZAÇÃO — BARBERPRO
+========================================================== */
+
+function iniciarBarberPro() {
+
+    console.log(
+        "================================"
+    );
+
+    console.log(
+        "BARBERPRO INICIANDO..."
+    );
+
+    console.log(
+        "================================"
+    );
+
+
+    /* ======================================================
+       TESTAR LOCALSTORAGE
+    ====================================================== */
+
+    if (
+        !testarArmazenamento()
+    ) {
+
+        console.error(
+            "LocalStorage não disponível."
+        );
+
+
+        mostrarMensagem(
+            "Atenção: armazenamento indisponível."
+        );
+
+    }
+
+
+    /* ======================================================
+       PREPARAR SISTEMA
+    ====================================================== */
+
+    prepararBarberPro();
+
+
+    /* ======================================================
+       SERVIÇOS
+    ====================================================== */
+
+    criarServicosPadrao();
+
+    atualizarSelectServicos();
+
+
+    /* ======================================================
+       CLIENTES
+    ====================================================== */
+
+    atualizarSugestoesClientes();
+
+
+    /* ======================================================
+       AGENDA
+    ====================================================== */
+
+    garantirDataInicial();
+
+    renderizarCalendario();
+
+    renderizarAgenda();
+
+
+    /* ======================================================
+       CLIENTES / SERVIÇOS
+    ====================================================== */
+
+    renderizarClientes();
+
+    renderizarServicos();
+
+
+    /* ======================================================
+       HOME
+    ====================================================== */
+
+    atualizarResumoHome();
+
+    atualizarCardsHome();
+
+    renderizarAgendaHome();
+
+
+    /* ======================================================
+       FINANCEIRO
+       
+       O valor real fica disponível somente
+       dentro da tela Financeiro.
+    ====================================================== */
+
+    renderizarFinanceiro();
+
+
+    /* ======================================================
+       CONFIGURAÇÕES
+    ====================================================== */
+
+    carregarConfiguracoes();
+
+    atualizarInterfaceBarbearia();
+
+    atualizarIdentidadeBarbearia();
+
+    atualizarInformacoesBackup();
+
+
+    /* ======================================================
+       STATUS DO SISTEMA
+    ====================================================== */
+
+    atualizarStatusConexao();
+
+    atualizarDataSistema();
+
+    atualizarRelogioBarberPro();
+
+    verificarModoInstalado();
+
+
+    /* ======================================================
+       GARANTIR ESTADO INICIAL
+    ====================================================== */
+
+    protegerResumoFinanceiroHome();
+
+
+    /* ======================================================
+       MOSTRAR HOME
+    ====================================================== */
+
+    mostrarTela(
+        "inicio"
+    );
+
+
+    /* ======================================================
+       ATUALIZAR HOME NOVAMENTE
+       
+       Garante que os dados apareçam depois
+       de toda a preparação do sistema.
+    ====================================================== */
+
+    setTimeout(
+        function () {
+
+            atualizarHomeCompleta();
+
+            protegerResumoFinanceiroHome();
+
+        },
+        100
+    );
+
+
+    /* ======================================================
+       LOGS DE TESTE
+    ====================================================== */
+
+    console.log(
+        "Agendamentos:",
+        obterDados(
+            CHAVES.agendamentos
+        )
+    );
+
+
+    console.log(
+        "Clientes:",
+        obterDados(
+            CHAVES.clientes
+        )
+    );
+
+
+    console.log(
+        "Serviços:",
+        obterDados(
+            CHAVES.servicos
+        )
+    );
+
+
+    console.log(
+        "Configurações:",
+        obterConfiguracoes()
+    );
+
+
+    console.log(
+        "================================"
+    );
+
+    console.log(
+        "BARBERPRO PRONTO."
+    );
+
+    console.log(
+        "================================"
+    );
+
+}
+
+
+/* ==========================================================
+   INICIAR QUANDO O HTML ESTIVER PRONTO
+========================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        iniciarBarberPro
+    );
+
+} else {
+
+    iniciarBarberPro();
+
+}
+
+
+/* ==========================================================
+   FIM DO BARBERPRO
+========================================================== */
