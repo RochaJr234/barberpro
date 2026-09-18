@@ -21,7 +21,105 @@
         rel="stylesheet"
         href="style.css"
     >
+<style>
+/* ==========================================================
+   BARBERPRO — CORREÇÃO DO MENU LATERAL
+========================================================== */
 
+#menuOverlay {
+    position: fixed !important;
+    inset: 0 !important;
+
+    background: rgba(0, 0, 0, 0.45) !important;
+
+    z-index: 2147483646 !important;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
+}
+
+#menuOverlay.ativo {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+
+/* PAINEL DO MENU */
+
+#menuLateral {
+    position: fixed !important;
+
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+
+    width: 290px !important;
+    max-width: 82vw !important;
+
+    display: block !important;
+
+    background: #ffffff !important;
+
+    z-index: 2147483647 !important;
+
+    transform: translateX(-105%) !important;
+
+    opacity: 1 !important;
+
+    visibility: hidden !important;
+
+    pointer-events: none !important;
+
+    overflow-y: auto !important;
+
+    box-shadow:
+        12px 0 35px rgba(0,0,0,0.15) !important;
+
+    transition:
+        transform 0.28s ease,
+        visibility 0.28s ease !important;
+}
+
+
+/* MENU ABERTO */
+
+#menuLateral.ativo {
+    display: block !important;
+
+    transform: translateX(0) !important;
+
+    opacity: 1 !important;
+
+    visibility: visible !important;
+
+    pointer-events: auto !important;
+}
+
+
+/* GARANTE QUE OS BOTÕES FIQUEM CLICÁVEIS */
+
+#menuLateral .menu-item {
+    position: relative !important;
+    z-index: 2 !important;
+
+    pointer-events: auto !important;
+}
+
+
+/* BOTÃO X */
+
+#menuLateral .btn-fechar-menu {
+    position: relative !important;
+    z-index: 10 !important;
+    pointer-events: auto !important;
+}
+</style>
 </head>
 
 <body>
